@@ -15,7 +15,7 @@
   );
 
   width: 100%;
-  max-width: min(100%, 76rem);
+  max-width: var(--app-page-max-width);
   margin: 0 auto;
   padding: 2rem 1.25rem 3.5rem;
   box-sizing: border-box;

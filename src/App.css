@@ -13,7 +13,7 @@
 }
 
 .app-top-nav-inner {
-  max-width: 1080px;
+  max-width: var(--app-page-max-width);
   margin: 0 auto;
   padding: 0.65rem 1.25rem;
   display: flex;

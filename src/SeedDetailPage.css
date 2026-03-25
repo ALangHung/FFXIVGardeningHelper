@@ -4,11 +4,9 @@
   --text: #f3f4f6;
   --muted: #9ca3af;
   --gold: #fbbf24;
-  /* 與種子列表 .seed-list-page 同寬 */
-  --list-fixed-width: 1080px;
 
-  width: var(--list-fixed-width);
-  max-width: 100%;
+  width: 100%;
+  max-width: var(--app-page-max-width);
   margin-left: auto;
   margin-right: auto;
   padding: 2rem 1.25rem 3.5rem;

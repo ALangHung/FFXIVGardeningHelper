@@ -1,6 +1,8 @@
 :root {
   color-scheme: dark;
   --app-bg: #120c1d;
+  /* 與田地管理 `.field-page` 同寬 */
+  --app-page-max-width: min(100%, 76rem);
 }
 
 /* 避免垂直捲軸出現／消失時整頁寬度跳動 */

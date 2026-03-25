@@ -12,11 +12,9 @@
   --gold-dim: #d97706;
   --purple: #7c3aed;
   --purple-soft: rgba(124, 58, 237, 0.35);
-  /* 與表格同寬，避免篩選時版面左右位移 */
-  --list-fixed-width: 1080px;
 
-  width: var(--list-fixed-width);
-  max-width: 100%;
+  width: 100%;
+  max-width: var(--app-page-max-width);
   margin-left: auto;
   margin-right: auto;
   padding: 2rem 1.25rem 3.5rem;

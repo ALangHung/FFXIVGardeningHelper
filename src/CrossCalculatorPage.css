@@ -7,10 +7,9 @@
   --text-muted: #9ca3af;
   --gold: #fbbf24;
   --purple-soft: rgba(124, 58, 237, 0.35);
-  --list-fixed-width: 1080px;
 
-  width: var(--list-fixed-width);
-  max-width: 100%;
+  width: 100%;
+  max-width: var(--app-page-max-width);
   margin-left: auto;
   margin-right: auto;
   padding: 2rem 1.25rem 3.5rem;
