@@ -14,6 +14,10 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+# 讓 JavaScript Actions（含 upload-artifact、deploy-pages）在 runner 上提早使用 Node 24，減少 Node 20 棄用警告。
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   build:
     runs-on: ubuntu-latest
