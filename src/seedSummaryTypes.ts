@@ -1,6 +1,11 @@
 export type SeedSummary = {
   seedId: number
   name: string
+  /**
+   * 供名稱篩選：含顯示名（繁中）及 Teamcraft 對應道具的英／日／簡中別名。
+   * 未建置 Teamcraft 時通常等於 `name`。
+   */
+  nameSearchText?: string
   seedType: string | null
   growTime: string | null
   wiltTime: string | null

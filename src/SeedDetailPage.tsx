@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { getSeedById } from './seedDataApi'
+import { getSeedById, loadSeedNameSearchById } from './seedDataApi'
 import type { ConfirmedCross, SeedRecord } from './seedDetailTypes'
 import { formatDurationEn, seedTypeLabelZh } from './seedFormat'
 import './SeedDetailPage.css'
@@ -53,13 +53,31 @@ function normalizeQ(s: string) {
   return s.trim().toLowerCase()
 }
 
-function rowMatchesQuery(row: ConfirmedCross, q: string) {
+function crossNameHaystack(
+  seedId: number | null,
+  displayName: string | null,
+  searchById: Record<string, string>,
+): string {
+  const name = displayName != null ? String(displayName) : ''
+  const extra =
+    seedId != null && Number.isFinite(seedId)
+      ? (searchById[String(seedId)] ?? '')
+      : ''
+  return normalizeQ(`${name} ${extra}`)
+}
+
+function rowMatchesQuery(
+  row: ConfirmedCross,
+  q: string,
+  searchById: Record<string, string>,
+) {
   if (!q.trim()) return true
   const n = normalizeQ(q)
-  const names = [row.parentA.name, row.parentB.name]
-    .filter(Boolean)
-    .map((x) => normalizeQ(String(x)))
-  return names.some((p) => p.includes(n))
+  const hays = [
+    crossNameHaystack(row.parentA.seedId, row.parentA.name, searchById),
+    crossNameHaystack(row.parentB.seedId, row.parentB.name, searchById),
+  ]
+  return hays.some((hay) => hay.includes(n))
 }
 
 function compareCross(
@@ -116,6 +134,9 @@ function ConfirmedCrossesTable({
   crosses: ConfirmedCross[]
 }) {
   const [query, setQuery] = useState('')
+  const [nameSearchById, setNameSearchById] = useState<Record<string, string>>(
+    {},
+  )
   const [loopFilter, setLoopFilter] = useState<'all' | 'loop' | 'nonloop'>(
     'all',
   )
@@ -129,14 +150,29 @@ function ConfirmedCrossesTable({
     setSortDir(-1)
   }, [seedId])
 
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const map = await loadSeedNameSearchById()
+        if (!cancelled) setNameSearchById(map)
+      } catch {
+        if (!cancelled) setNameSearchById({})
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const filtered = useMemo(() => {
     return crosses.filter((row) => {
-      if (!rowMatchesQuery(row, query)) return false
+      if (!rowMatchesQuery(row, query, nameSearchById)) return false
       if (loopFilter === 'loop' && !row.isLoop) return false
       if (loopFilter === 'nonloop' && row.isLoop) return false
       return true
     })
-  }, [crosses, query, loopFilter])
+  }, [crosses, query, loopFilter, nameSearchById])
 
   const sorted = useMemo(() => {
     const rows = [...filtered]

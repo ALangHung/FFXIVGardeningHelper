@@ -86,7 +86,10 @@ export function SeedListPage() {
     const nq = normalize(nameQuery)
     const lq = normalize(locationQuery)
     return seeds.filter((s) => {
-      if (nq && !normalize(s.name).includes(nq)) return false
+      if (nq) {
+        const hay = normalize(s.nameSearchText ?? s.name)
+        if (!hay.includes(nq)) return false
+      }
       if (growTime && s.growTime !== growTime) return false
       if (lq && !normalize(s.harvestLocation ?? '').includes(lq)) return false
       return true
