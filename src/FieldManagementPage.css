@@ -788,3 +788,23 @@
   padding: 2rem 1rem;
   color: var(--text-muted);
 }
+
+.field-empty-hint-lead {
+  margin: 0 auto 1rem;
+  max-width: 40rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.field-empty-hint-rules {
+  margin: 0 auto;
+  padding-left: 1.25rem;
+  max-width: 42rem;
+  text-align: left;
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.field-empty-hint-rules li + li {
+  margin-top: 0.65rem;
+}

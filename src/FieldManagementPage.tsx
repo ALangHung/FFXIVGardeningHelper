@@ -545,12 +545,25 @@ export function FieldManagementPage() {
       ) : null}
 
       {!loading && !loadError && fields.length === 0 ? (
-        <p className="field-empty-hint">
-          點「新增田地」建立一塊九宮格（中間不可種植）。依順序設定各格作物後，若與<strong>右→下→上→左</strong>
-          優先順序下第一個有確認配方的鄰格可雜交時，格內會顯示可能種子，將滑鼠停於該格可查看完整列表（僅此一側）；施肥會對<strong>冷卻已結束</strong>的已種格子將<strong>剩餘收成時間 × 99%</strong>
-          ，<strong>每格施肥後 1 小時內</strong>該格不會再被施肥影響。總覽為<strong>每列 3 塊田</strong>
-          ，可<strong>拖曳田地卡片背景</strong>調整位置並<strong>留出空白格</strong>（按鈕與連結仍可正常點擊）。
-        </p>
+        <div className="field-empty-hint">
+          <p className="field-empty-hint-lead">
+            尚無田地。請點上方「新增田地」開始你的耕田人生。
+          </p>
+          <ul className="field-empty-hint-rules">
+            <li>
+              <strong>雜交提示</strong>
+              ：種下作物時，依鄰格右 → 下 → 上 → 左順序尋找第一個鄰格進行雜交，格中會顯示可能獲得的種子。滑鼠懸停可看到完整資訊。
+            </li>
+            <li>
+              <strong>施肥</strong>
+              ：僅作用於已種植、尚未可收成，且該格施肥冷卻已結束的格子，每格施肥後需隔1小時才可再對該格施肥。效果為將剩餘收成時間縮短為原本的 99%（即剩餘時間 × 0.99）。施肥後1分鐘內可取消本次施肥，避免誤操作。
+            </li>
+            <li>
+              <strong>總覽棋盤</strong>
+              ：田地以每列 3 塊排列；可拖曳田地卡片調整位置。
+            </li>
+          </ul>
+        </div>
       ) : null}
 
       {!loading && !loadError && fields.length > 0 ? (
