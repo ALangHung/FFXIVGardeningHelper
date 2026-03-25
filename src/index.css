@@ -1,0 +1,34 @@
+:root {
+  color-scheme: dark;
+  --app-bg: #120c1d;
+  --font-sans: system-ui, 'Segoe UI', 'Noto Sans TC', sans-serif;
+}
+
+/* 避免垂直捲軸出現／消失時整頁寬度跳動 */
+html {
+  scrollbar-gutter: stable;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: #e5e7eb;
+  background: var(--app-bg);
+  background-image:
+    radial-gradient(ellipse 100% 80% at 50% -30%, rgba(88, 28, 135, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 50% at 100% 50%, rgba(30, 27, 75, 0.4) 0%, transparent 45%),
+    linear-gradient(180deg, #120c1d 0%, #0d0814 100%);
+}
+
+#app {
+  min-height: 100vh;
+}

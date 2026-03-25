@@ -1,0 +1,30 @@
+{
+  "name": "ffxivgardeninghelper",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "scrape:seeds": "node scripts/scrape-seeds.mjs",
+    "apply:tw-names": "node scripts/apply-tw-item-names.mjs",
+    "build:seeds-summary": "node scripts/build-seeds-summary.mjs",
+    "translate:harvest-locations": "node scripts/translate-harvest-locations.mjs",
+    "download:seed-icons": "node scripts/download-seed-icons.mjs",
+    "copy:seeds-by-id": "node scripts/copy-seeds-by-id-to-public.mjs"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "cheerio": "^1.2.0",
+    "typescript": "~5.9.3",
+    "vite": "^8.0.1"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.2"
+  }
+}
