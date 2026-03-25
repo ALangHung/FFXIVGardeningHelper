@@ -1,6 +1,7 @@
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
 import { CrossCalculatorPage } from './CrossCalculatorPage'
+import { FieldManagementPage } from './FieldManagementPage'
 import { SeedDetailPage } from './SeedDetailPage'
 import { SeedListPage } from './SeedListPage'
 
@@ -27,13 +28,14 @@ export function App() {
             >
               雜交計算器
             </NavLink>
-            <button
-              type="button"
-              className="app-top-nav-tab app-top-nav-tab--soon"
-              disabled
+            <NavLink
+              to="/fields"
+              className={({ isActive }) =>
+                `app-top-nav-tab${isActive ? ' app-top-nav-tab--active' : ''}`
+              }
             >
               田地管理
-            </button>
+            </NavLink>
           </nav>
           <div className="app-top-nav-source">
             <span className="app-top-nav-source-label">資料來源:</span>
@@ -59,6 +61,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<SeedListPage />} />
         <Route path="/cross" element={<CrossCalculatorPage />} />
+        <Route path="/fields" element={<FieldManagementPage />} />
         <Route path="/seed/:seedId" element={<SeedDetailPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
