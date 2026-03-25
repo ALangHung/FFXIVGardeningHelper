@@ -2,10 +2,16 @@ import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import type { SeedSummary, SeedsSummaryPayload } from './seedSummaryTypes'
 import { publicUrl } from './publicUrl'
+import { SearchClearButton } from './SearchClearButton'
+import {
+  loadSeedListUiState,
+  saveSeedListUiState,
+  type SeedListSortKey,
+} from './sessionUiState'
 import { durationToSortHours, formatDurationEn } from './seedFormat'
 import './SeedListPage.css'
 
-type SortKey = 'name' | 'growTime' | 'harvestLocation'
+type SortKey = SeedListSortKey
 
 function normalize(s: string): string {
   return s.trim().toLowerCase()
@@ -49,16 +55,38 @@ function compareRows(
 }
 
 export function SeedListPage() {
+  const [persistedList] = useState(() => loadSeedListUiState())
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [seeds, setSeeds] = useState<SeedSummary[]>([])
 
-  const [nameQuery, setNameQuery] = useState('')
-  const [growTime, setGrowTime] = useState('')
-  const [locationQuery, setLocationQuery] = useState('')
+  const [nameQuery, setNameQuery] = useState(
+    () => persistedList?.nameQuery ?? '',
+  )
+  const [growTime, setGrowTime] = useState(
+    () => persistedList?.growTime ?? '',
+  )
+  const [locationQuery, setLocationQuery] = useState(
+    () => persistedList?.locationQuery ?? '',
+  )
 
-  const [sortKey, setSortKey] = useState<SortKey>('name')
-  const [sortDir, setSortDir] = useState<1 | -1>(1)
+  const [sortKey, setSortKey] = useState<SortKey>(
+    () => persistedList?.sortKey ?? 'name',
+  )
+  const [sortDir, setSortDir] = useState<1 | -1>(
+    () => persistedList?.sortDir ?? 1,
+  )
+
+  useEffect(() => {
+    saveSeedListUiState({
+      nameQuery,
+      growTime,
+      locationQuery,
+      sortKey,
+      sortDir,
+    })
+  }, [nameQuery, growTime, locationQuery, sortKey, sortDir])
 
   useEffect(() => {
     let cancelled = false
@@ -115,8 +143,7 @@ export function SeedListPage() {
       <header className="seed-list-header">
         <h1 className="seed-page-title">種子列表</h1>
         <p className="seed-list-sub">
-          資料來自 ffxivgardening.com · 共 {seeds.length} 筆 · 篩選後{' '}
-          {filtered.length} 筆
+          共 {seeds.length} 筆 · 篩選後 {filtered.length} 筆
         </p>
       </header>
 
@@ -180,13 +207,16 @@ export function SeedListPage() {
                       </span>
                       <input
                         type="search"
-                        className="seed-td-input seed-td-input--inbox"
+                        className={`seed-td-input seed-td-input--inbox${nameQuery ? ' seed-td-input--with-clear' : ''}`}
                         placeholder="搜尋名稱…"
                         value={nameQuery}
                         onChange={(e) => setNameQuery(e.target.value)}
                         autoComplete="off"
                         aria-label="依名稱篩選"
                       />
+                      {nameQuery ? (
+                        <SearchClearButton onClear={() => setNameQuery('')} />
+                      ) : null}
                     </label>
                   </td>
                   <td>
@@ -211,13 +241,16 @@ export function SeedListPage() {
                       </span>
                       <input
                         type="search"
-                        className="seed-td-input seed-td-input--inbox"
+                        className={`seed-td-input seed-td-input--inbox${locationQuery ? ' seed-td-input--with-clear' : ''}`}
                         placeholder="搜尋地點…"
                         value={locationQuery}
                         onChange={(e) => setLocationQuery(e.target.value)}
                         autoComplete="off"
                         aria-label="依獲取地點篩選"
                       />
+                      {locationQuery ? (
+                        <SearchClearButton onClear={() => setLocationQuery('')} />
+                      ) : null}
                     </label>
                   </td>
                 </tr>

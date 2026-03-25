@@ -1,0 +1,38 @@
+/* 與列高等寬的方形點擊區；× 維持小字 */
+.app-search-clear {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 寬 = 高（繼承自父列高） */
+  height: 100%;
+  aspect-ratio: 1;
+  width: auto;
+  min-width: 2.25rem;
+}
+
+.app-search-clear:hover {
+  color: #e5e7eb;
+}
+
+.app-search-clear:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.75);
+  outline-offset: -2px;
+}
+
+.app-search-clear-glyph {
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 500;
+  pointer-events: none;
+}

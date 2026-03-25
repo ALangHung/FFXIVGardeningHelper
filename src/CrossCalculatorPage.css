@@ -1,0 +1,324 @@
+.cross-calc-page {
+  --surface: #1a1428;
+  --surface-2: #221a32;
+  --border: rgba(167, 139, 250, 0.22);
+  --border-focus: rgba(139, 92, 246, 0.65);
+  --text: #f3f4f6;
+  --text-muted: #9ca3af;
+  --gold: #fbbf24;
+  --purple-soft: rgba(124, 58, 237, 0.35);
+  --list-fixed-width: 1080px;
+
+  width: var(--list-fixed-width);
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2rem 1.25rem 3.5rem;
+  box-sizing: border-box;
+}
+
+.cross-calc-header {
+  margin-bottom: 1.5rem;
+}
+
+.cross-calc-title {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  text-shadow: 0 0 24px rgba(251, 191, 36, 0.25);
+}
+
+.cross-calc-mode {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.35rem;
+}
+
+.cross-calc-mode-btn {
+  appearance: none;
+  margin: 0;
+  padding: 0.45rem 1rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #d1d5db;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: rgba(34, 26, 50, 0.6);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.cross-calc-mode-btn:hover {
+  color: #f3f4f6;
+  background: rgba(42, 33, 64, 0.85);
+  border-color: rgba(167, 139, 250, 0.28);
+}
+
+.cross-calc-mode-btn--active {
+  color: #fbbf24;
+  background: rgba(124, 58, 237, 0.22);
+  border-color: rgba(251, 191, 36, 0.35);
+  text-shadow: 0 0 18px rgba(251, 191, 36, 0.2);
+}
+
+.cross-calc-mode-btn:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.75);
+  outline-offset: 2px;
+}
+
+.cross-calc-parents {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .cross-calc-parents {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cross-calc-field-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e9d5ff;
+  letter-spacing: 0.02em;
+}
+
+.cross-calc-picker {
+  position: relative;
+}
+
+.cross-calc-input-wrap {
+  display: block;
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(18, 12, 29, 0.65);
+}
+
+.cross-calc-input-wrap:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--purple-soft);
+}
+
+.cross-calc-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.75rem 0.55rem 2.25rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.cross-calc-input--with-clear {
+  padding-right: 2.85rem;
+}
+
+.cross-calc-input::placeholder {
+  color: #6b7280;
+}
+
+.cross-calc-input-icon {
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.cross-calc-suggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 30;
+  max-height: min(52vh, 380px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+.cross-calc-suggest-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cross-calc-suggest-btn:hover,
+.cross-calc-suggest-btn:focus-visible {
+  background: rgba(124, 58, 237, 0.2);
+  outline: none;
+}
+
+.cross-calc-suggest-icon {
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.cross-calc-table-shell {
+  width: 100%;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.cross-calc-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cross-calc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.cross-calc-table th {
+  background: linear-gradient(180deg, #1e1630 0%, #181022 100%);
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  white-space: nowrap;
+  color: #fef3c7;
+  vertical-align: middle;
+}
+
+.cross-calc-th-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.cross-calc-th-btn:hover {
+  color: var(--gold);
+}
+
+.cross-calc-sort-glyph {
+  font-size: 0.7rem;
+  opacity: 0.85;
+  font-weight: 700;
+}
+
+.cross-calc-sort-glyph--muted {
+  opacity: 0.35;
+  font-weight: 400;
+}
+
+.cross-calc-table td {
+  border-bottom: 1px solid rgba(167, 139, 250, 0.12);
+  padding: 0.55rem 0.85rem;
+  vertical-align: middle;
+}
+
+.cross-calc-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.cross-calc-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.cross-calc-name-link {
+  color: #c4b5fd;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.cross-calc-name-link:hover {
+  color: #ddd6fe;
+  text-decoration: underline;
+}
+
+.cross-calc-muted {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.cross-calc-error {
+  color: #fca5a5;
+}
+
+.cross-calc-eff {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.cross-calc-eff--green {
+  color: #86efac;
+}
+
+.cross-calc-eff--yellow {
+  color: #fde047;
+}
+
+.cross-calc-eff--red {
+  color: #fca5a5;
+}
+
+.cross-calc-eff--none {
+  color: var(--text-muted);
+}
+
+.cross-calc-loop {
+  font-size: 0.85rem;
+}
+
+.cross-calc-loop--yes {
+  color: #fde68a;
+}
+
+.cross-calc-loop--no {
+  color: var(--text-muted);
+}

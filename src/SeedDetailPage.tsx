@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getSeedById, loadSeedNameSearchById } from './seedDataApi'
 import type { ConfirmedCross, SeedRecord } from './seedDetailTypes'
 import { formatDurationEn, seedTypeLabelZh } from './seedFormat'
 import './SeedDetailPage.css'
 import { publicUrl } from './publicUrl'
+import { SearchClearButton } from './SearchClearButton'
 
 function iconSrc(seedId: number) {
   return publicUrl(`images/seed-icon/${seedId}.png`)
@@ -25,6 +26,25 @@ function formatHarvestLocation(value: string | null | undefined): string {
   if (!t) return '—'
   if (t === '素材商人（僅限盆栽）') return '素材商人'
   return t
+}
+
+function SeedDetailBackNav() {
+  const navigate = useNavigate()
+  return (
+    <button
+      type="button"
+      className="seed-detail-back"
+      onClick={() => {
+        if (typeof window !== 'undefined' && window.history.length > 1) {
+          navigate(-1)
+        } else {
+          navigate('/')
+        }
+      }}
+    >
+      ← 返回
+    </button>
+  )
 }
 
 function SeedLink({
@@ -211,14 +231,19 @@ function ConfirmedCrossesTable({
       <div className="seed-detail-cross-toolbar">
         <label className="seed-detail-cross-field">
           <span className="seed-detail-cross-label">親本</span>
-          <input
-            type="search"
-            className="seed-detail-cross-input"
-            placeholder="親本 A 或親本 B"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            autoComplete="off"
-          />
+          <div className="seed-detail-cross-input-wrap">
+            <input
+              type="search"
+              className={`seed-detail-cross-input${query ? ' seed-detail-cross-input--with-clear' : ''}`}
+              placeholder="親本 A 或親本 B"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              autoComplete="off"
+            />
+            {query ? (
+              <SearchClearButton onClear={() => setQuery('')} />
+            ) : null}
+          </div>
         </label>
         <label className="seed-detail-cross-field">
           <span className="seed-detail-cross-label">迴圈</span>
@@ -324,9 +349,7 @@ export function SeedDetailPage() {
     return (
       <div className="seed-detail-page">
         <p className="seed-detail-error">無效的種子編號。</p>
-        <Link to="/" className="seed-detail-back">
-          ← 種子列表
-        </Link>
+        <SeedDetailBackNav />
       </div>
     )
   }
@@ -335,9 +358,7 @@ export function SeedDetailPage() {
     return (
       <div className="seed-detail-page">
         <p className="seed-detail-error">{error}</p>
-        <Link to="/" className="seed-detail-back">
-          ← 種子列表
-        </Link>
+        <SeedDetailBackNav />
       </div>
     )
   }
@@ -354,9 +375,7 @@ export function SeedDetailPage() {
     return (
       <div className="seed-detail-page">
         <p className="seed-detail-error">找不到此種子。</p>
-        <Link to="/" className="seed-detail-back">
-          ← 種子列表
-        </Link>
+        <SeedDetailBackNav />
       </div>
     )
   }
@@ -366,9 +385,7 @@ export function SeedDetailPage() {
   return (
     <div className="seed-detail-page">
       <nav className="seed-detail-nav">
-        <Link to="/" className="seed-detail-back">
-          ← 種子列表
-        </Link>
+        <SeedDetailBackNav />
       </nav>
 
       <header className="seed-detail-hero">
