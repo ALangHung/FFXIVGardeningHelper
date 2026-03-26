@@ -76,11 +76,24 @@ function formatRemaining(deadline: number | null, now: number): string {
   const ms = deadline - now
   if (ms <= 0) return '已可收成'
   const totalSec = Math.floor(ms / 1000)
+  if (totalSec <= 0) return '不足1秒'
+
   const days = Math.floor(totalSec / 86400)
   const hours = Math.floor((totalSec % 86400) / 3600)
   const minutes = Math.floor((totalSec % 3600) / 60)
   const seconds = totalSec % 60
-  return `${days}天${hours}時${minutes}分${seconds}秒`
+  const pad2 = (n: number) => n.toString().padStart(2, '0')
+
+  if (days > 0) {
+    return `${days}天${hours}時${minutes}分${seconds}秒`
+  }
+  if (hours > 0) {
+    return `${hours}時${minutes}分${pad2(seconds)}秒`
+  }
+  if (minutes > 0) {
+    return `${minutes}分${pad2(seconds)}秒`
+  }
+  return `${seconds}秒`
 }
 
 function FieldCellCrossOutcomesInline({ hint }: { hint: CrossHintAtPlant }) {
@@ -792,64 +805,69 @@ export function FieldManagementPage() {
                                   : 'field-cell'
                               }
                             >
-                              {slot.seedId != null && !canHarvest ? (
-                                <button
-                                  type="button"
-                                  draggable={false}
-                                  className="field-cell-clear"
-                                  aria-label="清除此格作物"
-                                  title="清除此格作物"
-                                  onClick={() =>
-                                    clearSlot(field.id, sid, 'trash')
-                                  }
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    aria-hidden
+                              <div className="field-cell-head">
+                                <span className="field-cell-label">
+                                  <span className="field-cell-label-key">
+                                    {FIELD_SLOTS.find((x) => x.id === sid)!.label}
+                                  </span>
+                                </span>
+                                {slot.seedId != null && !canHarvest ? (
+                                  <button
+                                    type="button"
+                                    draggable={false}
+                                    className="field-cell-clear"
+                                    aria-label="清除此格作物"
+                                    title="清除此格作物"
+                                    onClick={() =>
+                                      clearSlot(field.id, sid, 'trash')
+                                    }
                                   >
-                                    <path d="M3 6h18" />
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                    <line x1="10" x2="10" y1="11" y2="17" />
-                                    <line x1="14" x2="14" y1="11" y2="17" />
-                                  </svg>
-                                </button>
-                              ) : null}
-                              {slot.seedId == null && slot.clearUndo != null ? (
-                                <button
-                                  type="button"
-                                  draggable={false}
-                                  className="field-cell-restore"
-                                  aria-label="還原清除前的作物"
-                                  title="還原清除前的作物"
-                                  onClick={() =>
-                                    restoreClearedSlot(field.id, sid)
-                                  }
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    aria-hidden
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      aria-hidden
+                                    >
+                                      <path d="M3 6h18" />
+                                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                      <line x1="10" x2="10" y1="11" y2="17" />
+                                      <line x1="14" x2="14" y1="11" y2="17" />
+                                    </svg>
+                                  </button>
+                                ) : null}
+                                {slot.seedId == null &&
+                                slot.clearUndo != null ? (
+                                  <button
+                                    type="button"
+                                    draggable={false}
+                                    className="field-cell-restore"
+                                    aria-label="還原清除前的作物"
+                                    title="還原清除前的作物"
+                                    onClick={() =>
+                                      restoreClearedSlot(field.id, sid)
+                                    }
                                   >
-                                    <path d="M3 7v6h6" />
-                                    <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
-                                  </svg>
-                                </button>
-                              ) : null}
-                              <span className="field-cell-label">
-                                格 {FIELD_SLOTS.find((x) => x.id === sid)!.label}
-                              </span>
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      aria-hidden
+                                    >
+                                      <path d="M3 7v6h6" />
+                                      <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+                                    </svg>
+                                  </button>
+                                ) : null}
+                              </div>
                               <div className="field-cell-seed">
                                 {slot.seedId != null ? (
                                   <Link

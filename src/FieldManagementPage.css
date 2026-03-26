@@ -374,7 +374,7 @@
 .field-cell-cross-outcomes {
   flex: 0 0 auto;
   margin: 0.1rem 0 0;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   line-height: 1.35;
   word-break: break-word;
 }
@@ -402,18 +402,26 @@
   cursor: default;
 }
 
+.field-cell-head {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  min-width: 0;
+  min-height: 1.55rem;
+}
+
 .field-cell-clear {
-  position: absolute;
-  top: 0.2rem;
-  right: 0.2rem;
-  z-index: 3;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 1.42rem;
+  height: 1.42rem;
   padding: 0;
-  margin: 0;
+  margin: 0 0 0 auto;
   border: 1px solid rgba(34, 211, 238, 0.35);
   border-radius: 6px;
   background: rgba(15, 23, 42, 0.92);
@@ -434,17 +442,14 @@
 }
 
 .field-cell-restore {
-  position: absolute;
-  top: 0.2rem;
-  right: 0.2rem;
-  z-index: 3;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 1.42rem;
+  height: 1.42rem;
   padding: 0;
-  margin: 0;
+  margin: 0 0 0 auto;
   border: 1px solid rgba(52, 211, 153, 0.45);
   border-radius: 6px;
   background: rgba(15, 23, 42, 0.92);
@@ -464,25 +469,35 @@
   display: block;
 }
 
-.field-cell:has(.field-cell-clear) .field-cell-label,
-.field-cell:has(.field-cell-restore) .field-cell-label {
-  padding-right: 1.65rem;
-}
-
 .field-cell-label {
   flex-shrink: 0;
   min-height: 1.55rem;
   display: flex;
   align-items: center;
-  font-size: 0.95rem;
-  line-height: 1.2;
-  font-weight: 400;
-  color: #67e8f9;
-  letter-spacing: 0.06em;
+}
+
+/* 類 1️⃣ 鍵帽：圓角方塊、純色底 */
+.field-cell-label-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 1.42rem;
+  height: 1.42rem;
+  padding: 0 0.22rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  color: #fff;
+  background: #1d143f;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0.38rem;
 }
 
 .field-cell-seed {
-  font-size: 0.92rem;
+  font-size: 1rem;
   color: var(--text);
   line-height: 1.25;
   flex-shrink: 0;

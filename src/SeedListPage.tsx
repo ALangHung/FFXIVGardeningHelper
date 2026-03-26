@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import type { SeedSummary, SeedsSummaryPayload } from './seedSummaryTypes'
 import { publicUrl } from './publicUrl'
+import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import { SearchClearButton } from './SearchClearButton'
 import {
   loadSeedListUiState,
@@ -77,6 +78,7 @@ export function SeedListPage() {
   const [sortDir, setSortDir] = useState<1 | -1>(
     () => persistedList?.sortDir ?? 1,
   )
+  const [copyToastKey, setCopyToastKey] = useState<number | null>(null)
 
   useEffect(() => {
     saveSeedListUiState({
@@ -140,6 +142,10 @@ export function SeedListPage() {
 
   return (
     <div className="seed-list-page">
+      <CopyCropNameToast
+        toastKey={copyToastKey}
+        onDismiss={() => setCopyToastKey(null)}
+      />
       <header className="seed-list-header">
         <h1 className="seed-page-title">種子列表</h1>
         <p className="seed-list-sub">
@@ -274,6 +280,10 @@ export function SeedListPage() {
                         >
                           {s.name}
                         </Link>
+                        <CopyCropNameButton
+                          name={s.name}
+                          onCopied={() => setCopyToastKey(Date.now())}
+                        />
                       </span>
                     </td>
                     <td className="seed-td seed-td-grow">

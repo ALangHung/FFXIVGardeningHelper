@@ -11,6 +11,7 @@ import {
   findIntercrossOutcomes,
   findOtherParentsFromResult,
 } from './crossOutcomes'
+import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import { publicUrl } from './publicUrl'
 import { SearchClearButton } from './SearchClearButton'
 import {
@@ -250,16 +251,6 @@ function OutcomeSortGlyph({
   )
 }
 
-/** 與種子詳情頁親本連結一致：名稱後接 (X天) */
-function formatSeedNameWithGrowDays(
-  name: string,
-  growDays: number | null,
-): string {
-  if (growDays != null && Number.isFinite(growDays))
-    return `${name} (${growDays}天)`
-  return name
-}
-
 export function CrossCalculatorPage() {
   const [persistedCross] = useState(() => loadCrossCalcUiState())
 
@@ -314,6 +305,7 @@ export function CrossCalculatorPage() {
   const [otherParentSortDir, setOtherParentSortDir] = useState<1 | -1>(
     () => persistedCross?.otherParentSortDir ?? -1,
   )
+  const [copyToastKey, setCopyToastKey] = useState<number | null>(null)
 
   const prevParentPairKeyRef = useRef<string | null>(null)
   const prevSpPairKeyRef = useRef<string | null>(null)
@@ -502,6 +494,10 @@ export function CrossCalculatorPage() {
 
   return (
     <div className="cross-calc-page">
+      <CopyCropNameToast
+        toastKey={copyToastKey}
+        onDismiss={() => setCopyToastKey(null)}
+      />
       <header className="cross-calc-header">
         <h1 className="cross-calc-title">雜交計算器</h1>
       </header>
@@ -641,6 +637,12 @@ export function CrossCalculatorPage() {
                                   >
                                     {row.outcomeName}
                                   </Link>
+                                  <CopyCropNameButton
+                                    name={row.outcomeName}
+                                    onCopied={() =>
+                                      setCopyToastKey(Date.now())
+                                    }
+                                  />
                                 </div>
                               </td>
                               <td>
@@ -767,11 +769,14 @@ export function CrossCalculatorPage() {
                                     to={`/seed/${row.otherParentSeedId}`}
                                     className="cross-calc-name-link"
                                   >
-                                    {formatSeedNameWithGrowDays(
-                                      row.otherParentName,
-                                      row.otherParentGrowDays,
-                                    )}
+                                    {row.otherParentName}
                                   </Link>
+                                  <CopyCropNameButton
+                                    name={row.otherParentName}
+                                    onCopied={() =>
+                                      setCopyToastKey(Date.now())
+                                    }
+                                  />
                                 </div>
                               </td>
                               <td>

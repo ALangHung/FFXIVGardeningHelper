@@ -283,9 +283,19 @@
 .seed-name-cell {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.45rem;
   min-width: 0;
   max-width: 100%;
+}
+
+.seed-name-cell .copy-crop-name-btn {
+  flex-shrink: 0;
+  padding: 0.22rem;
+}
+
+.seed-name-cell .copy-crop-name-icon {
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
 .seed-row-icon {

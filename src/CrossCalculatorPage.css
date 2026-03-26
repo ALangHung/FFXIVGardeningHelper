@@ -255,6 +255,11 @@
   border-bottom: 1px solid rgba(167, 139, 250, 0.12);
   padding: 0.55rem 0.85rem;
   vertical-align: middle;
+  line-height: 1.45;
+}
+
+.cross-calc-table td:first-child {
+  min-width: 0;
 }
 
 .cross-calc-table tbody tr:last-child td {
@@ -262,21 +267,43 @@
 }
 
 .cross-calc-name-cell {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
   min-width: 0;
+  max-width: 100%;
+}
+
+.cross-calc-name-cell .cross-calc-suggest-icon {
+  display: block;
+  image-rendering: pixelated;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.cross-calc-name-cell .copy-crop-name-btn {
+  flex-shrink: 0;
+  padding: 0.22rem;
+}
+
+.cross-calc-name-cell .copy-crop-name-icon {
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
 .cross-calc-name-link {
-  color: #c4b5fd;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-weight: 600;
   text-decoration: none;
-  font-weight: 500;
+  transition: color 0.15s ease;
 }
 
 .cross-calc-name-link:hover {
-  color: #ddd6fe;
-  text-decoration: underline;
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
 }
 
 .cross-calc-muted {

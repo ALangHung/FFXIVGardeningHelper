@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import { getSeedById, loadSeedNameSearchById } from './seedDataApi'
-import type { ConfirmedCross, SeedRecord } from './seedDetailTypes'
+import type {
+  ConfirmedCross,
+  CrossParent,
+  SeedRecord,
+} from './seedDetailTypes'
 import { formatDurationEn, seedTypeLabelZh } from './seedFormat'
 import './SeedDetailPage.css'
 import { publicUrl } from './publicUrl'
@@ -26,6 +31,46 @@ function formatHarvestLocation(value: string | null | undefined): string {
   if (!t) return '—'
   if (t === '素材商人（僅限盆栽）') return '素材商人'
   return t
+}
+
+/** 與畫面上作物／種子收成相同：多為「1–4 級黑森林土壤」以「 / 」分隔的數值。 */
+function blackForestSoilYieldHintText(
+  kind: 'crop' | 'seed',
+  raw: string | null,
+): string {
+  const intro =
+    kind === 'crop'
+      ? '使用黑森林土壤會增加作物收成量'
+      : '使用黑森林土壤會增加種子收成量'
+  if (raw == null) return `${intro}\n—`
+  const display = raw.trim()
+  if (!display || display === '—' || display === '-' || display === '--')
+    return `${intro}\n—`
+  const parts = display
+    .split('/')
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0)
+  if (parts.length === 4) {
+    return `${intro}\n1級: ${parts[0]}\n2級: ${parts[1]}\n3級: ${parts[2]}\n4級: ${parts[3]}`
+  }
+  return `${intro}\n${display}`
+}
+
+function BlackForestSoilYieldHint({ text }: { text: string }) {
+  return (
+    <span
+      className="seed-detail-help"
+      tabIndex={0}
+      aria-label={text}
+    >
+      <span aria-hidden className="seed-detail-help-mark">
+        ?
+      </span>
+      <span className="seed-detail-help-tip" role="tooltip" aria-hidden="true">
+        {text}
+      </span>
+    </span>
+  )
 }
 
 function SeedDetailBackNav() {
@@ -98,6 +143,70 @@ function rowMatchesQuery(
     crossNameHaystack(row.parentB.seedId, row.parentB.name, searchById),
   ]
   return hays.some((hay) => hay.includes(n))
+}
+
+/** 有搜尋條件時：符合關鍵字的親本固定顯示在親本 A，另一親本在親本 B。 */
+function orientParentsForSearchQuery(
+  row: ConfirmedCross,
+  q: string,
+  searchById: Record<string, string>,
+): { displayA: CrossParent; displayB: CrossParent } {
+  const t = q.trim()
+  if (!t) {
+    return { displayA: row.parentA, displayB: row.parentB }
+  }
+  const n = normalizeQ(t)
+  const hayA = crossNameHaystack(
+    row.parentA.seedId,
+    row.parentA.name,
+    searchById,
+  )
+  const hayB = crossNameHaystack(
+    row.parentB.seedId,
+    row.parentB.name,
+    searchById,
+  )
+  const aMatch = hayA.includes(n)
+  const bMatch = hayB.includes(n)
+  if (bMatch && !aMatch) {
+    return { displayA: row.parentB, displayB: row.parentA }
+  }
+  return { displayA: row.parentA, displayB: row.parentB }
+}
+
+type PreparedCrossRow = {
+  row: ConfirmedCross
+  displayA: CrossParent
+  displayB: CrossParent
+}
+
+function comparePreparedCross(
+  a: PreparedCrossRow,
+  b: PreparedCrossRow,
+  key: CrossSortKey,
+  dir: 1 | -1,
+): number {
+  const m = dir
+  switch (key) {
+    case 'parentA':
+      return (
+        m *
+        String(a.displayA.name ?? '').localeCompare(
+          String(b.displayA.name ?? ''),
+          'zh-Hant',
+        )
+      )
+    case 'parentB':
+      return (
+        m *
+        String(a.displayB.name ?? '').localeCompare(
+          String(b.displayB.name ?? ''),
+          'zh-Hant',
+        )
+      )
+    default:
+      return compareCross(a.row, b.row, key, dir)
+  }
 }
 
 function compareCross(
@@ -194,11 +303,22 @@ function ConfirmedCrossesTable({
     })
   }, [crosses, query, loopFilter, nameSearchById])
 
+  const prepared = useMemo(() => {
+    return filtered.map((row) => {
+      const { displayA, displayB } = orientParentsForSearchQuery(
+        row,
+        query,
+        nameSearchById,
+      )
+      return { row, displayA, displayB }
+    })
+  }, [filtered, query, nameSearchById])
+
   const sorted = useMemo(() => {
-    const rows = [...filtered]
-    rows.sort((a, b) => compareCross(a, b, sortKey, sortDir))
+    const rows = [...prepared]
+    rows.sort((a, b) => comparePreparedCross(a, b, sortKey, sortDir))
     return rows
-  }, [filtered, sortKey, sortDir])
+  }, [prepared, sortKey, sortDir])
 
   function toggleSort(key: CrossSortKey) {
     if (sortKey === key) setSortDir((d) => (d === 1 ? -1 : 1))
@@ -275,33 +395,33 @@ function ConfirmedCrossesTable({
             </tr>
           </thead>
           <tbody>
-            {sorted.map((row, i) => (
+            {sorted.map((item, i) => (
               <tr key={i}>
                 <td>
                   <SeedLink
-                    seedId={row.parentA.seedId}
-                    name={row.parentA.name}
-                    growDays={row.parentA.growDays}
+                    seedId={item.displayA.seedId}
+                    name={item.displayA.name}
+                    growDays={item.displayA.growDays}
                   />
                 </td>
                 <td>
                   <SeedLink
-                    seedId={row.parentB.seedId}
-                    name={row.parentB.name}
-                    growDays={row.parentB.growDays}
+                    seedId={item.displayB.seedId}
+                    name={item.displayB.name}
+                    growDays={item.displayB.growDays}
                   />
                 </td>
                 <td>
                   <SeedLink
-                    seedId={row.alternate.seedId}
-                    name={row.alternate.name}
+                    seedId={item.row.alternate.seedId}
+                    name={item.row.alternate.name}
                   />
                 </td>
                 <td>
                   <span
-                    className={`seed-detail-eff seed-detail-eff--${row.efficiencyRating ?? 'none'}`}
+                    className={`seed-detail-eff seed-detail-eff--${item.row.efficiencyRating ?? 'none'}`}
                   >
-                    {row.efficiency ?? '—'}
+                    {item.row.efficiency ?? '—'}
                   </span>
                 </td>
               </tr>
@@ -320,6 +440,7 @@ export function SeedDetailPage() {
   const { seedId: rawId } = useParams()
   const [seed, setSeed] = useState<SeedRecord | null | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
+  const [copyToastKey, setCopyToastKey] = useState<number | null>(null)
 
   const idNum = rawId ? Number.parseInt(rawId, 10) : Number.NaN
 
@@ -397,9 +518,20 @@ export function SeedDetailPage() {
           className="seed-detail-hero-icon"
         />
         <div>
-          <h1 className="seed-detail-title">{s.name}</h1>
+          <div className="seed-detail-title-row">
+            <h1 className="seed-detail-title">{s.name}</h1>
+            <CopyCropNameButton
+              name={s.name}
+              onCopied={() => setCopyToastKey(Date.now())}
+            />
+          </div>
         </div>
       </header>
+
+      <CopyCropNameToast
+        toastKey={copyToastKey}
+        onDismiss={() => setCopyToastKey(null)}
+      />
 
       <section className="seed-detail-card">
         <h2 className="seed-detail-h2">基本資訊</h2>
@@ -430,11 +562,21 @@ export function SeedDetailPage() {
               <dd>{formatDurationEn(s.wiltTime)}</dd>
             </div>
             <div className="seed-detail-dl-item">
-              <dt>作物收成</dt>
+              <dt className="seed-detail-dt-with-help">
+                <span>作物收成</span>
+                <BlackForestSoilYieldHint
+                  text={blackForestSoilYieldHintText('crop', s.cropYield)}
+                />
+              </dt>
               <dd>{s.cropYield ?? '—'}</dd>
             </div>
             <div className="seed-detail-dl-item">
-              <dt>種子收成</dt>
+              <dt className="seed-detail-dt-with-help">
+                <span>種子收成</span>
+                <BlackForestSoilYieldHint
+                  text={blackForestSoilYieldHintText('seed', s.seedYield)}
+                />
+              </dt>
               <dd>{s.seedYield ?? '—'}</dd>
             </div>
           </div>
