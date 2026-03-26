@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
-import type { SeedSummary, SeedsSummaryPayload } from './seedSummaryTypes'
+import type { SeedSummary } from './seedSummaryTypes'
 import type { SeedRecord } from './seedDetailTypes'
-import { getSeedById, loadSeedsById } from './seedDataApi'
+import { getSeedById, loadSeedsById, loadSeedsSummaryMerged } from './seedDataApi'
 import { publicUrl } from './publicUrl'
 import { loadFieldsSession, saveFieldsSession } from './sessionUiState'
 import {
@@ -194,14 +194,12 @@ export function FieldManagementPage() {
     let cancelled = false
     ;(async () => {
       try {
-        const [res, byId] = await Promise.all([
-          fetch(publicUrl('data/seeds-summary.json')),
+        const [merged, byId] = await Promise.all([
+          loadSeedsSummaryMerged(),
           loadSeedsById(),
         ])
-        if (!res.ok) throw new Error(`無法載入種子摘要 (${res.status})`)
-        const data = (await res.json()) as SeedsSummaryPayload
         if (cancelled) return
-        setSeeds(data.seeds ?? [])
+        setSeeds(merged)
         setSeedsById(byId)
         setLoadError(null)
       } catch (e) {

@@ -6,17 +6,24 @@ export function CopyCropNameButton({
   name,
   onCopied,
   className,
+  ariaLabel,
+  title,
 }: {
   name: string
   onCopied: () => void
   className?: string
+  /** 未傳則為複製作物名稱 */
+  ariaLabel?: string
+  title?: string
 }) {
+  const label = ariaLabel ?? `複製作物名稱：${name}`
+  const tip = title ?? '複製作物名稱'
   return (
     <button
       type="button"
       className={['copy-crop-name-btn', className].filter(Boolean).join(' ')}
-      aria-label={`複製作物名稱：${name}`}
-      title="複製作物名稱"
+      aria-label={label}
+      title={tip}
       onClick={() => {
         void (async () => {
           const ok = await copyTextToClipboard(name)
@@ -44,9 +51,11 @@ export function CopyCropNameButton({
 
 export function CopyCropNameToast({
   toastKey,
+  message = '已複製作物名稱',
   onDismiss,
 }: {
   toastKey: number | null
+  message?: string
   onDismiss: () => void
 }) {
   if (toastKey == null) return null
@@ -61,7 +70,7 @@ export function CopyCropNameToast({
         onDismiss()
       }}
     >
-      已複製作物名稱
+      {message}
     </div>
   )
 }

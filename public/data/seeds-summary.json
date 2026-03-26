@@ -1,26 +1,26 @@
 {
   "meta": {
-    "generatedAt": "2026-03-24T07:00:05.682Z",
+    "generatedAt": "2026-03-26T07:43:29.905Z",
     "source": "https://www.ffxivgardening.com/seed-details.php",
     "seedIdRange": [
       1,
       107
     ],
     "count": 107,
-    "nameLocale": "zh-Hant",
-    "nameSource": "ffxiv-teamcraft libs/data/src/lib/json/tw/tw-items.json (via items.json en→id)",
-    "namesTranslatedAt": "2026-03-24T07:30:26.017Z",
+    "i18n": {
+      "path": "public/data/i18n/seeds-i18n.json",
+      "publicPath": "/data/i18n/seeds-i18n.json",
+      "generatedAt": "2026-03-26T07:44:55.019Z"
+    },
     "harvestLocationLocale": "zh-Hant",
     "harvestLocationSource": "ffxiv-teamcraft places.json + tw/tw-places.json (+ manual phrases)",
-    "harvestLocationTranslatedAt": "2026-03-24T08:02:10.919Z",
-    "summaryGeneratedAt": "2026-03-25T05:41:51.578Z",
-    "nameSearchText": "display name + Teamcraft en/ja/zh (zh-Hans) for same item id(s) resolved from tw name"
+    "harvestLocationTranslatedAt": "2026-03-26T07:45:06.631Z",
+    "summaryGeneratedAt": "2026-03-26T07:45:21.076Z",
+    "nameFields": "種子道具名、作物名、nameSearchText 見 /data/i18n/seeds-i18n.json"
   },
   "seeds": [
     {
       "seedId": 1,
-      "name": "拉諾西亞香橙",
-      "nameSearchText": "拉諾西亞香橙 La Noscean Orange ラノシアオレンジ 拉诺西亚香橙 La Noscean Orange Seeds ラノシアオレンジの種 拉诺西亚香橙种子",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -31,8 +31,6 @@
     },
     {
       "seedId": 2,
-      "name": "低地葡萄種子",
-      "nameSearchText": "低地葡萄種子 Lowland Grape Seeds ローランドグレープの種 低地葡萄种子 Lowland Grapes ローランドグレープ 低地葡萄",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -43,8 +41,6 @@
     },
     {
       "seedId": 3,
-      "name": "紅彩椒",
-      "nameSearchText": "紅彩椒 Paprika パプリカ 红辣椒 Paprika Seeds パプリカの種 红辣椒种子",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -55,8 +51,6 @@
     },
     {
       "seedId": 4,
-      "name": "薰衣草",
-      "nameSearchText": "薰衣草 Lavender ラベンダー Lavender Seeds ラベンダーの種 薰衣草种子",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -67,8 +61,6 @@
     },
     {
       "seedId": 5,
-      "name": "拉諾西亞萵苣",
-      "nameSearchText": "拉諾西亞萵苣 La Noscean Lettuce ラノシアレタス 拉诺西亚莴苣 La Noscean Lettuce Seeds ラノシアレタスの種 拉诺西亚莴苣种子",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -79,8 +71,6 @@
     },
     {
       "seedId": 6,
-      "name": "庫爾札斯胡蘿蔔",
-      "nameSearchText": "庫爾札斯胡蘿蔔 Coerthan Carrot クルザスカロット 库尔札斯胡萝卜 Coerthan Carrot Seeds クルザスカロットの種 库尔札斯胡萝卜种子",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -91,8 +81,6 @@
     },
     {
       "seedId": 7,
-      "name": "橄欖種子",
-      "nameSearchText": "橄欖種子 Olive Seeds オリーヴの種 橄榄种子 Cinderfoot Olive オリーヴ 橄榄",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -103,8 +91,6 @@
     },
     {
       "seedId": 8,
-      "name": "黑胡椒",
-      "nameSearchText": "黑胡椒 Black Pepper ブラックペッパー Black Pepper Seeds ブラックペッパーの種 黑胡椒种子",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -115,8 +101,6 @@
     },
     {
       "seedId": 9,
-      "name": "仙女蘋果",
-      "nameSearchText": "仙女蘋果 Faerie Apple フェアリーアップル 仙女苹果 Faerie Apple Seeds フェアリーアップルの種 仙女苹果种子",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -127,8 +111,6 @@
     },
     {
       "seedId": 10,
-      "name": "太陽檸檬",
-      "nameSearchText": "太陽檸檬 Sun Lemon サンレモン 太阳柠檬 Sun Lemon Seeds サンレモンの種 太阳柠檬种子",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -139,8 +121,6 @@
     },
     {
       "seedId": 11,
-      "name": "基沙爾野菜",
-      "nameSearchText": "基沙爾野菜 Gysahl Greens ギサールの野菜 基萨尔野菜",
       "seedType": "Chocobo Food",
       "growTime": "3 Days",
       "wiltTime": "24 Hours",
@@ -151,8 +131,6 @@
     },
     {
       "seedId": 12,
-      "name": "仙子梅種子",
-      "nameSearchText": "仙子梅種子 Pixie Plum Seeds ピクシープラムの種 仙子梅种子 Pixie Plums ピクシープラム 仙子梅",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -163,8 +141,6 @@
     },
     {
       "seedId": 13,
-      "name": "阿拉米格芥子",
-      "nameSearchText": "阿拉米格芥子 Ala Mhigan Mustard アラミゴマスタード Ala Mhigan Mustard Seeds アラミゴマスタードの種 阿拉米格芥子种子",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -175,8 +151,6 @@
     },
     {
       "seedId": 14,
-      "name": "甘菊",
-      "nameSearchText": "甘菊 Chamomile カモミール Chamomile Seeds カモミールの種 甘菊种子",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -187,8 +161,6 @@
     },
     {
       "seedId": 15,
-      "name": "多實玉米",
-      "nameSearchText": "多實玉米 Millioncorn ミリオンコーン 多实玉米 Millioncorn Seeds ミリオンコーンの種 多实玉米种子",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -199,8 +171,6 @@
     },
     {
       "seedId": 16,
-      "name": "巫茄",
-      "nameSearchText": "巫茄 Wizard Eggplant エッグプラント Wizard Eggplant Seeds エッグプラントの種 巫茄种子",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -211,8 +181,6 @@
     },
     {
       "seedId": 17,
-      "name": "中原甘藍",
-      "nameSearchText": "中原甘藍 Midland Cabbage ミッドランドキャベツ 中原甘蓝 Midland Cabbage Seeds ミッドランドキャベツの種 中原甘蓝种子",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -223,8 +191,6 @@
     },
     {
       "seedId": 18,
-      "name": "亞麻種子",
-      "nameSearchText": "亞麻種子 Linseed 亜麻の種 亚麻种子 Flax 亜麻 亚麻",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -235,8 +201,6 @@
     },
     {
       "seedId": 19,
-      "name": "中原羅勒草",
-      "nameSearchText": "中原羅勒草 Midland Basil ミッドランドバジル 中原罗勒草 Midland Basil Seeds ミッドランドバジルの種 中原罗勒草种子",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -247,8 +211,6 @@
     },
     {
       "seedId": 20,
-      "name": "風茄",
-      "nameSearchText": "風茄 Mandrake マンドレイク 风茄 Mandrake Seeds マンドレイクの種 风茄种子",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -259,8 +221,6 @@
     },
     {
       "seedId": 21,
-      "name": "血紅奇異果種子",
-      "nameSearchText": "血紅奇異果種子 Blood Currant Seeds ブラッドカーラントの種 血红奇异果种子 Blood Currants ブラッドカーラント 血红奇异果",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -271,8 +231,6 @@
     },
     {
       "seedId": 22,
-      "name": "扁桃種子",
-      "nameSearchText": "扁桃種子 Almond Seeds アーモンドの種 扁桃种子 Almonds アーモンド 扁桃",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -283,8 +241,6 @@
     },
     {
       "seedId": 23,
-      "name": "晶亮蘋果",
-      "nameSearchText": "晶亮蘋果 Mirror Apple シャインアップル 晶亮苹果 Mirror Apple Seeds シャインアップルの種 晶亮苹果种子",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -295,8 +251,6 @@
     },
     {
       "seedId": 24,
-      "name": "羅蘭莓",
-      "nameSearchText": "羅蘭莓 Rolanberry ロランベリー 罗兰莓 Rolanberry Seeds ロランベリーの種 罗兰莓种子",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -307,8 +261,6 @@
     },
     {
       "seedId": 25,
-      "name": "蜜檸檬",
-      "nameSearchText": "蜜檸檬 Honey Lemon ハニーレモン 蜜柠檬 Honey Lemon Seeds ハニーレモンの種 蜜柠檬种子",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -319,8 +271,6 @@
     },
     {
       "seedId": 26,
-      "name": "澤梅爾番茄",
-      "nameSearchText": "澤梅爾番茄 Dzemael Tomato ゼーメルトマト 泽梅尔番茄 Dzemael Tomato Seeds ゼーメルトマトの種 泽梅尔番茄种子",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -331,8 +281,6 @@
     },
     {
       "seedId": 27,
-      "name": "多刺鳳梨",
-      "nameSearchText": "多刺鳳梨 Prickly Pineapple パイナップル 多刺菠萝 Prickly Pineapple Seeds パイナップルの種 多刺菠萝种子",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -343,8 +291,6 @@
     },
     {
       "seedId": 28,
-      "name": "黃杏",
-      "nameSearchText": "黃杏 Apricot アプリコット 黄杏 Apricot Kernels アプリコットの種 黄杏种子",
       "seedType": "Deluxe Fruit",
       "growTime": "6 Days",
       "wiltTime": "36 Hours",
@@ -355,8 +301,6 @@
     },
     {
       "seedId": 29,
-      "name": "皇家可可豆種子",
-      "nameSearchText": "皇家可可豆種子 Royal Kukuru Seeds ロイヤルククルの種 皇家可可豆种子 Royal Kukuru Bean ロイヤルククルビーン 皇家可可豆",
       "seedType": "Deluxe Fruit",
       "growTime": "6 Days",
       "wiltTime": "36 Hours",
@@ -367,8 +311,6 @@
     },
     {
       "seedId": 30,
-      "name": "提諾爾卡茶樹種子",
-      "nameSearchText": "提諾爾卡茶樹種子 Shroud Tea Seeds ティノルカ茶樹の種 提诺尔卡茶树种子",
       "seedType": "Deluxe Herb & Nut",
       "growTime": "6 Days",
       "wiltTime": "36 Hours",
@@ -379,8 +321,6 @@
     },
     {
       "seedId": 31,
-      "name": "克里耶蘿蔔",
-      "nameSearchText": "克里耶蘿蔔 Curiel Root クリーエの野菜 库里尔萝卜 Curiel Root Seeds クリーエの種 库里尔萝卜种子",
       "seedType": "Chocobo Food",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -391,8 +331,6 @@
     },
     {
       "seedId": 32,
-      "name": "米梅特葫蘆",
-      "nameSearchText": "米梅特葫蘆 Mimett Gourd ミメットの野菜 米梅特葫芦 Mimett Gourd Seeds ミメットの種 米梅特葫芦种子",
       "seedType": "Chocobo Food",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -403,8 +341,6 @@
     },
     {
       "seedId": 33,
-      "name": "帕薩納紅茄",
-      "nameSearchText": "帕薩納紅茄 Pahsana Fruit パサーナの野菜 帕萨纳红茄 Pahsana Fruit Seeds パサーナの種 帕萨纳红茄种子",
       "seedType": "Chocobo Food",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -415,8 +351,6 @@
     },
     {
       "seedId": 34,
-      "name": "阿澤瑪玫瑰",
-      "nameSearchText": "阿澤瑪玫瑰 Azeyma Rose アーゼマローズ 阿泽玛玫瑰 Azeyma Rose Seeds アーゼマローズの種 阿泽玛玫瑰种子",
       "seedType": "Deluxe Herb & Nut",
       "growTime": "6 Days",
       "wiltTime": "36 Hours",
@@ -427,8 +361,6 @@
     },
     {
       "seedId": 35,
-      "name": "星八角",
-      "nameSearchText": "星八角 Star Anise スターアニス Star Anise Seeds スターアニスの種 星八角种子",
       "seedType": "Deluxe Herb & Nut",
       "growTime": "6 Days",
       "wiltTime": "36 Hours",
@@ -439,8 +371,6 @@
     },
     {
       "seedId": 36,
-      "name": "拉諾西亞韭蔥",
-      "nameSearchText": "拉諾西亞韭蔥 La Noscean Leek ラノシアリーキ 拉诺西亚韭葱 La Noscean Leek Seeds ラノシアリーキの種 拉诺西亚韭葱种子",
       "seedType": "Deluxe Vegetable",
       "growTime": "6 Days",
       "wiltTime": "36 Hours",
@@ -451,8 +381,6 @@
     },
     {
       "seedId": 37,
-      "name": "珍珠葵",
-      "nameSearchText": "珍珠葵 Pearl Roselle パールローゼル Pearl Roselle Seeds パールローゼルの種 珍珠葵种子",
       "seedType": "Deluxe Herb & Nut",
       "growTime": "6 Days",
       "wiltTime": "36 Hours",
@@ -463,8 +391,6 @@
     },
     {
       "seedId": 38,
-      "name": "西其斯菜薊",
-      "nameSearchText": "西其斯菜薊 Sylkis Bud シルキスの野菜 希尔奇斯菜蓟 Sylkis Bud Seeds シルキスの種 希尔奇斯菜蓟种子",
       "seedType": "Chocobo Food",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -475,8 +401,6 @@
     },
     {
       "seedId": 39,
-      "name": "坦塔爾矮瓜",
-      "nameSearchText": "坦塔爾矮瓜 Tantalplant タンタルの野菜 坦塔尔矮瓜 Tantalplant Seeds タンタルの種 坦塔尔矮瓜种子",
       "seedType": "Chocobo Food",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -487,8 +411,6 @@
     },
     {
       "seedId": 40,
-      "name": "哈羅妮丁菊",
-      "nameSearchText": "哈羅妮丁菊 Halone Gerbera ハルオーネガーベラ 哈罗妮丁菊 Halone Gerbera Seeds ハルオーネガーベラの種 哈罗妮丁菊种子",
       "seedType": "Deluxe Herb & Nut",
       "growTime": "6 Days",
       "wiltTime": "36 Hours",
@@ -499,8 +421,6 @@
     },
     {
       "seedId": 41,
-      "name": "妮美雅百合",
-      "nameSearchText": "妮美雅百合 Nymeia Lily ニメーヤリリー Nymeia Lily Seeds ニメーヤリリーの種 妮美雅百合种子",
       "seedType": "Deluxe Herb & Nut",
       "growTime": "6 Days",
       "wiltTime": "36 Hours",
@@ -511,8 +431,6 @@
     },
     {
       "seedId": 42,
-      "name": "黃麻",
-      "nameSearchText": "黃麻 Jute 黄麻 Jute Seeds 黄麻の種 黄麻种子",
       "seedType": "Deluxe Herb & Nut",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -523,8 +441,6 @@
     },
     {
       "seedId": 43,
-      "name": "掃帚草",
-      "nameSearchText": "掃帚草 Broombush ホウキグサ 扫帚草 Broombush Seeds ホウキグサの種 扫帚草种子",
       "seedType": "Deluxe Herb & Nut",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -535,8 +451,6 @@
     },
     {
       "seedId": 44,
-      "name": "蒜頭明星",
-      "nameSearchText": "蒜頭明星 Garlic Jester ガーリックスター 蒜头明星 Garlic Jester Seeds ガーリックスターの種 蒜头明星种子",
       "seedType": "Minion",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -547,8 +461,6 @@
     },
     {
       "seedId": 45,
-      "name": "曼德拉王后",
-      "nameSearchText": "曼德拉王后 Mandragora Queen マンドラクイーン 蔓德拉王后 Mandragora Queen Seeds マンドラクイーンの種 蔓德拉王后种子",
       "seedType": "Minion",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -559,8 +471,6 @@
     },
     {
       "seedId": 46,
-      "name": "薩維奈圓蔥",
-      "nameSearchText": "薩維奈圓蔥 Thavnairian Onion サベネアの野菜 萨维奈圆葱 Thavnairian Onion Seeds サベネアの種 萨维奈圆葱种子",
       "seedType": "Chocobo Food",
       "growTime": "10 Days",
       "wiltTime": "24 Hours",
@@ -571,8 +481,6 @@
     },
     {
       "seedId": 47,
-      "name": "茄子騎士",
-      "nameSearchText": "茄子騎士 Eggplant Knight エッグナイト 茄子骑士 Eggplant Knight Seeds エッグナイトの種 茄子骑士种子",
       "seedType": "Minion",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -583,8 +491,6 @@
     },
     {
       "seedId": 48,
-      "name": "傘葉無花果",
-      "nameSearchText": "傘葉無花果 Umbrella Fig アンブレラフィグ 伞叶无花果 Umbrella Fig Seeds アンブレラフィグの種 伞叶无花果种子",
       "seedType": "Deluxe Fruit",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -595,8 +501,6 @@
     },
     {
       "seedId": 49,
-      "name": "釉質堅果",
-      "nameSearchText": "釉質堅果 Glazenut グレイズナッツ 釉质坚果 Glazenut Seeds グレイズナッツの種 釉质坚果种子",
       "seedType": "Deluxe Fruit",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -607,8 +511,6 @@
     },
     {
       "seedId": 50,
-      "name": "番茄國王",
-      "nameSearchText": "番茄國王 Tomato King キングトマト 番茄国王 Tomato King Seeds キングトマトの種 番茄国王种子",
       "seedType": "Minion",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -619,8 +521,6 @@
     },
     {
       "seedId": 51,
-      "name": "克拉卡蘿蔔",
-      "nameSearchText": "克拉卡蘿蔔 Krakka Root カラッカの野菜 克拉卡萝卜 Krakka Root Seeds カラッカの種 克拉卡萝卜种子",
       "seedType": "Chocobo Food",
       "growTime": "3 Days",
       "wiltTime": "24 Hours",
@@ -631,8 +531,6 @@
     },
     {
       "seedId": 52,
-      "name": "洋蔥王子",
-      "nameSearchText": "洋蔥王子 Onion Prince オニオンプリンス 洋葱王子 Onion Prince Seeds オニオンプリンスの種 洋葱王子种子",
       "seedType": "Minion",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -643,8 +541,6 @@
     },
     {
       "seedId": 53,
-      "name": "新薯芽塊",
-      "nameSearchText": "新薯芽塊 Popoto Set ポポトの種芋 新薯芽块",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -655,8 +551,6 @@
     },
     {
       "seedId": 54,
-      "name": "衛月新薯芽塊",
-      "nameSearchText": "衛月新薯芽塊 Dalamud Popoto Set ダラガブポポトの種芋 卫月新薯芽块",
       "seedType": "Deluxe Vegetable",
       "growTime": "6 Days",
       "wiltTime": "36 Hours",
@@ -667,8 +561,6 @@
     },
     {
       "seedId": 55,
-      "name": "大蒜球根",
-      "nameSearchText": "大蒜球根 Garlic Cloves ガーリックの種球根",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -679,8 +571,6 @@
     },
     {
       "seedId": 56,
-      "name": "生薑根",
-      "nameSearchText": "生薑根 Pearl Ginger Root パールジンジャーの種生姜 生姜根",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -691,8 +581,6 @@
     },
     {
       "seedId": 57,
-      "name": "野洋蔥球根",
-      "nameSearchText": "野洋蔥球根 Wild Onion Set ワイルドオニオンの種球根 野洋葱球根",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -703,8 +591,6 @@
     },
     {
       "seedId": 58,
-      "name": "塞爾法特爾沙果",
-      "nameSearchText": "塞爾法特爾沙果 Xelphatol Apple ゼルファトルの果実 塞尔法特尔沙果 Xelphatol Apple Seeds ゼルファトルの種 塞尔法特尔沙果种子",
       "seedType": "Chocobo Food",
       "growTime": "2 Days",
       "wiltTime": "--",
@@ -715,8 +601,6 @@
     },
     {
       "seedId": 59,
-      "name": "多瑪青梅",
-      "nameSearchText": "多瑪青梅 Doman Plum ドマの果実 多玛青梅 Doman Plum Pits ドマの種 多玛青梅种子",
       "seedType": "Chocobo Food",
       "growTime": "2 Days",
       "wiltTime": "--",
@@ -727,8 +611,6 @@
     },
     {
       "seedId": 60,
-      "name": "輝鱗油梨",
-      "nameSearchText": "輝鱗油梨 Mamook Pear マムークの果実 辉鳞油梨 Mamook Pear Seeds マムークの種 辉鳞油梨种子",
       "seedType": "Chocobo Food",
       "growTime": "2 Days",
       "wiltTime": "--",
@@ -739,8 +621,6 @@
     },
     {
       "seedId": 61,
-      "name": "瓦爾醋栗",
-      "nameSearchText": "瓦爾醋栗 Valfruit バルの果実 瓦尔醋栗 Valfruit Seeds バルの種 瓦尔醋栗种子",
       "seedType": "Chocobo Food",
       "growTime": "2 Days",
       "wiltTime": "--",
@@ -751,8 +631,6 @@
     },
     {
       "seedId": 62,
-      "name": "歐·葛莫羅漿果種子",
-      "nameSearchText": "歐·葛莫羅漿果種子 O'Ghomoro Berry Seeds オ・ゴモロの種 奥·哥摩罗浆果种子 O'Ghomoro Berries オ・ゴモロの果実 奥·哥摩罗浆果",
       "seedType": "Chocobo Food",
       "growTime": "2 Days",
       "wiltTime": "--",
@@ -763,8 +641,6 @@
     },
     {
       "seedId": 63,
-      "name": "謝爾達萊鳳梨",
-      "nameSearchText": "謝爾達萊鳳梨 Cieldalaes Pineapple シェルダレーの果実 谢尔达莱凤梨 Cieldalaes Pineapple Seeds シェルダレーの種 谢尔达莱凤梨种子",
       "seedType": "Chocobo Food",
       "growTime": "2 Days",
       "wiltTime": "--",
@@ -775,8 +651,6 @@
     },
     {
       "seedId": 64,
-      "name": "拉札漢檸檬",
-      "nameSearchText": "拉札漢檸檬 Han Lemon ラザハンの果実 拉札罕柠檬 Han Lemon Seeds ラザハンの種 拉札罕柠檬种子",
       "seedType": "Chocobo Food",
       "growTime": "2 Days",
       "wiltTime": "--",
@@ -787,8 +661,6 @@
     },
     {
       "seedId": 65,
-      "name": "血椒",
-      "nameSearchText": "血椒 Blood Pepper ブラッドペッパー Blood Pepper Seeds ブラッドペッパーの種 血椒种子",
       "seedType": "Deluxe Vegetable",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -799,8 +671,6 @@
     },
     {
       "seedId": 66,
-      "name": "舊世界無花果",
-      "nameSearchText": "舊世界無花果 Old World Fig オールドワールドフィグ 旧世界无花果 Old World Fig Seeds オールドワールドフィグの種 旧世界无花果种子",
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -811,8 +681,6 @@
     },
     {
       "seedId": 67,
-      "name": "庫爾札斯青蔥種子",
-      "nameSearchText": "庫爾札斯青蔥種子 Chive Seeds チャイブの種 库尔札斯青葱种子 Chives チャイブ 库尔札斯青葱",
       "seedType": "Deluxe Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -823,8 +691,6 @@
     },
     {
       "seedId": 68,
-      "name": "小包心菜種子",
-      "nameSearchText": "小包心菜種子 Pearl Sprout Seeds プチキャベツの種 小包心菜种子 Pearl Sprouts プチキャベツ 小包心菜",
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -835,8 +701,6 @@
     },
     {
       "seedId": 69,
-      "name": "庫爾札斯茶樹種子",
-      "nameSearchText": "庫爾札斯茶樹種子 Coerthan Tea Seeds クルザス茶樹の種 库尔札斯茶树种子",
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -847,8 +711,6 @@
     },
     {
       "seedId": 70,
-      "name": "阿爾基克薰衣草",
-      "nameSearchText": "阿爾基克薰衣草 Althyk Lavender アルジクラベンダー 阿尔基克薰衣草 Althyk Lavender Seeds アルジクラベンダーの種 阿尔基克薰衣草种子",
       "seedType": "Herb & Nut",
       "growTime": "22 Hours",
       "wiltTime": "--",
@@ -859,8 +721,6 @@
     },
     {
       "seedId": 71,
-      "name": "虛無界風茄",
-      "nameSearchText": "虛無界風茄 Voidrake ヴォイドマンドレイク 虚无界风茄 Voidrake Seeds ヴォイドマンドレイクの種 虚无界风茄种子",
       "seedType": "Herb & Nut",
       "growTime": "12 Hours",
       "wiltTime": "--",
@@ -871,8 +731,6 @@
     },
     {
       "seedId": 72,
-      "name": "古典玫瑰種子",
-      "nameSearchText": "古典玫瑰種子 Oldrose Seeds オールドローズの種 古典玫瑰种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -883,8 +741,6 @@
     },
     {
       "seedId": 73,
-      "name": "火晶草種子",
-      "nameSearchText": "火晶草種子 Firelight Seeds 火晶草の種 火晶草种子",
       "seedType": "Elemental",
       "growTime": "18 Hours",
       "wiltTime": "--",
@@ -895,8 +751,6 @@
     },
     {
       "seedId": 74,
-      "name": "冰晶草種子",
-      "nameSearchText": "冰晶草種子 Icelight Seeds 氷晶草の種 冰晶草种子",
       "seedType": "Elemental",
       "growTime": "18 Hours",
       "wiltTime": "--",
@@ -907,8 +761,6 @@
     },
     {
       "seedId": 75,
-      "name": "風晶草種子",
-      "nameSearchText": "風晶草種子 Windlight Seeds 風晶草の種 风晶草种子",
       "seedType": "Elemental",
       "growTime": "18 Hours",
       "wiltTime": "--",
@@ -919,8 +771,6 @@
     },
     {
       "seedId": 76,
-      "name": "土晶草種子",
-      "nameSearchText": "土晶草種子 Earthlight Seeds 土晶草の種 土晶草种子",
       "seedType": "Elemental",
       "growTime": "18 Hours",
       "wiltTime": "--",
@@ -931,8 +781,6 @@
     },
     {
       "seedId": 77,
-      "name": "雷神光",
-      "nameSearchText": "雷神光 Levinlight レヴィンライト",
       "seedType": "Elemental",
       "growTime": "18 Hours",
       "wiltTime": "--",
@@ -943,8 +791,6 @@
     },
     {
       "seedId": 78,
-      "name": "水晶草種子",
-      "nameSearchText": "水晶草種子 Waterlight Seeds 水晶草の種 水晶草种子",
       "seedType": "Elemental",
       "growTime": "18 Hours",
       "wiltTime": "--",
@@ -955,8 +801,6 @@
     },
     {
       "seedId": 79,
-      "name": "三色堇種子",
-      "nameSearchText": "三色堇種子 Viola Seeds パンジーの種 三色堇种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -967,8 +811,6 @@
     },
     {
       "seedId": 80,
-      "name": "雲海橡果",
-      "nameSearchText": "雲海橡果 Cloud Acorn クラウドエーコン 云海橡果 Cloud Acorn Sapling クラウドエーコンの種 云海橡果种子",
       "seedType": "Herb & Nut",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -979,8 +821,6 @@
     },
     {
       "seedId": 81,
-      "name": "櫻花樹幼苗",
-      "nameSearchText": "櫻花樹幼苗 Shroud Cherry Sapling シュラウドチェリーの苗 樱花树幼苗",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -991,8 +831,6 @@
     },
     {
       "seedId": 82,
-      "name": "雛菊種子",
-      "nameSearchText": "雛菊種子 Daisy Seeds マーガレットの種 雏菊种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1003,8 +841,6 @@
     },
     {
       "seedId": 83,
-      "name": "光明百合種子",
-      "nameSearchText": "光明百合種子 Brightlily Seeds ブライトリリーの種 光明百合种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1015,8 +851,6 @@
     },
     {
       "seedId": 84,
-      "name": "白雲花",
-      "nameSearchText": "白雲花 Cloudsbreath ウキグモソウ 白云花 Cloudsbreath Seeds ウキグモソウの種 白云花种子",
       "seedType": "Deluxe Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
@@ -1027,8 +861,6 @@
     },
     {
       "seedId": 85,
-      "name": "魔蕨菜",
-      "nameSearchText": "魔蕨菜 Royal Fern マナゼンマイ",
       "seedType": "Deluxe Vegetable",
       "growTime": "5 Days",
       "wiltTime": "24 Hours",
@@ -1039,8 +871,6 @@
     },
     {
       "seedId": 86,
-      "name": "鬱金香球根",
-      "nameSearchText": "鬱金香球根 Tulip Bulbs チューリップの球根 郁金香球根",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1051,8 +881,6 @@
     },
     {
       "seedId": 87,
-      "name": "大麗花的球根",
-      "nameSearchText": "大麗花的球根 Dahlia Bulbs ダリアの球根 大丽花的球根",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1063,8 +891,6 @@
     },
     {
       "seedId": 88,
-      "name": "馬蹄蓮球莖",
-      "nameSearchText": "馬蹄蓮球莖 Arum Bulbs カラーの球根 马蹄莲球茎",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1075,8 +901,6 @@
     },
     {
       "seedId": 89,
-      "name": "鈴蘭的幼苗",
-      "nameSearchText": "鈴蘭的幼苗 Lily of the Valley Pips リリーオブバレーの苗 铃兰的幼苗",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1087,8 +911,6 @@
     },
     {
       "seedId": 90,
-      "name": "繡球花的種子",
-      "nameSearchText": "繡球花的種子 Hydrangea Seeds ハイドレインジャの種 绣球花的种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1099,8 +921,6 @@
     },
     {
       "seedId": 91,
-      "name": "風鈴草種子",
-      "nameSearchText": "風鈴草種子 Campanula Seeds カンパニュラの種 风铃草种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1111,8 +931,6 @@
     },
     {
       "seedId": 92,
-      "name": "風信子種子",
-      "nameSearchText": "風信子種子 Hyacinth Bulbs ヒヤシンスの種 风信子种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1123,8 +941,6 @@
     },
     {
       "seedId": 93,
-      "name": "亞拉戈西瓜",
-      "nameSearchText": "亞拉戈西瓜 Allagan Melon アラガンメロン 亚拉戈西瓜 Allagan Melon Seeds アラガンメロンの種 亚拉戈西瓜种子",
       "seedType": "Minion",
       "growTime": "7 Days",
       "wiltTime": "24 Hours",
@@ -1135,8 +951,6 @@
     },
     {
       "seedId": 94,
-      "name": "大波斯菊種子",
-      "nameSearchText": "大波斯菊種子 Cosmos Seeds コスモスの種 秋英种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1147,8 +961,6 @@
     },
     {
       "seedId": 95,
-      "name": "康乃馨",
-      "nameSearchText": "康乃馨 Carnation カーネーション Carnation Seeds カーネーションの種 康乃馨种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1159,8 +971,6 @@
     },
     {
       "seedId": 96,
-      "name": "蝴蝶蘭幼苗",
-      "nameSearchText": "蝴蝶蘭幼苗 Moth Orchid Seeds 胡蝶蘭の苗 蝴蝶兰幼苗",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1171,8 +981,6 @@
     },
     {
       "seedId": 97,
-      "name": "紫燈花的種子",
-      "nameSearchText": "紫燈花的種子 Triteleia Seeds トリテレイアの種 紫灯花的种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1183,8 +991,6 @@
     },
     {
       "seedId": 98,
-      "name": "比爾格紫羅蘭的種子",
-      "nameSearchText": "比爾格紫羅蘭的種子 Byregotia Seeds ビエルゴヴァイオレットの種 比尔格紫罗兰的种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1195,8 +1001,6 @@
     },
     {
       "seedId": 99,
-      "name": "香豌豆花的種子",
-      "nameSearchText": "香豌豆花的種子 Sweet Pea Seeds スイートピーの種 香豌豆花的种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1207,8 +1011,6 @@
     },
     {
       "seedId": 100,
-      "name": "牽牛花的種子",
-      "nameSearchText": "牽牛花的種子 Morning Glory Seeds モーニンググローリーの種 牵牛花的种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1219,8 +1021,6 @@
     },
     {
       "seedId": 101,
-      "name": "菊花種子",
-      "nameSearchText": "菊花種子 Chrysanthemum Seeds クリサンセマムの種 菊花种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1231,8 +1031,6 @@
     },
     {
       "seedId": 102,
-      "name": "魯冰花種子",
-      "nameSearchText": "魯冰花種子 Lupin Seeds ルピナスの種 鲁冰花种子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1243,8 +1041,6 @@
     },
     {
       "seedId": 103,
-      "name": "葵花籽",
-      "nameSearchText": "葵花籽 Sunflower Seeds サンフラワーシード",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1255,8 +1051,6 @@
     },
     {
       "seedId": 104,
-      "name": "卡特蘭種子",
-      "nameSearchText": "卡特蘭種子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1267,8 +1061,6 @@
     },
     {
       "seedId": 105,
-      "name": "葉子花種子",
-      "nameSearchText": "葉子花種子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1279,8 +1071,6 @@
     },
     {
       "seedId": 106,
-      "name": "大季花種子",
-      "nameSearchText": "大季花種子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",
@@ -1291,8 +1081,6 @@
     },
     {
       "seedId": 107,
-      "name": "茶花種子",
-      "nameSearchText": "茶花種子",
       "seedType": "Flowerpot",
       "growTime": "1 Day",
       "wiltTime": "--",

@@ -1,6 +1,9 @@
 /**
- * Fetches seed detail pages from ffxivgardening.com (SeedID 1–107) and writes JSON.
+ * Fetches seed detail pages from ffxivgardening.com (SeedID 1–107) and writes
+ * `public/data/seeds-by-id.json` only（`{ meta, seedsById }`）.
  * Run: node scripts/scrape-seeds.mjs
+ *
+ * 後續：npm run build:seeds-i18n（以 seed.name 當英文標題，對 Teamcraft 寫入 seedItem／crop 多語 seeds-i18n.json）
  */
 import { writeFile, mkdir } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -9,7 +12,7 @@ import * as cheerio from 'cheerio'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
-const OUT_DIR = join(ROOT, 'data')
+const OUT_DIR = join(ROOT, 'public', 'data')
 const BASE = 'https://www.ffxivgardening.com/seed-details.php'
 
 const DELAY_MS = 400
@@ -212,7 +215,6 @@ async function main() {
   }
 
   await mkdir(OUT_DIR, { recursive: true })
-  const outPath = join(OUT_DIR, 'seeds.json')
   const meta = {
     generatedAt: new Date().toISOString(),
     source: 'https://www.ffxivgardening.com/seed-details.php',
@@ -220,8 +222,6 @@ async function main() {
     count: seeds.length,
     errors: errors.length ? errors : undefined,
   }
-  await writeFile(outPath, JSON.stringify({ meta, seeds }, null, 2), 'utf8')
-
   const indexPath = join(OUT_DIR, 'seeds-by-id.json')
   const byId = Object.fromEntries(seeds.map((s) => [String(s.seedId), s]))
   await writeFile(
@@ -230,8 +230,7 @@ async function main() {
     'utf8',
   )
 
-  console.log(`\nWrote ${outPath}`)
-  console.log(`Wrote ${indexPath}`)
+  console.log(`\nWrote ${indexPath}`)
   if (errors.length) console.warn(`Completed with ${errors.length} error(s).`)
 }
 

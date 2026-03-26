@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import type { SeedSummary, SeedsSummaryPayload } from './seedSummaryTypes'
+import type { SeedSummary } from './seedSummaryTypes'
 import type { SeedRecord } from './seedDetailTypes'
-import { loadSeedsById } from './seedDataApi'
+import { loadSeedsById, loadSeedsSummaryMerged } from './seedDataApi'
 import type {
   IntercrossOutcome,
   OtherParentCandidate,
@@ -316,14 +316,12 @@ export function CrossCalculatorPage() {
     setLoadError(null)
     ;(async () => {
       try {
-        const [summaryRes, byId] = await Promise.all([
-          fetch(publicUrl('data/seeds-summary.json')),
+        const [merged, byId] = await Promise.all([
+          loadSeedsSummaryMerged(),
           loadSeedsById(),
         ])
-        if (!summaryRes.ok) throw new Error(`摘要載入失敗 ${summaryRes.status}`)
-        const data = (await summaryRes.json()) as SeedsSummaryPayload
         if (!cancelled) {
-          setSeeds(data.seeds ?? [])
+          setSeeds(merged)
           setSeedsById(byId)
         }
       } catch (e) {

@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import type { SeedSummary, SeedsSummaryPayload } from './seedSummaryTypes'
+import type { SeedSummary } from './seedSummaryTypes'
+import { loadSeedsSummaryMerged } from './seedDataApi'
 import { publicUrl } from './publicUrl'
 import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import { SearchClearButton } from './SearchClearButton'
@@ -94,10 +95,8 @@ export function SeedListPage() {
     let cancelled = false
     ;(async () => {
       try {
-        const res = await fetch(publicUrl('data/seeds-summary.json'))
-        if (!res.ok) throw new Error(`載入失敗 ${res.status}`)
-        const data = (await res.json()) as SeedsSummaryPayload
-        if (!cancelled) setSeeds(data.seeds ?? [])
+        const merged = await loadSeedsSummaryMerged()
+        if (!cancelled) setSeeds(merged)
       } catch (e) {
         if (!cancelled)
           setError(e instanceof Error ? e.message : String(e))
@@ -177,7 +176,7 @@ export function SeedListPage() {
                       className="seed-th-btn"
                       onClick={() => toggleSort('name')}
                     >
-                      種子名稱
+                      作物／收成
                       <SortGlyph active={sortKey === 'name'} dir={sortDir} />
                     </button>
                   </th>
@@ -214,11 +213,11 @@ export function SeedListPage() {
                       <input
                         type="search"
                         className={`seed-td-input seed-td-input--inbox${nameQuery ? ' seed-td-input--with-clear' : ''}`}
-                        placeholder="搜尋名稱…"
+                        placeholder="搜尋作物或種子名稱…"
                         value={nameQuery}
                         onChange={(e) => setNameQuery(e.target.value)}
                         autoComplete="off"
-                        aria-label="依名稱篩選"
+                        aria-label="依作物或種子名稱篩選（含多語關鍵字）"
                       />
                       {nameQuery ? (
                         <SearchClearButton onClear={() => setNameQuery('')} />

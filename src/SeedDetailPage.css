@@ -66,6 +66,21 @@ button.seed-detail-back {
   margin-bottom: 0;
 }
 
+.seed-detail-seed-subrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.seed-detail-seed-sub {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
 .seed-detail-title {
   margin: 0 0 0.35rem;
   font-size: clamp(1.35rem, 3vw, 1.85rem);

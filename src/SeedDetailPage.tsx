@@ -98,7 +98,7 @@ function SeedLink({
   growDays,
 }: {
   seedId: number | null
-  name: string | null
+  name: string | null | undefined
   growDays?: number | null
 }) {
   if (seedId == null || !name) return <span>—</span>
@@ -120,7 +120,7 @@ function normalizeQ(s: string) {
 
 function crossNameHaystack(
   seedId: number | null,
-  displayName: string | null,
+  displayName: string | null | undefined,
   searchById: Record<string, string>,
 ): string {
   const name = displayName != null ? String(displayName) : ''
@@ -440,7 +440,10 @@ export function SeedDetailPage() {
   const { seedId: rawId } = useParams()
   const [seed, setSeed] = useState<SeedRecord | null | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
-  const [copyToastKey, setCopyToastKey] = useState<number | null>(null)
+  const [copyToast, setCopyToast] = useState<{
+    key: number
+    message: string
+  } | null>(null)
 
   const idNum = rawId ? Number.parseInt(rawId, 10) : Number.NaN
 
@@ -502,6 +505,8 @@ export function SeedDetailPage() {
   }
 
   const s = seed
+  const showSeedSubline =
+    s.seedItemName.trim() !== '' && s.seedItemName.trim() !== s.name.trim()
 
   return (
     <div className="seed-detail-page">
@@ -522,15 +527,39 @@ export function SeedDetailPage() {
             <h1 className="seed-detail-title">{s.name}</h1>
             <CopyCropNameButton
               name={s.name}
-              onCopied={() => setCopyToastKey(Date.now())}
+              onCopied={() =>
+                setCopyToast({
+                  key: Date.now(),
+                  message: '已複製作物名稱',
+                })
+              }
             />
           </div>
+          {showSeedSubline ? (
+            <div className="seed-detail-seed-subrow">
+              <span className="seed-detail-seed-sub">
+                種子：{s.seedItemName}
+              </span>
+              <CopyCropNameButton
+                name={s.seedItemName}
+                ariaLabel={`複製種子名稱：${s.seedItemName}`}
+                title="複製種子名稱"
+                onCopied={() =>
+                  setCopyToast({
+                    key: Date.now(),
+                    message: '已複製種子名稱',
+                  })
+                }
+              />
+            </div>
+          ) : null}
         </div>
       </header>
 
       <CopyCropNameToast
-        toastKey={copyToastKey}
-        onDismiss={() => setCopyToastKey(null)}
+        toastKey={copyToast?.key ?? null}
+        message={copyToast?.message}
+        onDismiss={() => setCopyToast(null)}
       />
 
       <section className="seed-detail-card">

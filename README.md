@@ -6,10 +6,10 @@
 
 | 頁面 | 路徑 | 說明 |
 |------|------|------|
-| 種子列表 | `/` | 瀏覽與搜尋種子，可進入詳情 |
-| 雜交計算器 | `/cross` | 依親本組合推算雜交相關結果 |
-| 田地管理 | `/fields` | 在格狀田地上配置種子、輔助版面規劃 |
-| 種子詳情 | `/seed/:seedId` | 單一種子的詳細資訊與相關資料 |
+| 種子列表 | `/` | 瀏覽與搜尋種子，可進入詳情；支援一鍵複製作物名稱 |
+| 雜交計算器 | `/cross` | 依親本組合推算雜交結果，或由結果反查另一親本；支援一鍵複製名稱 |
+| 田地管理 | `/fields` | 在格狀田地上配置種子、輔助版面規劃，並以 session 保留當前工作狀態 |
+| 種子詳情 | `/seed/:seedId` | 單一種子詳細資訊、已確認雜交表（多語搜尋）、作物/種子產量提示 |
 
 應用程式頂部亦標示資料來源連結（[ffxivgardening.com](https://www.ffxivgardening.com/)、[灰機 Wiki](https://ff14.huijiwiki.com/) 等）。
 
@@ -45,24 +45,28 @@ npm run preview
 
 ## 資料與維護腳本
 
-種子相關 JSON 體積較大；開發與建置使用的公開資料位於 **`public/data/`**（例如 `seeds-by-id.json`、`seeds-summary.json`）。`data/` 目錄可用於腳本產出或中間檔。
+種子相關 JSON 體積較大；**擷取與建置腳本直接讀寫 `public/data/`**（與前端 fetch 路徑一致，無另存 `data/`）。
+
+**多語名稱資料流**：① [ffxivgardening.com](https://www.ffxivgardening.com/)（擷取或 `public/data/seeds-gardening-en.json` 取得各 Seed 英文標題）→ ② [Teamcraft](https://github.com/ffxiv-teamcraft/ffxiv-teamcraft) 靜態 JSON（`items` + `tw` + `zh`）對應道具 id → ③ `build:seeds-i18n` 寫入 **`public/data/i18n/seeds-i18n.json`（`seedItem` 種子包 + `crop` 收成物各四語系，以及合併搜尋字串 `nameSearchText`）**。列表／詳情／雜交畫面主顯示為作物名（`name`）；`seedItemName` 與 `nameSearchText` 仍由 i18n 合併供搜尋等用途。
 
 | 指令 | 用途 |
 |------|------|
-| `npm run scrape:seeds` | 自 ffxivgardening.com 擷取種子詳情頁並寫入 `data/` |
-| `npm run apply:tw-names` | 套用繁中物品名稱等（見腳本說明） |
-| `npm run build:seeds-summary` | 產生列表／搜尋用摘要 JSON |
-| `npm run translate:harvest-locations` | 採集地點等翻譯處理 |
+| `npm run scrape:seeds` | 自 ffxivgardening.com 擷取種子詳情頁並寫入 `public/data/seeds-by-id.json`（英文 `name` 於各筆種子內） |
+| `npm run fetch:seeds-gardening-en` | 選用：寫入 `public/data/seeds-gardening-en.json`（各頁英文標題）；若已擷取過可略過 |
+| `npm run build:seeds-i18n` | 依 Teamcraft 產生 `public/data/i18n/seeds-i18n.json`（**`seedItem` + `crop` 多語** + 搜尋字串），並更新 `public/data/seeds-by-id.json`（移除內嵌名稱） |
+| `npm run build:seeds-summary` | 產生 `public/data/seeds-summary.json`（不含名稱；顯示名由 i18n 合併） |
+| `npm run translate:harvest-locations` | 採集地點等翻譯處理（就地更新 `public/data/seeds-by-id.json`） |
 | `npm run download:seed-icons` | 下載種子圖示資源 |
-| `npm run copy:seeds-by-id` | 將 `seeds-by-id` 等複製到 `public/data/` 供前端載入 |
+| `npm run report:seed-crop-same` | 檢查 seedItem 與 crop 是否同名，協助資料檢核 |
+
+**建議更新流程**（擷取新資料後）：`scrape:seeds` → `build:seeds-i18n`（可選 `fetch:seeds-gardening-en` 若無英文對照）→ `translate:harvest-locations`（若需要）→ `build:seeds-summary`。
 
 更新資料後請確認 `public/data/` 內容與建置流程一致，必要時重新執行 `npm run build`。
 
 ## 專案結構（精簡）
 
 ```
-├── data/                 # 腳本產出之原始／大型 JSON（可選）
-├── public/data/          # 前端 fetch 使用的公開資料
+├── public/data/          # 種子 JSON、i18n、摘要（腳本與前端共用路徑）
 ├── scripts/              # Node 維護腳本（.mjs）
 ├── src/
 │   ├── App.tsx           # 路由與頂部導覽
@@ -74,6 +78,12 @@ npm run preview
 ├── vite.config.ts
 └── package.json
 ```
+
+## 參考資料網站
+
+- [FFXIV Gardening](https://www.ffxivgardening.com/)：種子、雜交配方與園藝資訊主要來源
+- [灰機 Wiki（FF14）](https://ff14.huijiwiki.com/)：中文名稱與詞彙對照參考
+- [FFXIV Teamcraft（Repo）](https://github.com/ffxiv-teamcraft/ffxiv-teamcraft)：道具多語資料來源（`items`、`tw`、`zh` JSON）
 
 ## 免責與版權
 

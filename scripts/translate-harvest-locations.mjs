@@ -1,5 +1,5 @@
 /**
- * 將 data/seeds.json 與 data/seeds-by-id.json 的 harvestLocation 譯為繁體，
+ * 將 public/data/seeds-by-id.json 的 harvestLocation 譯為繁體，
  * 地名依 ffxiv-teamcraft places.json + tw/tw-places.json；其餘用 MANUAL。
  */
 import { readFile, writeFile } from 'node:fs/promises'
@@ -20,8 +20,7 @@ const TC = join(
 )
 const PLACES_JSON = join(TC, 'places.json')
 const TW_PLACES_JSON = join(TC, 'tw', 'tw-places.json')
-const SEEDS_JSON = join(ROOT, 'data', 'seeds.json')
-const BY_ID_JSON = join(ROOT, 'data', 'seeds-by-id.json')
+const BY_ID_JSON = join(ROOT, 'public', 'data', 'seeds-by-id.json')
 
 /** 完整字串無法從地名替換得到時使用（繁體） */
 const FULL_MANUAL = {
@@ -92,19 +91,22 @@ function applyToSeed(seed, pairs) {
 }
 
 async function main() {
-  const [placesRaw, twRaw, seedsRaw] = await Promise.all([
+  const [placesRaw, twRaw, byIdRaw] = await Promise.all([
     readFile(PLACES_JSON, 'utf8'),
     readFile(TW_PLACES_JSON, 'utf8'),
-    readFile(SEEDS_JSON, 'utf8'),
+    readFile(BY_ID_JSON, 'utf8'),
   ])
 
   const places = JSON.parse(placesRaw)
   const twPlaces = JSON.parse(twRaw)
   const pairs = buildPlacePairs(places, twPlaces)
 
-  const data = JSON.parse(seedsRaw)
-
-  data.seeds = data.seeds.map((s) => applyToSeed(s, pairs))
+  const data = JSON.parse(byIdRaw)
+  const nextById = {}
+  for (const [id, seed] of Object.entries(data.seedsById ?? {})) {
+    nextById[id] = applyToSeed(seed, pairs)
+  }
+  data.seedsById = nextById
   data.meta = {
     ...data.meta,
     harvestLocationLocale: 'zh-Hant',
@@ -113,18 +115,9 @@ async function main() {
     harvestLocationTranslatedAt: new Date().toISOString(),
   }
 
-  const seedsById = Object.fromEntries(
-    data.seeds.map((s) => [String(s.seedId), s]),
-  )
+  await writeFile(BY_ID_JSON, JSON.stringify(data, null, 2), 'utf8')
 
-  await writeFile(SEEDS_JSON, JSON.stringify(data, null, 2), 'utf8')
-  await writeFile(
-    BY_ID_JSON,
-    JSON.stringify({ meta: data.meta, seedsById }, null, 2),
-    'utf8',
-  )
-
-  console.log(`Updated ${SEEDS_JSON} and ${BY_ID_JSON}`)
+  console.log(`Updated ${BY_ID_JSON}`)
   console.log(`Place name pairs used: ${pairs.length}`)
 }
 
