@@ -38,7 +38,7 @@ export function findIntercrossOutcomes(
         continue
       raw.push({
         outcomeSeedId: seed.seedId,
-        outcomeName: seed.name,
+        outcomeName: seed.seedItemName.trim() || seed.name,
         kind: 'primary',
         efficiency: c.efficiency,
         efficiencyRating: c.efficiencyRating,
@@ -48,7 +48,10 @@ export function findIntercrossOutcomes(
       if (altId != null) {
         const altRec = seedsById[String(altId)]
         const altName =
-          altRec?.name ?? c.alternate.name ?? `種子 #${altId}`
+          altRec?.seedItemName?.trim() ||
+          altRec?.name ||
+          c.alternate.name ||
+          `種子 #${altId}`
         raw.push({
           outcomeSeedId: altId,
           outcomeName: altName,
@@ -106,12 +109,18 @@ export function findOtherParentsFromResult(
     const a = c.parentA.seedId
     const b = c.parentB.seedId
     const nameA =
+      (a != null
+        ? seedsById[String(a)]?.seedItemName?.trim() ||
+          seedsById[String(a)]?.name
+        : null) ??
       c.parentA.name ??
-      (a != null ? seedsById[String(a)]?.name : null) ??
       ''
     const nameB =
+      (b != null
+        ? seedsById[String(b)]?.seedItemName?.trim() ||
+          seedsById[String(b)]?.name
+        : null) ??
       c.parentB.name ??
-      (b != null ? seedsById[String(b)]?.name : null) ??
       ''
 
     if (

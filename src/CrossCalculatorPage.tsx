@@ -14,6 +14,7 @@ import {
 import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import { publicUrl } from './publicUrl'
 import { SearchClearButton } from './SearchClearButton'
+import { formatDurationEn } from './seedFormat'
 import {
   loadCrossCalcUiState,
   saveCrossCalcUiState,
@@ -68,6 +69,8 @@ function ParentPicker({
   selectedId,
   query,
   open,
+  keyboardSelectEnabled,
+  selectedAssistiveText,
   onOpenChange,
   onQueryChange,
   onSelect,
@@ -79,10 +82,14 @@ function ParentPicker({
   selectedId: number | null
   query: string
   open: boolean
+  keyboardSelectEnabled?: boolean
+  selectedAssistiveText?: string | null
   onOpenChange: (open: boolean) => void
   onQueryChange: (q: string) => void
   onSelect: (s: SeedSummary) => void
 }) {
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const [activeIndex, setActiveIndex] = useState(-1)
   const summaryById = useMemo(() => {
     const m = new Map<number, SeedSummary>()
     for (const s of seeds) m.set(s.seedId, s)
@@ -96,6 +103,18 @@ function ParentPicker({
     () => filterSeeds(seeds, selectedId != null ? '' : query),
     [seeds, query, selectedId],
   )
+  const activeSuggestion =
+    activeIndex >= 0 && activeIndex < suggestions.length
+      ? suggestions[activeIndex]
+      : null
+
+  useEffect(() => {
+    if (!open) setActiveIndex(-1)
+  }, [open])
+
+  useEffect(() => {
+    setActiveIndex(-1)
+  }, [query, selectedId])
 
   return (
     <div className="cross-calc-picker">
@@ -116,11 +135,58 @@ function ParentPicker({
           aria-expanded={open}
           aria-controls={listId}
           aria-autocomplete="list"
+          aria-activedescendant={
+            open && activeSuggestion != null
+              ? `${listId}-opt-${activeSuggestion.seedId}`
+              : undefined
+          }
+          ref={inputRef}
           value={displayValue}
           onChange={(e) => {
             onQueryChange(e.target.value)
           }}
           onFocus={() => onOpenChange(true)}
+          onKeyDown={(e) => {
+            if (!keyboardSelectEnabled) return
+            if (!open && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+              e.preventDefault()
+              onOpenChange(true)
+              if (suggestions.length > 0) {
+                setActiveIndex(e.key === 'ArrowUp' ? suggestions.length - 1 : 0)
+              }
+              return
+            }
+            if (!open) return
+            if (e.key === 'ArrowDown') {
+              e.preventDefault()
+              if (suggestions.length === 0) return
+              setActiveIndex((idx) =>
+                idx < 0 ? 0 : Math.min(idx + 1, suggestions.length - 1),
+              )
+              return
+            }
+            if (e.key === 'ArrowUp') {
+              e.preventDefault()
+              if (suggestions.length === 0) return
+              setActiveIndex((idx) =>
+                idx < 0 ? suggestions.length - 1 : Math.max(idx - 1, 0),
+              )
+              return
+            }
+            if (e.key === 'Enter') {
+              if (activeSuggestion == null) return
+              e.preventDefault()
+              onSelect(activeSuggestion)
+              onOpenChange(false)
+              inputRef.current?.blur()
+              return
+            }
+            if (e.key === 'Escape') {
+              e.preventDefault()
+              onOpenChange(false)
+              setActiveIndex(-1)
+            }
+          }}
           onBlur={() => {
             window.setTimeout(() => onOpenChange(false), 150)
           }}
@@ -132,35 +198,43 @@ function ParentPicker({
             aria-label="清除"
           />
         ) : null}
+        {open && suggestions.length > 0 ? (
+          <ul id={listId} className="cross-calc-suggestions" role="listbox">
+            {suggestions.map((s, idx) => (
+              <li key={s.seedId} role="none">
+                <button
+                  type="button"
+                  role="option"
+                  id={`${listId}-opt-${s.seedId}`}
+                  aria-selected={idx === activeIndex}
+                  className={`cross-calc-suggest-btn${idx === activeIndex ? ' cross-calc-suggest-btn--active' : ''}`}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onMouseEnter={() => setActiveIndex(idx)}
+                  onClick={() => {
+                    onSelect(s)
+                    onOpenChange(false)
+                  }}
+                >
+                  <img
+                    src={publicUrl(s.iconUrl)}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="cross-calc-suggest-icon"
+                    loading="lazy"
+                  />
+                  <span>{s.name}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
-      {open && suggestions.length > 0 ? (
-        <ul id={listId} className="cross-calc-suggestions" role="listbox">
-          {suggestions.map((s) => (
-            <li key={s.seedId} role="none">
-              <button
-                type="button"
-                role="option"
-                className="cross-calc-suggest-btn"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => {
-                  onSelect(s)
-                  onOpenChange(false)
-                }}
-              >
-                <img
-                  src={publicUrl(s.iconUrl)}
-                  alt=""
-                  width={24}
-                  height={24}
-                  className="cross-calc-suggest-icon"
-                  loading="lazy"
-                />
-                <span>{s.name}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      <p
+        className={`cross-calc-picker-assistive${selectedId != null && selectedAssistiveText ? '' : ' cross-calc-picker-assistive--placeholder'}`}
+      >
+        {selectedId != null && selectedAssistiveText ? selectedAssistiveText : '\u00A0'}
+      </p>
     </div>
   )
 }
@@ -462,6 +536,36 @@ export function CrossCalculatorPage() {
     return `共 ${outcomes.length} 種可能結果`
   }, [parentAId, parentBId, outcomes.length])
 
+  const seedSummaryById = useMemo(() => {
+    const m = new Map<number, SeedSummary>()
+    for (const s of seeds) m.set(s.seedId, s)
+    return m
+  }, [seeds])
+
+  const parentAHarvestText = useMemo(() => {
+    if (parentAId == null) return null
+    const growTime = seedSummaryById.get(parentAId)?.growTime ?? null
+    return `收成天數：${formatDurationEn(growTime)}`
+  }, [parentAId, seedSummaryById])
+
+  const parentBHarvestText = useMemo(() => {
+    if (parentBId == null) return null
+    const growTime = seedSummaryById.get(parentBId)?.growTime ?? null
+    return `收成天數：${formatDurationEn(growTime)}`
+  }, [parentBId, seedSummaryById])
+
+  const spKnownHarvestText = useMemo(() => {
+    if (spKnownId == null) return null
+    const growTime = seedSummaryById.get(spKnownId)?.growTime ?? null
+    return `收成天數：${formatDurationEn(growTime)}`
+  }, [spKnownId, seedSummaryById])
+
+  const spResultHarvestText = useMemo(() => {
+    if (spResultId == null) return null
+    const growTime = seedSummaryById.get(spResultId)?.growTime ?? null
+    return `收成天數：${formatDurationEn(growTime)}`
+  }, [spResultId, seedSummaryById])
+
   const otherParents = useMemo(() => {
     if (
       !seedsById ||
@@ -555,6 +659,8 @@ export function CrossCalculatorPage() {
                   selectedId={parentAId}
                   query={queryA}
                   open={openA}
+                  keyboardSelectEnabled
+                  selectedAssistiveText={parentAHarvestText}
                   onOpenChange={(o) => {
                     setOpenA(o)
                     if (o) setOpenB(false)
@@ -576,6 +682,8 @@ export function CrossCalculatorPage() {
                   selectedId={parentBId}
                   query={queryB}
                   open={openB}
+                  keyboardSelectEnabled
+                  selectedAssistiveText={parentBHarvestText}
                   onOpenChange={(o) => {
                     setOpenB(o)
                     if (o) setOpenA(false)
@@ -685,6 +793,8 @@ export function CrossCalculatorPage() {
                   selectedId={spKnownId}
                   query={spQueryKnown}
                   open={spOpenKnown}
+                  keyboardSelectEnabled
+                  selectedAssistiveText={spKnownHarvestText}
                   onOpenChange={(o) => {
                     setSpOpenKnown(o)
                     if (o) setSpOpenResult(false)
@@ -706,6 +816,8 @@ export function CrossCalculatorPage() {
                   selectedId={spResultId}
                   query={spQueryResult}
                   open={spOpenResult}
+                  keyboardSelectEnabled
+                  selectedAssistiveText={spResultHarvestText}
                   onOpenChange={(o) => {
                     setSpOpenResult(o)
                     if (o) setSpOpenKnown(false)
@@ -739,6 +851,7 @@ export function CrossCalculatorPage() {
                           <th scope="col">
                             {otherParentSortTh('other', '另一種親本')}
                           </th>
+                          <th scope="col">收成天數</th>
                           <th scope="col">
                             {otherParentSortTh('loop', '迴圈')}
                           </th>
@@ -776,6 +889,12 @@ export function CrossCalculatorPage() {
                                     }
                                   />
                                 </div>
+                              </td>
+                              <td>
+                                {formatDurationEn(
+                                  seedSummaryById.get(row.otherParentSeedId)
+                                    ?.growTime ?? null,
+                                )}
                               </td>
                               <td>
                                 <span

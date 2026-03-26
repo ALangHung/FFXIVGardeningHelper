@@ -102,6 +102,7 @@
 .cross-calc-input-wrap {
   display: block;
   position: relative;
+  z-index: 1;
   min-width: 0;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -147,7 +148,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(100% + 4px);
+  top: 100%;
   z-index: 30;
   max-height: min(52vh, 380px);
   overflow-y: auto;
@@ -179,6 +180,10 @@
 .cross-calc-suggest-btn:focus-visible {
   background: rgba(124, 58, 237, 0.2);
   outline: none;
+}
+
+.cross-calc-suggest-btn--active {
+  background: rgba(124, 58, 237, 0.28);
 }
 
 .cross-calc-suggest-icon {
@@ -310,6 +315,16 @@
   margin: 0;
   color: var(--text-muted);
   font-size: 0.9rem;
+}
+
+.cross-calc-picker-assistive {
+  margin: 0.35rem 0 0;
+  color: #c4b5fd;
+  font-size: 0.82rem;
+}
+
+.cross-calc-picker-assistive--placeholder {
+  visibility: hidden;
 }
 
 .cross-calc-error {
