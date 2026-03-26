@@ -3,11 +3,45 @@
   --app-bg: #120c1d;
   /* 與田地管理 `.field-page` 同寬 */
   --app-page-max-width: min(100%, 76rem);
+  --scrollbar-track: rgba(15, 23, 42, 0.9);
+  --scrollbar-thumb: #7c3aed;
+  --scrollbar-thumb-hover: #8b5cf6;
+  --scrollbar-thumb-active: #6d28d9;
 }
 
 /* 避免垂直捲軸出現／消失時整頁寬度跳動 */
 html {
   scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+/* 全域滾動條：透明軌道＋亮紫滑塊（保留容器圓角） */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--scrollbar-thumb) 0%, #4c1d95 100%);
+  border: 2px solid var(--scrollbar-track);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--scrollbar-thumb-hover) 0%, #5b21b6 100%);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, var(--scrollbar-thumb-active) 0%, #4c1d95 100%);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 *,
