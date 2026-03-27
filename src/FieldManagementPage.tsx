@@ -3,6 +3,7 @@ import {
   useEffect,
   useId,
   useMemo,
+  useRef,
   useState,
   type Dispatch,
   type SetStateAction,
@@ -124,22 +125,27 @@ function fieldBlockDragShouldCancel(target: EventTarget | null): boolean {
   )
 }
 
-/** 編輯版面拖曳田地時：視窗上／下此比例內會自動捲動（相對視窗高度）。 */
+/** 編輯版面拖曳田地時：田地管理捲動區（#app-main）上／下此比例內會自動捲動。 */
 const FIELD_DRAG_SCROLL_EDGE_RATIO = 0.2
 /** 每幀最大捲動量（px，整數），並依距離邊緣加權；以 rAF 合併避免同幀多次 scrollBy 造成抖動。 */
 const FIELD_DRAG_SCROLL_MAX_DELTA = 22
 
-function computeFieldBoardDragScrollDelta(clientY: number): number {
-  const h = window.innerHeight
+function computeFieldBoardDragScrollDelta(
+  clientY: number,
+  scrollRoot: HTMLElement,
+): number {
+  const rect = scrollRoot.getBoundingClientRect()
+  const h = rect.height
   if (h <= 0) return 0
+  const localY = clientY - rect.top
   const topTh = h * FIELD_DRAG_SCROLL_EDGE_RATIO
   const bottomTh = h * (1 - FIELD_DRAG_SCROLL_EDGE_RATIO)
-  if (clientY < topTh) {
-    const intensity = Math.min(1, (topTh - clientY) / topTh)
+  if (localY < topTh) {
+    const intensity = Math.min(1, (topTh - localY) / topTh)
     return -Math.round(FIELD_DRAG_SCROLL_MAX_DELTA * intensity)
   }
-  if (clientY > bottomTh) {
-    const intensity = Math.min(1, (clientY - bottomTh) / (h - bottomTh))
+  if (localY > bottomTh) {
+    const intensity = Math.min(1, (localY - bottomTh) / (h - bottomTh))
     return Math.round(FIELD_DRAG_SCROLL_MAX_DELTA * intensity)
   }
   return 0
@@ -251,6 +257,9 @@ export function FieldManagementPage() {
   )
   /** 編輯模式拖曳時，依最末列動態追加的空白列數（每列 FIELD_BOARD_COLS 格）。 */
   const [dragBoardExtraRows, setDragBoardExtraRows] = useState(0)
+
+  /** 棋盤格已成功觸發 `drop` 時為 true，避免接著的 `dragend` 再套用「最後高亮空白格」邏輯。 */
+  const layoutGridDropHandledRef = useRef(false)
 
   /** 版面編輯：開啟時可拖曳田地棋盤、刪除／複製田、編輯位置；關閉時才可施肥、收成重種。 */
   const [fieldLayoutEditMode, setFieldLayoutEditMode] = useState(false)
@@ -626,14 +635,17 @@ export function FieldManagementPage() {
 
   useEffect(() => {
     if (!fieldLayoutEditMode || !draggingFieldId) return
+    const scrollRoot = document.getElementById('app-main')
+    if (!(scrollRoot instanceof HTMLElement)) return
+
     let lastClientY = 0
     let rafId: number | null = null
 
     const flushScroll = () => {
       rafId = null
-      const delta = computeFieldBoardDragScrollDelta(lastClientY)
+      const delta = computeFieldBoardDragScrollDelta(lastClientY, scrollRoot)
       if (delta !== 0) {
-        window.scrollBy(0, delta)
+        scrollRoot.scrollBy(0, delta)
       }
     }
 
@@ -910,8 +922,10 @@ export function FieldManagementPage() {
                 if (!fieldLayoutEditMode) return
                 e.preventDefault()
                 const id = e.dataTransfer.getData('application/x-ffxiv-field-id')
-                if (id)
+                if (id) {
+                  layoutGridDropHandledRef.current = true
                   setFields((prev) => applyFieldGridDrop(prev, id, index))
+                }
                 setDragOverCellIndex(null)
                 setDraggingFieldId(null)
               }}
@@ -936,6 +950,7 @@ export function FieldManagementPage() {
                       return
                     }
                     setDragBoardExtraRows(0)
+                    layoutGridDropHandledRef.current = false
                     e.dataTransfer.setData(
                       'application/x-ffxiv-field-id',
                       field.id,
@@ -944,6 +959,25 @@ export function FieldManagementPage() {
                     setDraggingFieldId(field.id)
                   }}
                   onDragEnd={() => {
+                    if (
+                      fieldLayoutEditMode &&
+                      !layoutGridDropHandledRef.current &&
+                      dragOverCellIndex !== null
+                    ) {
+                      const targetCell = boardCellsForView.find(
+                        (c) => c.index === dragOverCellIndex,
+                      )
+                      if (targetCell?.field == null) {
+                        setFields((prev) =>
+                          applyFieldGridDrop(
+                            prev,
+                            field.id,
+                            dragOverCellIndex,
+                          ),
+                        )
+                      }
+                    }
+                    layoutGridDropHandledRef.current = false
                     setDraggingFieldId(null)
                     setDragOverCellIndex(null)
                   }}

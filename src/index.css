@@ -9,9 +9,9 @@
   --scrollbar-thumb-active: #6d28d9;
 }
 
-/* 避免垂直捲軸出現／消失時整頁寬度跳動 */
+/* 避免垂直捲軸出現／消失時整頁寬度跳動（捲動在 .app-main） */
 html {
-  scrollbar-gutter: stable;
+  height: 100%;
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
 }
@@ -59,7 +59,8 @@ input[type='search']::-webkit-search-decoration {
 
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100%;
+  min-height: 100%;
   font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
   font-size: 16px;
   line-height: 1.5;
@@ -72,5 +73,6 @@ body {
 }
 
 #app {
-  min-height: 100vh;
+  height: 100%;
+  min-height: 0;
 }

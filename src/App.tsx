@@ -58,13 +58,15 @@ export function App() {
           </div>
         </div>
       </header>
-      <Routes>
-        <Route path="/" element={<SeedListPage />} />
-        <Route path="/cross" element={<CrossCalculatorPage />} />
-        <Route path="/fields" element={<FieldManagementPage />} />
-        <Route path="/seed/:seedId" element={<SeedDetailPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <main id="app-main" className="app-main">
+        <Routes>
+          <Route path="/" element={<SeedListPage />} />
+          <Route path="/cross" element={<CrossCalculatorPage />} />
+          <Route path="/fields" element={<FieldManagementPage />} />
+          <Route path="/seed/:seedId" element={<SeedDetailPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
     </div>
   )
 }
