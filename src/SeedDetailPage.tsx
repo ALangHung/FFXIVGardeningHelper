@@ -33,7 +33,7 @@ function formatHarvestLocation(value: string | null | undefined): string {
   return t
 }
 
-/** 與畫面上作物／種子收成相同：多為「1–4 級黑森林土壤」以「 / 」分隔的數值。 */
+/** 與畫面上作物／種子收成相同：多為「未使用 / 1–3 級黑森林土壤」以「 / 」分隔的數值。 */
 function blackForestSoilYieldHintText(
   kind: 'crop' | 'seed',
   raw: string | null,
@@ -51,7 +51,7 @@ function blackForestSoilYieldHintText(
     .map((s) => s.trim())
     .filter((s) => s.length > 0)
   if (parts.length === 4) {
-    return `${intro}\n1級: ${parts[0]}\n2級: ${parts[1]}\n3級: ${parts[2]}\n4級: ${parts[3]}`
+    return `${intro}\n未使用: ${parts[0]}\n1級: ${parts[1]}\n2級: ${parts[2]}\n3級: ${parts[3]}`
   }
   return `${intro}\n${display}`
 }
