@@ -777,6 +777,23 @@ export function FieldManagementPage() {
     applyPlantWithGrowMs,
   ])
 
+  const handleGrowTimeDhmsFieldKeyDown = useCallback(
+    (
+      e: ReactKeyboardEvent<HTMLInputElement>,
+      setValue: Dispatch<SetStateAction<number>>,
+      max: number,
+    ) => {
+      if (e.nativeEvent.isComposing) return
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        confirmGrowTimeAndPlant()
+        return
+      }
+      handleGrowDhmsStepKeyDown(e, setValue, max)
+    },
+    [confirmGrowTimeAndPlant],
+  )
+
   const confirmPickerSeed = useCallback(
     (s: SeedSummary) => {
       if (!pickerTarget) return
@@ -1539,7 +1556,7 @@ export function FieldManagementPage() {
                         )
                       }
                       onKeyDown={(e) =>
-                        handleGrowDhmsStepKeyDown(
+                        handleGrowTimeDhmsFieldKeyDown(
                           e,
                           setGrowDays,
                           GROW_TIME_DHMS_MAX.days,
@@ -1566,7 +1583,7 @@ export function FieldManagementPage() {
                         )
                       }
                       onKeyDown={(e) =>
-                        handleGrowDhmsStepKeyDown(
+                        handleGrowTimeDhmsFieldKeyDown(
                           e,
                           setGrowHours,
                           GROW_TIME_DHMS_MAX.hours,
@@ -1593,7 +1610,7 @@ export function FieldManagementPage() {
                         )
                       }
                       onKeyDown={(e) =>
-                        handleGrowDhmsStepKeyDown(
+                        handleGrowTimeDhmsFieldKeyDown(
                           e,
                           setGrowMinutes,
                           GROW_TIME_DHMS_MAX.minutes,
@@ -1620,7 +1637,7 @@ export function FieldManagementPage() {
                         )
                       }
                       onKeyDown={(e) =>
-                        handleGrowDhmsStepKeyDown(
+                        handleGrowTimeDhmsFieldKeyDown(
                           e,
                           setGrowSeconds,
                           GROW_TIME_DHMS_MAX.seconds,
