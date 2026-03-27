@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useId, useMemo, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
 import type { SeedSummary } from './seedSummaryTypes'
@@ -10,6 +18,7 @@ import {
   FIELD_SLOTS,
   computeCrossHintsAtPlant,
   fieldHasFertilizableSlot,
+  fieldHasHarvestReadySlot,
   getNextFertilizeEligibleAt,
   growMsFromSeedRecord,
   slotCanReceiveFertilize,
@@ -19,7 +28,10 @@ import {
 import {
   applyFieldGridDrop,
   buildBoardCells,
+  duplicateGardenField,
+  FIELD_BOARD_COLS,
   nextFreeGridIndex,
+  trimTrailingEmptyBoardCells,
 } from './fieldBoardLayout'
 import type {
   CrossHintAtPlant,
@@ -34,10 +46,40 @@ import {
   formatFieldHeading,
   normalizeFieldLocation,
 } from './fieldStateTypes'
+import { dhmsToMs, formatDurationEn, msToDhms } from './seedFormat'
 import './FieldManagementPage.css'
 
 function normalize(s: string) {
   return s.trim().toLowerCase()
+}
+
+/** 收成時間彈窗：各欄允許上限（時／分／秒為常見時鐘分量；天數留較大空間供測試或長倒數）。 */
+const GROW_TIME_DHMS_MAX = {
+  days: 9999,
+  hours: 23,
+  minutes: 59,
+  seconds: 59,
+} as const
+
+function clampGrowDhmsUnit(n: number, max: number): number {
+  if (!Number.isFinite(n)) return 0
+  const x = Math.floor(n)
+  return Math.min(max, Math.max(0, x))
+}
+
+function handleGrowDhmsStepKeyDown(
+  e: ReactKeyboardEvent<HTMLInputElement>,
+  setValue: Dispatch<SetStateAction<number>>,
+  max: number,
+) {
+  if (e.nativeEvent.isComposing) return
+  if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    setValue((v) => Math.min(max, v + 1))
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    setValue((v) => Math.max(0, v - 1))
+  }
 }
 
 function filterSeeds(seeds: SeedSummary[], q: string): SeedSummary[] {
@@ -62,6 +104,17 @@ function createEmptySlots(): PlotSlot[] {
   }))
 }
 
+/** 格內顯示：作物／收成道具名（`SeedRecord.name`），相容舊 session 僅存種子包名時。 */
+function plotSlotCropLabel(
+  slot: PlotSlot,
+  seedsById: Record<string, SeedRecord> | null,
+): string {
+  if (slot.seedId == null) return ''
+  const fromRec = seedsById?.[String(slot.seedId)]?.name?.trim()
+  if (fromRec) return fromRec
+  return slot.seedName?.trim() ?? `種子 #${slot.seedId}`
+}
+
 function fieldBlockDragShouldCancel(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false
   return (
@@ -69,6 +122,27 @@ function fieldBlockDragShouldCancel(target: EventTarget | null): boolean {
       'button, a, input, textarea, select, [data-field-no-drag]',
     ) != null
   )
+}
+
+/** 編輯版面拖曳田地時：視窗上／下此比例內會自動捲動（相對視窗高度）。 */
+const FIELD_DRAG_SCROLL_EDGE_RATIO = 0.2
+/** 每幀最大捲動量（px，整數），並依距離邊緣加權；以 rAF 合併避免同幀多次 scrollBy 造成抖動。 */
+const FIELD_DRAG_SCROLL_MAX_DELTA = 22
+
+function computeFieldBoardDragScrollDelta(clientY: number): number {
+  const h = window.innerHeight
+  if (h <= 0) return 0
+  const topTh = h * FIELD_DRAG_SCROLL_EDGE_RATIO
+  const bottomTh = h * (1 - FIELD_DRAG_SCROLL_EDGE_RATIO)
+  if (clientY < topTh) {
+    const intensity = Math.min(1, (topTh - clientY) / topTh)
+    return -Math.round(FIELD_DRAG_SCROLL_MAX_DELTA * intensity)
+  }
+  if (clientY > bottomTh) {
+    const intensity = Math.min(1, (clientY - bottomTh) / (h - bottomTh))
+    return Math.round(FIELD_DRAG_SCROLL_MAX_DELTA * intensity)
+  }
+  return 0
 }
 
 function formatRemaining(deadline: number | null, now: number): string {
@@ -159,12 +233,27 @@ export function FieldManagementPage() {
   /** 鍵盤／ARIA 用：目前選中的清單項索引 */
   const [pickerHighlight, setPickerHighlight] = useState<number | null>(null)
 
+  const [growTimeDialog, setGrowTimeDialog] = useState<{
+    fieldId: string
+    slotId: FieldSlotId
+    seed: SeedSummary
+  } | null>(null)
+  const [growDays, setGrowDays] = useState(0)
+  const [growHours, setGrowHours] = useState(0)
+  const [growMinutes, setGrowMinutes] = useState(0)
+  const [growSeconds, setGrowSeconds] = useState(0)
+
   const pickerListId = useId()
 
   const [draggingFieldId, setDraggingFieldId] = useState<string | null>(null)
   const [dragOverCellIndex, setDragOverCellIndex] = useState<number | null>(
     null,
   )
+  /** 編輯模式拖曳時，依最末列動態追加的空白列數（每列 FIELD_BOARD_COLS 格）。 */
+  const [dragBoardExtraRows, setDragBoardExtraRows] = useState(0)
+
+  /** 版面編輯：開啟時可拖曳田地棋盤、刪除／複製田、編輯位置；關閉時才可施肥、收成重種。 */
+  const [fieldLayoutEditMode, setFieldLayoutEditMode] = useState(false)
 
   useEffect(() => {
     saveFieldsSession(fields)
@@ -260,12 +349,16 @@ export function FieldManagementPage() {
     setNewFieldOpen(true)
   }
 
-  const plantSeed = useCallback(
-    async (fieldId: string, slotId: FieldSlotId, seed: SeedSummary) => {
-      if (!seedsById) return
+  const applyPlantWithGrowMs = useCallback(
+    async (
+      fieldId: string,
+      slotId: FieldSlotId,
+      seed: SeedSummary,
+      growMs: number,
+    ) => {
+      if (!seedsById || !Number.isFinite(growMs) || growMs <= 0) return
       const rec = await getSeedById(seed.seedId)
-      const growMs = growMsFromSeedRecord(rec)
-      const deadline = growMs != null ? Date.now() + growMs : null
+      const deadline = Date.now() + growMs
       setFields((prev) =>
         prev.map((f) => {
           if (f.id !== fieldId) return f
@@ -274,7 +367,7 @@ export function FieldManagementPage() {
             return {
               ...s,
               seedId: seed.seedId,
-              seedName: seed.name,
+              seedName: rec?.name?.trim() || seed.name,
               growMs,
               harvestDeadline: deadline,
               lastFertilizeAt: null,
@@ -294,6 +387,26 @@ export function FieldManagementPage() {
           return { ...f, slots }
         }),
       )
+    },
+    [seedsById],
+  )
+
+  const beginPlantGrowTimeStep = useCallback(
+    async (fieldId: string, slotId: FieldSlotId, seed: SeedSummary) => {
+      if (!seedsById) return
+      const rec =
+        seedsById[String(seed.seedId)] ?? (await getSeedById(seed.seedId))
+      const defaultMs = growMsFromSeedRecord(rec)
+      const p =
+        defaultMs != null && defaultMs > 0
+          ? msToDhms(defaultMs)
+          : { days: 0, hours: 0, minutes: 0, seconds: 0 }
+      setGrowDays(clampGrowDhmsUnit(p.days, GROW_TIME_DHMS_MAX.days))
+      setGrowHours(clampGrowDhmsUnit(p.hours, GROW_TIME_DHMS_MAX.hours))
+      setGrowMinutes(clampGrowDhmsUnit(p.minutes, GROW_TIME_DHMS_MAX.minutes))
+      setGrowSeconds(clampGrowDhmsUnit(p.seconds, GROW_TIME_DHMS_MAX.seconds))
+      setGrowTimeDialog({ fieldId, slotId, seed })
+      setPickerTarget(null)
     },
     [seedsById],
   )
@@ -348,6 +461,43 @@ export function FieldManagementPage() {
       )
     },
     [],
+  )
+
+  const harvestAndReplantField = useCallback(
+    (fieldId: string) => {
+      if (!seedsById) return
+      const now = Date.now()
+      setFields((prev) =>
+        prev.map((f) => {
+          if (f.id !== fieldId) return f
+          const replantIds = new Set<FieldSlotId>()
+          const slotsPass1 = f.slots.map((slot) => {
+            if (!slotReadyToHarvest(slot, now)) return slot
+            if (slot.seedId == null || slot.growMs == null) return slot
+            replantIds.add(slot.id)
+            return {
+              ...slot,
+              harvestDeadline: now + slot.growMs,
+              lastFertilizeAt: null,
+              clearUndo: null,
+            }
+          })
+          if (replantIds.size === 0) return f
+          const slots = slotsPass1.map((slot) => {
+            if (!replantIds.has(slot.id) || slot.seedId == null) return slot
+            const hint = computeCrossHintsAtPlant(
+              seedsById,
+              slot.seedId,
+              slotsPass1,
+              slot.id,
+            )
+            return { ...slot, crossAtPlant: hint }
+          })
+          return { ...f, slots }
+        }),
+      )
+    },
+    [seedsById],
   )
 
   const restoreClearedSlot = useCallback((fieldId: string, slotId: FieldSlotId) => {
@@ -455,7 +605,99 @@ export function FieldManagementPage() {
     setDeleteConfirmFieldId(null)
   }
 
-  const boardCells = useMemo(() => buildBoardCells(fields), [fields])
+  const duplicateField = useCallback((fieldId: string) => {
+    setFields((prev) => {
+      const src = prev.find((f) => f.id === fieldId)
+      if (!src) return prev
+      return [...prev, duplicateGardenField(src, prev)]
+    })
+  }, [])
+
+  useEffect(() => {
+    if (fieldLayoutEditMode) return
+    setDraggingFieldId(null)
+    setDragOverCellIndex(null)
+    setDragBoardExtraRows(0)
+  }, [fieldLayoutEditMode])
+
+  useEffect(() => {
+    if (!draggingFieldId) setDragBoardExtraRows(0)
+  }, [draggingFieldId])
+
+  useEffect(() => {
+    if (!fieldLayoutEditMode || !draggingFieldId) return
+    let lastClientY = 0
+    let rafId: number | null = null
+
+    const flushScroll = () => {
+      rafId = null
+      const delta = computeFieldBoardDragScrollDelta(lastClientY)
+      if (delta !== 0) {
+        window.scrollBy(0, delta)
+      }
+    }
+
+    const onDragOver = (e: DragEvent) => {
+      lastClientY = e.clientY
+      if (rafId != null) return
+      rafId = requestAnimationFrame(flushScroll)
+    }
+
+    document.addEventListener('dragover', onDragOver, true)
+    return () => {
+      document.removeEventListener('dragover', onDragOver, true)
+      if (rafId != null) cancelAnimationFrame(rafId)
+    }
+  }, [fieldLayoutEditMode, draggingFieldId])
+
+  const baseBoardCells = useMemo(
+    () =>
+      buildBoardCells(fields, {
+        padToFullRows: fieldLayoutEditMode,
+      }),
+    [fields, fieldLayoutEditMode],
+  )
+
+  const boardCellsForView = useMemo(() => {
+    if (!fieldLayoutEditMode) {
+      return trimTrailingEmptyBoardCells(baseBoardCells)
+    }
+    if (!draggingFieldId || dragBoardExtraRows === 0) {
+      return baseBoardCells
+    }
+    const L = baseBoardCells.length
+    const append = Array.from(
+      { length: dragBoardExtraRows * FIELD_BOARD_COLS },
+      (_, i) => ({
+        index: L + i,
+        field: null as GardenField | null,
+      }),
+    )
+    return [...baseBoardCells, ...append]
+  }, [
+    baseBoardCells,
+    fieldLayoutEditMode,
+    draggingFieldId,
+    dragBoardExtraRows,
+  ])
+
+  const growBoardIfDragNeedsRowBelow = useCallback(
+    (slotIndex: number) => {
+      if (!draggingFieldId) return
+      const L = baseBoardCells.length
+      setDragBoardExtraRows((er) => {
+        const currentTotal = L + er * FIELD_BOARD_COLS
+        const r = Math.floor(slotIndex / FIELD_BOARD_COLS)
+        const lastRow = Math.floor((currentTotal - 1) / FIELD_BOARD_COLS)
+        if (r !== lastRow) return er
+        const neededCells = (r + 2) * FIELD_BOARD_COLS
+        if (neededCells <= currentTotal) return er
+        const delta = neededCells - currentTotal
+        return er + Math.ceil(delta / FIELD_BOARD_COLS)
+      })
+    },
+    [draggingFieldId, baseBoardCells],
+  )
 
   const pickerSeeds = useMemo(
     () => filterSeeds(seeds, pickerQuery),
@@ -484,17 +726,55 @@ export function FieldManagementPage() {
     return () => document.removeEventListener('keydown', onDocKey, true)
   }, [pickerTarget])
 
+  useEffect(() => {
+    if (!growTimeDialog) return
+    const onDocKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      e.preventDefault()
+      setGrowTimeDialog(null)
+    }
+    document.addEventListener('keydown', onDocKey, true)
+    return () => document.removeEventListener('keydown', onDocKey, true)
+  }, [growTimeDialog])
+
   const closeSeedPicker = useCallback(() => {
     setPickerTarget(null)
   }, [])
 
+  const closeGrowTimeDialog = useCallback(() => {
+    setGrowTimeDialog(null)
+  }, [])
+
+  const confirmGrowTimeAndPlant = useCallback(() => {
+    if (!growTimeDialog) return
+    const totalMs = dhmsToMs(growDays, growHours, growMinutes, growSeconds)
+    if (totalMs <= 0) return
+    void applyPlantWithGrowMs(
+      growTimeDialog.fieldId,
+      growTimeDialog.slotId,
+      growTimeDialog.seed,
+      totalMs,
+    )
+    setGrowTimeDialog(null)
+  }, [
+    growTimeDialog,
+    growDays,
+    growHours,
+    growMinutes,
+    growSeconds,
+    applyPlantWithGrowMs,
+  ])
+
   const confirmPickerSeed = useCallback(
     (s: SeedSummary) => {
       if (!pickerTarget) return
-      void plantSeed(pickerTarget.fieldId, pickerTarget.slotId, s)
-      closeSeedPicker()
+      void beginPlantGrowTimeStep(
+        pickerTarget.fieldId,
+        pickerTarget.slotId,
+        s,
+      )
     },
-    [pickerTarget, plantSeed, closeSeedPicker],
+    [pickerTarget, beginPlantGrowTimeStep],
   )
 
   const handlePickerSearchKeyDown = useCallback(
@@ -534,7 +814,13 @@ export function FieldManagementPage() {
   )
 
   return (
-    <div className="field-page">
+    <div
+      className={
+        fieldLayoutEditMode
+          ? 'field-page field-page--layout-edit'
+          : 'field-page'
+      }
+    >
       <header className="field-page-header">
         <h1 className="field-page-title">田地管理</h1>
         <div className="field-toolbar">
@@ -545,8 +831,30 @@ export function FieldManagementPage() {
           >
             新增田地
           </button>
+          <button
+            type="button"
+            className={
+              fieldLayoutEditMode
+                ? 'field-btn field-btn--primary field-btn--toggle-on'
+                : 'field-btn'
+            }
+            aria-pressed={fieldLayoutEditMode}
+            title={
+              fieldLayoutEditMode
+                ? '結束版面編輯，可再次施肥與收成重種'
+                : '調整田地棋盤位置、刪除或複製田'
+            }
+            onClick={() => setFieldLayoutEditMode((v) => !v)}
+          >
+            {fieldLayoutEditMode ? '完成編輯' : '編輯版面'}
+          </button>
         </div>
       </header>
+      {fieldLayoutEditMode && !loading && !loadError ? (
+        <p className="field-layout-edit-banner" role="status">
+          編輯版面中：可拖曳田地卡片調整棋盤位置，或使用複製／刪除。施肥與收成重種請先按「完成編輯」。
+        </p>
+      ) : null}
 
       {loading && <p className="field-muted">載入中…</p>}
       {loadError ? (
@@ -571,7 +879,7 @@ export function FieldManagementPage() {
             </li>
             <li>
               <strong>總覽棋盤</strong>
-              ：田地以每列 3 塊排列；可拖曳田地卡片調整位置。
+              ：田地以每列 3 塊排列；開啟「編輯版面」後可拖曳田地卡片調整位置。
             </li>
           </ul>
         </div>
@@ -579,20 +887,27 @@ export function FieldManagementPage() {
 
       {!loading && !loadError && fields.length > 0 ? (
         <div className="field-fields-board">
-          {boardCells.map(({ index, field }) => (
+          {boardCellsForView.map(({ index, field }) => (
             <div
               key={field?.id ?? `board-slot-${index}`}
               className={
-                dragOverCellIndex === index
+                fieldLayoutEditMode && dragOverCellIndex === index
                   ? 'field-board-slot field-board-slot--drag-over'
                   : 'field-board-slot'
               }
+              style={{
+                gridColumn: (index % FIELD_BOARD_COLS) + 1,
+                gridRow: Math.floor(index / FIELD_BOARD_COLS) + 1,
+              }}
               onDragOver={(e) => {
+                if (!fieldLayoutEditMode) return
                 e.preventDefault()
                 e.dataTransfer.dropEffect = 'move'
                 setDragOverCellIndex(index)
+                growBoardIfDragNeedsRowBelow(index)
               }}
               onDrop={(e) => {
+                if (!fieldLayoutEditMode) return
                 e.preventDefault()
                 const id = e.dataTransfer.getData('application/x-ffxiv-field-id')
                 if (id)
@@ -606,14 +921,21 @@ export function FieldManagementPage() {
                   className={
                     draggingFieldId === field.id
                       ? 'field-block field-block--dragging'
-                      : 'field-block'
+                      : fieldLayoutEditMode
+                        ? 'field-block field-block--layout-drag'
+                        : 'field-block'
                   }
-                  draggable
+                  draggable={fieldLayoutEditMode}
                   onDragStart={(e) => {
+                    if (!fieldLayoutEditMode) {
+                      e.preventDefault()
+                      return
+                    }
                     if (fieldBlockDragShouldCancel(e.target)) {
                       e.preventDefault()
                       return
                     }
+                    setDragBoardExtraRows(0)
                     e.dataTransfer.setData(
                       'application/x-ffxiv-field-id',
                       field.id,
@@ -631,130 +953,190 @@ export function FieldManagementPage() {
                       <h2 className="field-block-title">
                         {formatFieldHeading(field)}
                       </h2>
-                      <button
-                        type="button"
-                        draggable={false}
-                        className="field-title-edit-btn"
-                        aria-label="修改田地位置與編號"
-                        title="修改田地位置與編號"
-                        onClick={() => {
-                          setNewFieldOpen(false)
-                          setDraftLocation(field.locationLabel)
-                          setDraftPlotNumber(field.plotNumber)
-                          setEditingFieldId(field.id)
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          aria-hidden
+                      {fieldLayoutEditMode ? (
+                        <button
+                          type="button"
+                          draggable={false}
+                          className="field-title-edit-btn"
+                          aria-label="修改田地位置與編號"
+                          title="修改田地位置與編號"
+                          onClick={() => {
+                            setNewFieldOpen(false)
+                            setDraftLocation(field.locationLabel)
+                            setDraftPlotNumber(field.plotNumber)
+                            setEditingFieldId(field.id)
+                          }}
                         >
-                          <path d="M12 20h9" />
-                          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                        </svg>
-                      </button>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden
+                          >
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                      ) : null}
                     </div>
                     <div className="field-block-toolbar">
-                      {(() => {
-                        const canFertilize = fieldHasFertilizableSlot(
-                          field,
-                          nowTick,
-                        )
-                        const showUndo = canUndoFertilize(field, nowTick)
-                        const nextAt = getNextFertilizeEligibleAt(field, nowTick)
-                        const fertilizeDisabledTitle =
-                          nextAt != null
-                            ? `下次施肥時間: ${new Date(nextAt).toLocaleString(undefined, {
-                                dateStyle: 'medium',
-                                timeStyle: 'short',
-                              })}`
-                            : '目前無可施肥的格子；請在有作物的格子種植並待收成進行中。'
-                        return (
-                          <>
-                            {showUndo ? (
-                              <button
-                                type="button"
-                                draggable={false}
-                                className="field-title-edit-btn"
-                                aria-label="取消施肥"
-                                title="取消施肥，施肥後一分鐘內可以取消，避免誤操作。"
-                                onClick={() => undoFertilizeField(field.id)}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  aria-hidden
+                      {fieldLayoutEditMode ? (
+                        <>
+                          <button
+                            type="button"
+                            draggable={false}
+                            className="field-title-edit-btn"
+                            aria-label="複製此田"
+                            title="複製此田（含各格作物與倒數）"
+                            onClick={() => duplicateField(field.id)}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              aria-hidden
+                            >
+                              <rect
+                                width="14"
+                                height="14"
+                                x="8"
+                                y="8"
+                                rx="2"
+                                ry="2"
+                              />
+                              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
+                            draggable={false}
+                            className="field-title-edit-btn field-title-edit-btn--danger"
+                            aria-label="刪除此田"
+                            title="刪除此田"
+                            onClick={() => setDeleteConfirmFieldId(field.id)}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              aria-hidden
+                            >
+                              <path d="M3 6h18" />
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                              <line x1="10" x2="10" y1="11" y2="17" />
+                              <line x1="14" x2="14" y1="11" y2="17" />
+                            </svg>
+                          </button>
+                        </>
+                      ) : (
+                        (() => {
+                          const canFertilize = fieldHasFertilizableSlot(
+                            field,
+                            nowTick,
+                          )
+                          const canHarvestReplant = fieldHasHarvestReadySlot(
+                            field,
+                            nowTick,
+                          )
+                          const showUndo = canUndoFertilize(field, nowTick)
+                          const nextAt = getNextFertilizeEligibleAt(
+                            field,
+                            nowTick,
+                          )
+                          const fertilizeDisabledTitle =
+                            nextAt != null
+                              ? `下次施肥時間: ${new Date(nextAt).toLocaleString(undefined, {
+                                  dateStyle: 'medium',
+                                  timeStyle: 'short',
+                                })}`
+                              : '目前無可施肥的格子；請在有作物的格子種植並待收成進行中。'
+                          return (
+                            <>
+                              {showUndo ? (
+                                <button
+                                  type="button"
+                                  draggable={false}
+                                  className="field-title-edit-btn"
+                                  aria-label="取消施肥"
+                                  title="取消施肥，施肥後一分鐘內可以取消，避免誤操作。"
+                                  onClick={() => undoFertilizeField(field.id)}
                                 >
-                                  <path d="M3 7v6h6" />
-                                  <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
-                                </svg>
-                              </button>
-                            ) : (
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    aria-hidden
+                                  >
+                                    <path d="M3 7v6h6" />
+                                    <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+                                  </svg>
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  draggable={false}
+                                  className="field-title-edit-btn field-title-edit-btn--primary"
+                                  aria-label="施肥"
+                                  onClick={() => fertilizeField(field.id)}
+                                  disabled={!canFertilize}
+                                  title={
+                                    canFertilize
+                                      ? '施肥：對冷卻已結束且有剩餘收成時間的格子生效（每格 1 小時冷卻）'
+                                      : fertilizeDisabledTitle
+                                  }
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    aria-hidden
+                                  >
+                                    <path d="M12 3c-4 6-8 8-8 12a8 8 0 0 0 16 0c0-4-4-6-8-12z" />
+                                  </svg>
+                                </button>
+                              )}
                               <button
                                 type="button"
                                 draggable={false}
-                                className="field-title-edit-btn field-title-edit-btn--primary"
-                                aria-label="施肥"
-                                onClick={() => fertilizeField(field.id)}
-                                disabled={!canFertilize}
+                                className="field-block-replant-btn"
+                                aria-label="收成重種，適用本塊田內已可收成之格子"
                                 title={
-                                  canFertilize
-                                    ? '施肥：對冷卻已結束且有剩餘收成時間的格子生效（每格 1 小時冷卻）'
-                                    : fertilizeDisabledTitle
+                                  canHarvestReplant
+                                    ? '將本田所有「已可收成」的格子視為採收後立刻重種同一作物，收成計時重新開始。'
+                                    : '目前沒有已可收成的格子。'
+                                }
+                                disabled={!canHarvestReplant || !seedsById}
+                                onClick={() =>
+                                  harvestAndReplantField(field.id)
                                 }
                               >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  aria-hidden
-                                >
-                                  <path d="M12 3c-4 6-8 8-8 12a8 8 0 0 0 16 0c0-4-4-6-8-12z" />
-                                </svg>
+                                收成重種
                               </button>
-                            )}
-                          </>
-                        )
-                      })()}
-                      <button
-                        type="button"
-                        draggable={false}
-                        className="field-title-edit-btn field-title-edit-btn--danger"
-                        aria-label="刪除此田"
-                        title="刪除此田"
-                        onClick={() => setDeleteConfirmFieldId(field.id)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          aria-hidden
-                        >
-                          <path d="M3 6h18" />
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                          <line x1="10" x2="10" y1="11" y2="17" />
-                          <line x1="14" x2="14" y1="11" y2="17" />
-                        </svg>
-                      </button>
+                            </>
+                          )
+                        })()
+                      )}
                     </div>
                   </div>
                   <p className="field-last-fertilize">
@@ -803,95 +1185,108 @@ export function FieldManagementPage() {
                                   : 'field-cell'
                               }
                             >
-                              <div className="field-cell-head">
-                                <span className="field-cell-label">
-                                  <span className="field-cell-label-key">
-                                    {FIELD_SLOTS.find((x) => x.id === sid)!.label}
+                              <div className="field-cell-main">
+                                <div className="field-cell-head">
+                                  <span className="field-cell-label">
+                                    <span className="field-cell-label-key">
+                                      {
+                                        FIELD_SLOTS.find((x) => x.id === sid)!
+                                          .label
+                                      }
+                                    </span>
                                   </span>
-                                </span>
+                                  {slot.seedId != null && !canHarvest ? (
+                                    <button
+                                      type="button"
+                                      draggable={false}
+                                      className="field-cell-clear"
+                                      aria-label="清除此格作物"
+                                      title="清除此格作物"
+                                      onClick={() =>
+                                        clearSlot(field.id, sid, 'trash')
+                                      }
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        aria-hidden
+                                      >
+                                        <path d="M3 6h18" />
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                        <line x1="10" x2="10" y1="11" y2="17" />
+                                        <line x1="14" x2="14" y1="11" y2="17" />
+                                      </svg>
+                                    </button>
+                                  ) : null}
+                                  {slot.seedId == null &&
+                                  slot.clearUndo != null ? (
+                                    <button
+                                      type="button"
+                                      draggable={false}
+                                      className="field-cell-restore"
+                                      aria-label="還原清除前的作物"
+                                      title="還原清除前的作物"
+                                      onClick={() =>
+                                        restoreClearedSlot(field.id, sid)
+                                      }
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        aria-hidden
+                                      >
+                                        <path d="M3 7v6h6" />
+                                        <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+                                      </svg>
+                                    </button>
+                                  ) : null}
+                                </div>
+                                <div className="field-cell-seed">
+                                  {slot.seedId != null ? (
+                                    <Link
+                                      to={`/seed/${slot.seedId}`}
+                                      draggable={false}
+                                      className="field-cell-seed-link"
+                                    >
+                                      {plotSlotCropLabel(slot, seedsById)}
+                                    </Link>
+                                  ) : (
+                                    <span className="field-cell-seed-empty">
+                                      未設定
+                                    </span>
+                                  )}
+                                </div>
+                                {slot.seedId != null &&
+                                crossHintsUi[0] != null ? (
+                                  <FieldCellCrossOutcomesInline
+                                    hint={crossHintsUi[0]}
+                                  />
+                                ) : null}
                                 {slot.seedId != null && !canHarvest ? (
-                                  <button
-                                    type="button"
-                                    draggable={false}
-                                    className="field-cell-clear"
-                                    aria-label="清除此格作物"
-                                    title="清除此格作物"
-                                    onClick={() =>
-                                      clearSlot(field.id, sid, 'trash')
-                                    }
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="2"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      aria-hidden
-                                    >
-                                      <path d="M3 6h18" />
-                                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                      <line x1="10" x2="10" y1="11" y2="17" />
-                                      <line x1="14" x2="14" y1="11" y2="17" />
-                                    </svg>
-                                  </button>
-                                ) : null}
-                                {slot.seedId == null &&
-                                slot.clearUndo != null ? (
-                                  <button
-                                    type="button"
-                                    draggable={false}
-                                    className="field-cell-restore"
-                                    aria-label="還原清除前的作物"
-                                    title="還原清除前的作物"
-                                    onClick={() =>
-                                      restoreClearedSlot(field.id, sid)
-                                    }
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="2"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      aria-hidden
-                                    >
-                                      <path d="M3 7v6h6" />
-                                      <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
-                                    </svg>
-                                  </button>
+                                  <div className="field-cell-time">
+                                    {formatRemaining(
+                                      slot.harvestDeadline,
+                                      nowTick,
+                                    )}
+                                  </div>
                                 ) : null}
                               </div>
-                              <div className="field-cell-seed">
-                                {slot.seedId != null ? (
-                                  <Link
-                                    to={`/seed/${slot.seedId}`}
-                                    draggable={false}
-                                    className="field-cell-seed-link"
-                                  >
-                                    {slot.seedName}
-                                  </Link>
-                                ) : (
-                                  <span className="field-cell-seed-empty">
-                                    未設定
-                                  </span>
-                                )}
-                              </div>
-                              {slot.seedId != null &&
-                              crossHintsUi[0] != null ? (
-                                <FieldCellCrossOutcomesInline
-                                  hint={crossHintsUi[0]}
-                                />
-                              ) : null}
                               {slot.seedId != null && canHarvest ? (
                                 <button
                                   type="button"
                                   draggable={false}
-                                  className="field-cell-harvest-btn"
+                                  className="field-cell-btn field-cell-btn--harvest"
                                   aria-label="收成並清空此格"
                                   title="收成並清空此格"
                                   onClick={() =>
@@ -900,14 +1295,6 @@ export function FieldManagementPage() {
                                 >
                                   收成
                                 </button>
-                              ) : null}
-                              {slot.seedId != null && !canHarvest ? (
-                                <div className="field-cell-time">
-                                  {formatRemaining(
-                                    slot.harvestDeadline,
-                                    nowTick,
-                                  )}
-                                </div>
                               ) : null}
                               {slot.seedId == null ? (
                                 <button
@@ -935,7 +1322,7 @@ export function FieldManagementPage() {
                     </div>
                   </div>
                 </section>
-              ) : (
+              ) : fieldLayoutEditMode ? (
                 <div
                   className={
                     draggingFieldId
@@ -945,6 +1332,8 @@ export function FieldManagementPage() {
                 >
                   {draggingFieldId ? '放開以放置' : '空白格'}
                 </div>
+              ) : (
+                <div className="field-board-slot-phantom" aria-hidden />
               )}
             </div>
           ))}
@@ -1066,6 +1455,172 @@ export function FieldManagementPage() {
         </div>
       ) : null}
 
+      {growTimeDialog && !loadError ? (
+        <div
+          className="field-modal-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="field-grow-time-title"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) closeGrowTimeDialog()
+          }}
+        >
+          <div className="field-modal field-modal--grow-time">
+            <div className="field-modal-head" id="field-grow-time-title">
+              收成時間
+            </div>
+            <div className="field-add-field-body">
+              <p className="field-grow-time-seed-name">
+                {growTimeDialog.seed.name}
+              </p>
+              <p className="field-grow-time-hint">
+                預設已帶入種子資料中的收成時間（
+                {formatDurationEn(growTimeDialog.seed.growTime)}
+                ），可自行修改天／時／分／秒。各欄範圍：天 0–{GROW_TIME_DHMS_MAX.days}
+                、時 0–{GROW_TIME_DHMS_MAX.hours}、分 0–{GROW_TIME_DHMS_MAX.minutes}
+                、秒 0–{GROW_TIME_DHMS_MAX.seconds}。
+              </p>
+              <fieldset className="field-add-field-group">
+                <legend className="field-add-field-legend">
+                  距離可收成
+                </legend>
+                <div className="field-grow-dhms-grid">
+                  <label className="field-grow-dhms-cell">
+                    <span className="field-grow-dhms-label">天</span>
+                    <input
+                      type="number"
+                      className="field-grow-dhms-input"
+                      inputMode="numeric"
+                      min={0}
+                      max={GROW_TIME_DHMS_MAX.days}
+                      step={1}
+                      value={growDays}
+                      autoFocus
+                      onChange={(e) =>
+                        setGrowDays(
+                          clampGrowDhmsUnit(
+                            Number.parseInt(e.target.value, 10) || 0,
+                            GROW_TIME_DHMS_MAX.days,
+                          ),
+                        )
+                      }
+                      onKeyDown={(e) =>
+                        handleGrowDhmsStepKeyDown(
+                          e,
+                          setGrowDays,
+                          GROW_TIME_DHMS_MAX.days,
+                        )
+                      }
+                    />
+                  </label>
+                  <label className="field-grow-dhms-cell">
+                    <span className="field-grow-dhms-label">時</span>
+                    <input
+                      type="number"
+                      className="field-grow-dhms-input"
+                      inputMode="numeric"
+                      min={0}
+                      max={GROW_TIME_DHMS_MAX.hours}
+                      step={1}
+                      value={growHours}
+                      onChange={(e) =>
+                        setGrowHours(
+                          clampGrowDhmsUnit(
+                            Number.parseInt(e.target.value, 10) || 0,
+                            GROW_TIME_DHMS_MAX.hours,
+                          ),
+                        )
+                      }
+                      onKeyDown={(e) =>
+                        handleGrowDhmsStepKeyDown(
+                          e,
+                          setGrowHours,
+                          GROW_TIME_DHMS_MAX.hours,
+                        )
+                      }
+                    />
+                  </label>
+                  <label className="field-grow-dhms-cell">
+                    <span className="field-grow-dhms-label">分</span>
+                    <input
+                      type="number"
+                      className="field-grow-dhms-input"
+                      inputMode="numeric"
+                      min={0}
+                      max={GROW_TIME_DHMS_MAX.minutes}
+                      step={1}
+                      value={growMinutes}
+                      onChange={(e) =>
+                        setGrowMinutes(
+                          clampGrowDhmsUnit(
+                            Number.parseInt(e.target.value, 10) || 0,
+                            GROW_TIME_DHMS_MAX.minutes,
+                          ),
+                        )
+                      }
+                      onKeyDown={(e) =>
+                        handleGrowDhmsStepKeyDown(
+                          e,
+                          setGrowMinutes,
+                          GROW_TIME_DHMS_MAX.minutes,
+                        )
+                      }
+                    />
+                  </label>
+                  <label className="field-grow-dhms-cell">
+                    <span className="field-grow-dhms-label">秒</span>
+                    <input
+                      type="number"
+                      className="field-grow-dhms-input"
+                      inputMode="numeric"
+                      min={0}
+                      max={GROW_TIME_DHMS_MAX.seconds}
+                      step={1}
+                      value={growSeconds}
+                      onChange={(e) =>
+                        setGrowSeconds(
+                          clampGrowDhmsUnit(
+                            Number.parseInt(e.target.value, 10) || 0,
+                            GROW_TIME_DHMS_MAX.seconds,
+                          ),
+                        )
+                      }
+                      onKeyDown={(e) =>
+                        handleGrowDhmsStepKeyDown(
+                          e,
+                          setGrowSeconds,
+                          GROW_TIME_DHMS_MAX.seconds,
+                        )
+                      }
+                    />
+                  </label>
+                </div>
+              </fieldset>
+              <div className="field-add-field-actions">
+                <button
+                  type="button"
+                  className="field-btn"
+                  onClick={closeGrowTimeDialog}
+                >
+                  取消
+                </button>
+                <button
+                  type="button"
+                  className="field-btn field-btn--primary"
+                  onClick={confirmGrowTimeAndPlant}
+                  disabled={
+                    dhmsToMs(growDays, growHours, growMinutes, growSeconds) <=
+                    0
+                  }
+                >
+                  種植
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {pickerTarget && !loadError ? (
         <div
           className="field-modal-backdrop"
@@ -1121,12 +1676,11 @@ export function FieldManagementPage() {
                     onMouseEnter={() => setPickerHighlight(i)}
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => {
-                      void plantSeed(
+                      void beginPlantGrowTimeStep(
                         pickerTarget.fieldId,
                         pickerTarget.slotId,
                         s,
                       )
-                      setPickerTarget(null)
                     }}
                   >
                     <img

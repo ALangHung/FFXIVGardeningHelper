@@ -48,6 +48,29 @@
   align-items: center;
 }
 
+.field-btn--toggle-on {
+  box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.45);
+}
+
+.field-layout-edit-banner {
+  margin: -0.5rem 0 1.25rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #bae6fd;
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  border-radius: 8px;
+}
+
+.field-block--layout-drag {
+  cursor: grab;
+}
+
+.field-block--layout-drag:active {
+  cursor: grabbing;
+}
+
 .field-btn {
   margin: 0;
   padding: 0.45rem 0.95rem;
@@ -99,6 +122,15 @@
 .field-board-slot--drag-over {
   box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.65);
   background: rgba(6, 182, 212, 0.08);
+}
+
+/* 一般模式：棋盤上無田的格位不顯示「空白格」外框，僅保留版面佔位 */
+.field-board-slot-phantom {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--field-card-min-height);
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .field-board-empty {
@@ -235,11 +267,48 @@
 
 .field-block-toolbar {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 0.35rem;
   flex-shrink: 0;
+}
+
+.field-block-replant-btn {
+  margin: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.75rem;
+  min-height: 1.75rem;
+  padding: 0 0.35rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: center;
+  border-radius: 6px;
+  border: 1px solid rgba(34, 197, 94, 0.45);
+  background: linear-gradient(
+    180deg,
+    rgba(22, 101, 52, 0.45) 0%,
+    rgba(20, 83, 45, 0.62) 100%
+  );
+  color: #bbf7d0;
+  cursor: pointer;
+}
+
+.field-block-replant-btn:hover:not(:disabled) {
+  border-color: rgba(251, 191, 36, 0.55);
+  color: #fef9c3;
+}
+
+.field-block-replant-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .field-btn--danger {
@@ -293,6 +362,16 @@
   gap: 0.2rem;
   min-width: 0;
   overflow: visible;
+}
+
+/* 上方區塊撐滿，讓「收成／設定作物」永遠貼齊格底（與僅有 main 的格一致） */
+.field-cell-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
 }
 
 .field-cell--has-cross-hint {
@@ -534,41 +613,10 @@
   white-space: nowrap;
 }
 
-.field-cell-harvest-btn {
-  margin-top: auto;
-  flex-shrink: 0;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.45rem 0.35rem;
-  font: inherit;
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  border-radius: 6px;
-  border: 1px solid rgba(34, 197, 94, 0.45);
-  background: linear-gradient(
-    180deg,
-    rgba(22, 101, 52, 0.55) 0%,
-    rgba(20, 83, 45, 0.75) 100%
-  );
-  color: #bbf7d0;
-  cursor: pointer;
-  line-height: 1.15;
-}
-
-.field-cell-harvest-btn:hover {
-  border-color: rgba(251, 191, 36, 0.55);
-  color: #fef9c3;
-  background: linear-gradient(
-    180deg,
-    rgba(22, 101, 52, 0.7) 0%,
-    rgba(20, 83, 45, 0.88) 100%
-  );
-}
-
 .field-cell-btn {
-  margin-top: auto;
   flex-shrink: 0;
+  align-self: stretch;
+  box-sizing: border-box;
   padding: 0.25rem 0.35rem;
   font: inherit;
   font-size: 0.72rem;
@@ -582,6 +630,18 @@
 
 .field-cell-btn:hover {
   border-color: rgba(251, 191, 36, 0.4);
+}
+
+.field-cell-btn--harvest {
+  border-color: rgba(34, 197, 94, 0.45);
+  background: rgba(22, 101, 52, 0.35);
+  color: #bbf7d0;
+}
+
+.field-cell-btn--harvest:hover {
+  border-color: rgba(251, 191, 36, 0.45);
+  color: #fef9c3;
+  background: rgba(22, 101, 52, 0.5);
 }
 
 .field-modal-backdrop {
@@ -740,6 +800,71 @@
   margin-top: 0.25rem;
   padding-top: 0.65rem;
   border-top: 1px solid var(--border);
+}
+
+.field-modal--grow-time {
+  width: min(100%, 22rem);
+}
+
+.field-grow-time-seed-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.field-grow-time-hint {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.field-grow-dhms-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem 0.45rem;
+}
+
+.field-grow-dhms-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.field-grow-dhms-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #bae6fd;
+}
+
+.field-grow-dhms-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 0.4rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.8);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.field-grow-dhms-input::-webkit-outer-spin-button,
+.field-grow-dhms-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.field-grow-dhms-input:focus {
+  outline: none;
+  border-color: rgba(251, 191, 36, 0.45);
 }
 
 .field-modal-search {

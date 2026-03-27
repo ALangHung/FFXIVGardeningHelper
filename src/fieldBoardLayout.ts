@@ -27,22 +27,56 @@ export function nextFreeGridIndex(fields: GardenField[]): number {
 
 export type BoardCell = { index: number; field: GardenField | null }
 
+export type BuildBoardCellsOptions = {
+  /**
+   * 將總格數向上取整為欄數的倍數，使每一列都排滿（編輯模式棋盤尾端才不會缺空白格）。
+   * 例：僅 1 塊田在 index 0 時，基礎長度 4 只會排到第二列第 1 格；補滿後為 6，第二列有三個空白格。
+   */
+  padToFullRows?: boolean
+}
+
 export function computeBoardCellCount(fields: GardenField[]): number {
   if (fields.length === 0) return FIELD_BOARD_TAIL_EMPTY
   const maxIdx = Math.max(...fields.map((f) => f.gridIndex))
   return maxIdx + 1 + FIELD_BOARD_TAIL_EMPTY
 }
 
-export function buildBoardCells(fields: GardenField[]): BoardCell[] {
+export function buildBoardCells(
+  fields: GardenField[],
+  options?: BuildBoardCellsOptions,
+): BoardCell[] {
   const fixed = dedupeGridIndices(fields)
   const byIndex = new Map<number, GardenField>()
   for (const f of fixed) byIndex.set(f.gridIndex, f)
-  const len = computeBoardCellCount(fixed)
+  let len = computeBoardCellCount(fixed)
+  if (options?.padToFullRows) {
+    len = Math.ceil(len / FIELD_BOARD_COLS) * FIELD_BOARD_COLS
+  }
   const out: BoardCell[] = []
   for (let i = 0; i < len; i++) {
     out.push({ index: i, field: byIndex.get(i) ?? null })
   }
   return out
+}
+
+/** 自尾端移除連續的空白格（供一般模式不顯示尾端放置區時使用）。 */
+export function trimTrailingEmptyBoardCells(cells: BoardCell[]): BoardCell[] {
+  let end = cells.length
+  while (end > 0 && cells[end - 1]!.field == null) end -= 1
+  return cells.slice(0, end)
+}
+
+/** 複製一塊田：新 id、新棋盤格位，其餘狀態（含各格作物與倒數）與來源相同。 */
+export function duplicateGardenField(
+  source: GardenField,
+  allFields: GardenField[],
+): GardenField {
+  const newId = crypto.randomUUID()
+  const gridIndex = nextFreeGridIndex(allFields)
+  const cloned = structuredClone(source) as GardenField
+  cloned.id = newId
+  cloned.gridIndex = gridIndex
+  return cloned
 }
 
 export function applyFieldGridDrop(

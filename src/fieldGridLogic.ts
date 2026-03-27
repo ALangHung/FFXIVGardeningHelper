@@ -125,6 +125,11 @@ export function fieldHasFertilizableSlot(field: GardenField, now: number): boole
   return field.slots.some((s) => slotCanReceiveFertilize(s, now))
 }
 
+/** 該田是否至少一格已可收成 */
+export function fieldHasHarvestReadySlot(field: GardenField, now: number): boolean {
+  return field.slots.some((s) => slotReadyToHarvest(s, now))
+}
+
 /**
  * 最早可再施肥的時間（毫秒時間戳）；若已有可施肥格則為 null。
  * 僅依「每格施肥冷卻」推算；若無作物／無倒數等則為 null。
