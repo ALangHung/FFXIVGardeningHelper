@@ -10,7 +10,7 @@
     "i18n": {
       "path": "public/data/i18n/seeds-i18n.json",
       "publicPath": "/data/i18n/seeds-i18n.json",
-      "generatedAt": "2026-03-26T07:44:55.019Z"
+      "generatedAt": "2026-03-27T08:48:46.695Z"
     },
     "harvestLocationLocale": "zh-Hant",
     "harvestLocationSource": "ffxiv-teamcraft places.json + tw/tw-places.json (+ manual phrases)",
@@ -76457,7 +76457,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "73": {
       "seedId": 73,
@@ -77100,7 +77100,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "80": {
       "seedId": 80,
@@ -77227,7 +77227,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "82": {
       "seedId": 82,
@@ -77246,7 +77246,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "83": {
       "seedId": 83,
@@ -77265,7 +77265,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "84": {
       "seedId": 84,
@@ -77542,7 +77542,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "87": {
       "seedId": 87,
@@ -77561,7 +77561,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "88": {
       "seedId": 88,
@@ -77580,7 +77580,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "89": {
       "seedId": 89,
@@ -77599,7 +77599,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "90": {
       "seedId": 90,
@@ -77618,7 +77618,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "91": {
       "seedId": 91,
@@ -77637,7 +77637,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "92": {
       "seedId": 92,
@@ -77656,7 +77656,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "93": {
       "seedId": 93,
@@ -77787,7 +77787,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "95": {
       "seedId": 95,
@@ -77806,7 +77806,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "96": {
       "seedId": 96,
@@ -77825,7 +77825,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "97": {
       "seedId": 97,
@@ -77844,7 +77844,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "98": {
       "seedId": 98,
@@ -77863,7 +77863,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "99": {
       "seedId": 99,
@@ -77882,7 +77882,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "100": {
       "seedId": 100,
@@ -77901,7 +77901,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "101": {
       "seedId": 101,
@@ -77920,7 +77920,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "102": {
       "seedId": 102,
@@ -77939,7 +77939,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "103": {
       "seedId": 103,
@@ -77958,7 +77958,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "104": {
       "seedId": 104,
@@ -77977,7 +77977,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "105": {
       "seedId": 105,
@@ -77996,7 +77996,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "106": {
       "seedId": 106,
@@ -78015,7 +78015,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     },
     "107": {
       "seedId": 107,
@@ -78034,7 +78034,7 @@
       "confirmedCrosses": [],
       "notObtainableViaIntercrossing": true,
       "usedInOtherCrosses": [],
-      "isPlanterOnly": false
+      "isPlanterOnly": true
     }
   }
 }

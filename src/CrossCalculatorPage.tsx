@@ -379,7 +379,10 @@ export function CrossCalculatorPage() {
   const [otherParentSortDir, setOtherParentSortDir] = useState<1 | -1>(
     () => persistedCross?.otherParentSortDir ?? -1,
   )
-  const [copyToastKey, setCopyToastKey] = useState<number | null>(null)
+  const [copyToast, setCopyToast] = useState<{
+    key: number
+    message: string
+  } | null>(null)
 
   const prevParentPairKeyRef = useRef<string | null>(null)
   const prevSpPairKeyRef = useRef<string | null>(null)
@@ -597,8 +600,9 @@ export function CrossCalculatorPage() {
   return (
     <div className="cross-calc-page">
       <CopyCropNameToast
-        toastKey={copyToastKey}
-        onDismiss={() => setCopyToastKey(null)}
+        toastKey={copyToast?.key ?? null}
+        message={copyToast?.message}
+        onDismiss={() => setCopyToast(null)}
       />
       <header className="cross-calc-header">
         <h1 className="cross-calc-title">雜交計算器</h1>
@@ -745,8 +749,11 @@ export function CrossCalculatorPage() {
                                   </Link>
                                   <CopyCropNameButton
                                     name={row.outcomeName}
-                                    onCopied={() =>
-                                      setCopyToastKey(Date.now())
+                                    onCopied={(text) =>
+                                      setCopyToast({
+                                        key: Date.now(),
+                                        message: `已複製：${text}`,
+                                      })
                                     }
                                   />
                                 </div>
@@ -884,8 +891,11 @@ export function CrossCalculatorPage() {
                                   </Link>
                                   <CopyCropNameButton
                                     name={row.otherParentName}
-                                    onCopied={() =>
-                                      setCopyToastKey(Date.now())
+                                    onCopied={(text) =>
+                                      setCopyToast({
+                                        key: Date.now(),
+                                        message: `已複製：${text}`,
+                                      })
                                     }
                                   />
                                 </div>

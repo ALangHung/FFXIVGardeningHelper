@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-03-26T07:44:55.019Z",
+    "generatedAt": "2026-03-27T08:48:46.695Z",
     "teamcraftSource": "C:\\ReferenceProject\\ffxiv-teamcraft\\libs\\data\\src\\lib\\json",
     "gardeningEnSource": "C:\\ReferenceProject\\FFXIVGardeningHelper\\public\\data\\seeds-gardening-en.json",
     "defaultLocale": "zh-Hant",
@@ -1089,12 +1089,7 @@
         "ja": "オールドローズの種",
         "zh-Hans": "古典玫瑰种子"
       },
-      "crop": {
-        "zh-Hant": "古典玫瑰種子",
-        "en": "Oldrose Seeds",
-        "ja": "オールドローズの種",
-        "zh-Hans": "古典玫瑰种子"
-      },
+      "crop": null,
       "nameSearchText": "古典玫瑰種子 Oldrose Seeds オールドローズの種 古典玫瑰种子"
     },
     "73": {
@@ -1194,12 +1189,7 @@
         "ja": "パンジーの種",
         "zh-Hans": "三色堇种子"
       },
-      "crop": {
-        "zh-Hant": "三色堇種子",
-        "en": "Viola Seeds",
-        "ja": "パンジーの種",
-        "zh-Hans": "三色堇种子"
-      },
+      "crop": null,
       "nameSearchText": "三色堇種子 Viola Seeds パンジーの種 三色堇种子"
     },
     "80": {
@@ -1224,12 +1214,7 @@
         "ja": "シュラウドチェリーの苗",
         "zh-Hans": "樱花树幼苗"
       },
-      "crop": {
-        "zh-Hant": "櫻花樹幼苗",
-        "en": "Shroud Cherry Sapling",
-        "ja": "シュラウドチェリーの苗",
-        "zh-Hans": "樱花树幼苗"
-      },
+      "crop": null,
       "nameSearchText": "櫻花樹幼苗 Shroud Cherry Sapling シュラウドチェリーの苗 樱花树幼苗"
     },
     "82": {
@@ -1239,12 +1224,7 @@
         "ja": "マーガレットの種",
         "zh-Hans": "雏菊种子"
       },
-      "crop": {
-        "zh-Hant": "雛菊種子",
-        "en": "Daisy Seeds",
-        "ja": "マーガレットの種",
-        "zh-Hans": "雏菊种子"
-      },
+      "crop": null,
       "nameSearchText": "雛菊種子 Daisy Seeds マーガレットの種 雏菊种子"
     },
     "83": {
@@ -1254,12 +1234,7 @@
         "ja": "ブライトリリーの種",
         "zh-Hans": "光明百合种子"
       },
-      "crop": {
-        "zh-Hant": "光明百合種子",
-        "en": "Brightlily Seeds",
-        "ja": "ブライトリリーの種",
-        "zh-Hans": "光明百合种子"
-      },
+      "crop": null,
       "nameSearchText": "光明百合種子 Brightlily Seeds ブライトリリーの種 光明百合种子"
     },
     "84": {
@@ -1299,12 +1274,7 @@
         "ja": "チューリップの球根",
         "zh-Hans": "郁金香球根"
       },
-      "crop": {
-        "zh-Hant": "鬱金香球根",
-        "en": "Tulip Bulbs",
-        "ja": "チューリップの球根",
-        "zh-Hans": "郁金香球根"
-      },
+      "crop": null,
       "nameSearchText": "鬱金香球根 Tulip Bulbs チューリップの球根 郁金香球根"
     },
     "87": {
@@ -1314,12 +1284,7 @@
         "ja": "ダリアの球根",
         "zh-Hans": "大丽花的球根"
       },
-      "crop": {
-        "zh-Hant": "大麗花的球根",
-        "en": "Dahlia Bulbs",
-        "ja": "ダリアの球根",
-        "zh-Hans": "大丽花的球根"
-      },
+      "crop": null,
       "nameSearchText": "大麗花的球根 Dahlia Bulbs ダリアの球根 大丽花的球根"
     },
     "88": {
@@ -1329,12 +1294,7 @@
         "ja": "カラーの球根",
         "zh-Hans": "马蹄莲球茎"
       },
-      "crop": {
-        "zh-Hant": "馬蹄蓮球莖",
-        "en": "Arum Bulbs",
-        "ja": "カラーの球根",
-        "zh-Hans": "马蹄莲球茎"
-      },
+      "crop": null,
       "nameSearchText": "馬蹄蓮球莖 Arum Bulbs カラーの球根 马蹄莲球茎"
     },
     "89": {
@@ -1344,12 +1304,7 @@
         "ja": "リリーオブバレーの苗",
         "zh-Hans": "铃兰的幼苗"
       },
-      "crop": {
-        "zh-Hant": "鈴蘭的幼苗",
-        "en": "Lily of the Valley Pips",
-        "ja": "リリーオブバレーの苗",
-        "zh-Hans": "铃兰的幼苗"
-      },
+      "crop": null,
       "nameSearchText": "鈴蘭的幼苗 Lily of the Valley Pips リリーオブバレーの苗 铃兰的幼苗"
     },
     "90": {
@@ -1359,12 +1314,7 @@
         "ja": "ハイドレインジャの種",
         "zh-Hans": "绣球花的种子"
       },
-      "crop": {
-        "zh-Hant": "繡球花的種子",
-        "en": "Hydrangea Seeds",
-        "ja": "ハイドレインジャの種",
-        "zh-Hans": "绣球花的种子"
-      },
+      "crop": null,
       "nameSearchText": "繡球花的種子 Hydrangea Seeds ハイドレインジャの種 绣球花的种子"
     },
     "91": {
@@ -1374,12 +1324,7 @@
         "ja": "カンパニュラの種",
         "zh-Hans": "风铃草种子"
       },
-      "crop": {
-        "zh-Hant": "風鈴草種子",
-        "en": "Campanula Seeds",
-        "ja": "カンパニュラの種",
-        "zh-Hans": "风铃草种子"
-      },
+      "crop": null,
       "nameSearchText": "風鈴草種子 Campanula Seeds カンパニュラの種 风铃草种子"
     },
     "92": {
@@ -1389,12 +1334,7 @@
         "ja": "ヒヤシンスの種",
         "zh-Hans": "风信子种子"
       },
-      "crop": {
-        "zh-Hant": "風信子種子",
-        "en": "Hyacinth Bulbs",
-        "ja": "ヒヤシンスの種",
-        "zh-Hans": "风信子种子"
-      },
+      "crop": null,
       "nameSearchText": "風信子種子 Hyacinth Bulbs ヒヤシンスの種 风信子种子"
     },
     "93": {
@@ -1419,12 +1359,7 @@
         "ja": "コスモスの種",
         "zh-Hans": "秋英种子"
       },
-      "crop": {
-        "zh-Hant": "大波斯菊種子",
-        "en": "Cosmos Seeds",
-        "ja": "コスモスの種",
-        "zh-Hans": "秋英种子"
-      },
+      "crop": null,
       "nameSearchText": "大波斯菊種子 Cosmos Seeds コスモスの種 秋英种子"
     },
     "95": {
@@ -1434,13 +1369,8 @@
         "ja": "カーネーションの種",
         "zh-Hans": "康乃馨种子"
       },
-      "crop": {
-        "zh-Hant": "康乃馨",
-        "en": "Carnation",
-        "ja": "カーネーション",
-        "zh-Hans": "康乃馨"
-      },
-      "nameSearchText": "康乃馨種子 康乃馨 Carnation Seeds Carnation カーネーションの種 カーネーション 康乃馨种子"
+      "crop": null,
+      "nameSearchText": "康乃馨種子 Carnation Seeds カーネーションの種 康乃馨种子"
     },
     "96": {
       "seedItem": {
@@ -1449,12 +1379,7 @@
         "ja": "胡蝶蘭の苗",
         "zh-Hans": "蝴蝶兰幼苗"
       },
-      "crop": {
-        "zh-Hant": "蝴蝶蘭幼苗",
-        "en": "Moth Orchid Seeds",
-        "ja": "胡蝶蘭の苗",
-        "zh-Hans": "蝴蝶兰幼苗"
-      },
+      "crop": null,
       "nameSearchText": "蝴蝶蘭幼苗 Moth Orchid Seeds 胡蝶蘭の苗 蝴蝶兰幼苗"
     },
     "97": {
@@ -1464,12 +1389,7 @@
         "ja": "トリテレイアの種",
         "zh-Hans": "紫灯花的种子"
       },
-      "crop": {
-        "zh-Hant": "紫燈花的種子",
-        "en": "Triteleia Seeds",
-        "ja": "トリテレイアの種",
-        "zh-Hans": "紫灯花的种子"
-      },
+      "crop": null,
       "nameSearchText": "紫燈花的種子 Triteleia Seeds トリテレイアの種 紫灯花的种子"
     },
     "98": {
@@ -1479,12 +1399,7 @@
         "ja": "ビエルゴヴァイオレットの種",
         "zh-Hans": "比尔格紫罗兰的种子"
       },
-      "crop": {
-        "zh-Hant": "比爾格紫羅蘭的種子",
-        "en": "Byregotia Seeds",
-        "ja": "ビエルゴヴァイオレットの種",
-        "zh-Hans": "比尔格紫罗兰的种子"
-      },
+      "crop": null,
       "nameSearchText": "比爾格紫羅蘭的種子 Byregotia Seeds ビエルゴヴァイオレットの種 比尔格紫罗兰的种子"
     },
     "99": {
@@ -1494,12 +1409,7 @@
         "ja": "スイートピーの種",
         "zh-Hans": "香豌豆花的种子"
       },
-      "crop": {
-        "zh-Hant": "香豌豆花的種子",
-        "en": "Sweet Pea Seeds",
-        "ja": "スイートピーの種",
-        "zh-Hans": "香豌豆花的种子"
-      },
+      "crop": null,
       "nameSearchText": "香豌豆花的種子 Sweet Pea Seeds スイートピーの種 香豌豆花的种子"
     },
     "100": {
@@ -1509,13 +1419,8 @@
         "ja": "モーニンググローリーの種",
         "zh-Hans": "牵牛花的种子"
       },
-      "crop": {
-        "zh-Hant": "紅色牽牛花頭花",
-        "en": "Red Morning Glory Corsage",
-        "ja": "モーニンググローリーオーナメント:レッド",
-        "zh-Hans": "红色牵牛花头花"
-      },
-      "nameSearchText": "牽牛花的種子 紅色牽牛花頭花 Morning Glory Seeds Red Morning Glory Corsage モーニンググローリーの種 モーニンググローリーオーナメント:レッド 牵牛花的种子 红色牵牛花头花"
+      "crop": null,
+      "nameSearchText": "牽牛花的種子 Morning Glory Seeds モーニンググローリーの種 牵牛花的种子"
     },
     "101": {
       "seedItem": {
@@ -1524,13 +1429,8 @@
         "ja": "クリサンセマムの種",
         "zh-Hans": "菊花种子"
       },
-      "crop": {
-        "zh-Hant": "紅色菊花",
-        "en": "Red Chrysanthemums",
-        "ja": "クリサンセマム:レッド",
-        "zh-Hans": "红色菊花"
-      },
-      "nameSearchText": "菊花種子 紅色菊花 Chrysanthemum Seeds Red Chrysanthemums クリサンセマムの種 クリサンセマム:レッド 菊花种子 红色菊花"
+      "crop": null,
+      "nameSearchText": "菊花種子 Chrysanthemum Seeds クリサンセマムの種 菊花种子"
     },
     "102": {
       "seedItem": {
@@ -1539,13 +1439,8 @@
         "ja": "ルピナスの種",
         "zh-Hans": "鲁冰花种子"
       },
-      "crop": {
-        "zh-Hant": "紅色魯冰花",
-        "en": "Red Lupins",
-        "ja": "ルピナス:レッド",
-        "zh-Hans": "红色鲁冰花"
-      },
-      "nameSearchText": "魯冰花種子 紅色魯冰花 Lupin Seeds Red Lupins ルピナスの種 ルピナス:レッド 鲁冰花种子 红色鲁冰花"
+      "crop": null,
+      "nameSearchText": "魯冰花種子 Lupin Seeds ルピナスの種 鲁冰花种子"
     },
     "103": {
       "seedItem": {
@@ -1554,13 +1449,8 @@
         "ja": "サンフラワーシード",
         "zh-Hans": "葵花籽"
       },
-      "crop": {
-        "zh-Hant": "紅色向日葵",
-        "en": "Red Sunflowers",
-        "ja": "サンフラワー:レッド",
-        "zh-Hans": "红色向日葵"
-      },
-      "nameSearchText": "葵花籽 紅色向日葵 Sunflower Seeds Red Sunflowers サンフラワーシード サンフラワー:レッド 红色向日葵"
+      "crop": null,
+      "nameSearchText": "葵花籽 Sunflower Seeds サンフラワーシード"
     },
     "104": {
       "seedItem": {
@@ -1569,13 +1459,8 @@
         "ja": "カトレアの種",
         "zh-Hans": "卡特兰种子"
       },
-      "crop": {
-        "zh-Hant": "",
-        "en": "Red Cattleyas",
-        "ja": "カトレア:レッド",
-        "zh-Hans": "红色卡特兰"
-      },
-      "nameSearchText": "Cattleya Seeds Red Cattleyas カトレアの種 カトレア:レッド 卡特兰种子 红色卡特兰"
+      "crop": null,
+      "nameSearchText": "Cattleya Seeds カトレアの種 卡特兰种子"
     },
     "105": {
       "seedItem": {
@@ -1584,13 +1469,8 @@
         "ja": "ペーパーフラワーの種",
         "zh-Hans": "叶子花的种子"
       },
-      "crop": {
-        "zh-Hant": "",
-        "en": "Red Paperflowers",
-        "ja": "ペーパーフラワー:レッド",
-        "zh-Hans": "红色叶子花"
-      },
-      "nameSearchText": "Paperflower Seeds Red Paperflowers ペーパーフラワーの種 ペーパーフラワー:レッド 叶子花的种子 红色叶子花"
+      "crop": null,
+      "nameSearchText": "Paperflower Seeds ペーパーフラワーの種 叶子花的种子"
     },
     "106": {
       "seedItem": {
@@ -1599,13 +1479,8 @@
         "ja": "チャンパーの種",
         "zh-Hans": "大季花的种子"
       },
-      "crop": {
-        "zh-Hant": "",
-        "en": "Red Champa",
-        "ja": "チャンパー:レッド",
-        "zh-Hans": "红色大季花"
-      },
-      "nameSearchText": "Champa Seeds Red Champa チャンパーの種 チャンパー:レッド 大季花的种子 红色大季花"
+      "crop": null,
+      "nameSearchText": "Champa Seeds チャンパーの種 大季花的种子"
     },
     "107": {
       "seedItem": {
@@ -1614,13 +1489,8 @@
         "ja": "ティーフラワーの種",
         "zh-Hans": ""
       },
-      "crop": {
-        "zh-Hant": "",
-        "en": "Red Tea Flowers",
-        "ja": "ティーフラワー:レッド",
-        "zh-Hans": ""
-      },
-      "nameSearchText": "Tea Flower Seeds Red Tea Flowers ティーフラワーの種 ティーフラワー:レッド"
+      "crop": null,
+      "nameSearchText": "Tea Flower Seeds ティーフラワーの種"
     }
   }
 }

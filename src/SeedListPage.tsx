@@ -79,7 +79,10 @@ export function SeedListPage() {
   const [sortDir, setSortDir] = useState<1 | -1>(
     () => persistedList?.sortDir ?? 1,
   )
-  const [copyToastKey, setCopyToastKey] = useState<number | null>(null)
+  const [copyToast, setCopyToast] = useState<{
+    key: number
+    message: string
+  } | null>(null)
 
   useEffect(() => {
     saveSeedListUiState({
@@ -142,8 +145,9 @@ export function SeedListPage() {
   return (
     <div className="seed-list-page">
       <CopyCropNameToast
-        toastKey={copyToastKey}
-        onDismiss={() => setCopyToastKey(null)}
+        toastKey={copyToast?.key ?? null}
+        message={copyToast?.message}
+        onDismiss={() => setCopyToast(null)}
       />
       <header className="seed-list-header">
         <h1 className="seed-page-title">種子列表</h1>
@@ -281,7 +285,12 @@ export function SeedListPage() {
                         </Link>
                         <CopyCropNameButton
                           name={s.name}
-                          onCopied={() => setCopyToastKey(Date.now())}
+                          onCopied={(text) =>
+                            setCopyToast({
+                              key: Date.now(),
+                              message: `已複製：${text}`,
+                            })
+                          }
                         />
                       </span>
                     </td>

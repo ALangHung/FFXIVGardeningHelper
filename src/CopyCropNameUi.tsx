@@ -10,7 +10,8 @@ export function CopyCropNameButton({
   title,
 }: {
   name: string
-  onCopied: () => void
+  /** 成功時傳入已寫入剪貼簿的文字（與 name 相同） */
+  onCopied: (copiedText: string) => void
   className?: string
   /** 未傳則為複製作物名稱 */
   ariaLabel?: string
@@ -27,7 +28,7 @@ export function CopyCropNameButton({
       onClick={() => {
         void (async () => {
           const ok = await copyTextToClipboard(name)
-          if (ok) onCopied()
+          if (ok) onCopied(name)
         })()
       }}
     >
@@ -51,7 +52,7 @@ export function CopyCropNameButton({
 
 export function CopyCropNameToast({
   toastKey,
-  message = '已複製作物名稱',
+  message = '已複製',
   onDismiss,
 }: {
   toastKey: number | null

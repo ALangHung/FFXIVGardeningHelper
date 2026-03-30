@@ -7,6 +7,13 @@ import type {
   CrossParent,
   SeedRecord,
 } from './seedDetailTypes'
+import {
+  type FlowerpotColorKey,
+  cropNameZhFromEntry,
+  fallbackFlowerpotCropLine,
+  loadFlowerpotCropsByColor,
+  type FlowerpotSeedColorEntry,
+} from './flowerpotCropsByColor'
 import { formatDurationEn, seedTypeLabelZh } from './seedFormat'
 import './SeedDetailPage.css'
 import { publicUrl } from './publicUrl'
@@ -31,6 +38,215 @@ function formatHarvestLocation(value: string | null | undefined): string {
   if (!t) return '—'
   if (t === '素材商人（僅限盆栽）') return '素材商人'
   return t
+}
+
+/** 盆栽花種子（僅限盆栽）：顯示盆栽染色對照 */
+function isFlowerpotExclusiveSeed(seed: SeedRecord): boolean {
+  return seed.seedType === 'Flowerpot'
+}
+
+/** 肥料列 → flowerpot-crops-by-color.json 的 cropsByColor 鍵 */
+const FLOWERPOT_DYE_ROW_DEFS: {
+  fertilizer: string
+  colors: FlowerpotColorKey[]
+  randomColorNote?: boolean
+}[] = [
+  { fertilizer: '無肥料', colors: ['red'] },
+  { fertilizer: '緋紅色油粕', colors: ['red'] },
+  { fertilizer: '青藍色油粕', colors: ['blue'] },
+  { fertilizer: '金黃色油粕', colors: ['yellow'] },
+  { fertilizer: '青藍色油粕+金黃色油粕', colors: ['green'] },
+  { fertilizer: '緋紅色油粕+金黃色油粕', colors: ['orange'] },
+  { fertilizer: '緋紅色油粕+青藍色油粕', colors: ['purple'] },
+  {
+    fertilizer: '緋紅色油粕+青藍色油粕+金黃色油粕',
+    colors: ['white', 'black', 'mixed'],
+    randomColorNote: true,
+  },
+]
+
+const FLOWERPOT_DYE_RANDOM_NOTE = '（隨機顏色）'
+
+/** 單段或「青藍色油粕+金黃色油粕」等多段（每段右側複製） */
+function FlowerpotFertilizerCell({
+  fertilizer,
+  onCopied,
+}: {
+  fertilizer: string
+  onCopied: (copiedText: string) => void
+}) {
+  const parts = fertilizer
+    .split('+')
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0)
+  if (parts.length <= 1) {
+    const text = parts[0] ?? fertilizer
+    if (text === '無肥料') {
+      return (
+        <span className="seed-detail-dye-fertilizer-line">{text}</span>
+      )
+    }
+    return (
+      <div className="seed-detail-dye-copy-row">
+        <span className="seed-detail-dye-fertilizer-line">{text}</span>
+        <CopyCropNameButton
+          name={text}
+          className="seed-detail-dye-copy-btn"
+          ariaLabel={`複製肥料：${text}`}
+          title="複製"
+          onCopied={(text) => onCopied(text)}
+        />
+      </div>
+    )
+  }
+  return (
+    <div className="seed-detail-dye-fertilizer-segments">
+      {parts.map((part, i) => (
+        <span
+          key={`${part}-${i}`}
+          className="seed-detail-dye-fertilizer-segment-item"
+        >
+          {i > 0 ? (
+            <span className="seed-detail-dye-fertilizer-plus" aria-hidden>
+              +
+            </span>
+          ) : null}
+          <span className="seed-detail-dye-copy-row">
+            <span className="seed-detail-dye-fertilizer-line">{part}</span>
+            <CopyCropNameButton
+              name={part}
+              className="seed-detail-dye-copy-btn"
+              ariaLabel={`複製肥料：${part}`}
+              title="複製"
+              onCopied={(text) => onCopied(text)}
+            />
+          </span>
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function FlowerpotDyeSection({
+  seedId,
+  fallbackCropName,
+  onCopied,
+}: {
+  seedId: number
+  fallbackCropName: string
+  onCopied: (copiedText: string) => void
+}) {
+  const [entry, setEntry] = useState<FlowerpotSeedColorEntry | null | undefined>(
+    undefined,
+  )
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const payload = await loadFlowerpotCropsByColor()
+        if (cancelled) return
+        setEntry(payload.bySeedId[String(seedId)] ?? null)
+      } catch {
+        if (!cancelled) setEntry(null)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [seedId])
+
+  function linesForColors(colors: FlowerpotColorKey[]): string[] {
+    return colors.map((color) => {
+      const fromJson = cropNameZhFromEntry(entry ?? undefined, color)
+      return fromJson ?? fallbackFlowerpotCropLine(color, fallbackCropName)
+    })
+  }
+
+  if (entry === undefined) {
+    return (
+      <section className="seed-detail-card">
+        <h2 className="seed-detail-h2">染色詳情</h2>
+        <p className="seed-detail-muted">載入染色資料中…</p>
+      </section>
+    )
+  }
+
+  return (
+    <section className="seed-detail-card">
+      <h2 className="seed-detail-h2">染色詳情</h2>
+      <div className="seed-detail-table-wrap seed-detail-dye-table-wrap">
+        <table className="seed-detail-table seed-detail-dye-table">
+          <thead>
+            <tr>
+              <th scope="col">肥料</th>
+              <th scope="col">染色結果</th>
+            </tr>
+          </thead>
+          <tbody>
+            {FLOWERPOT_DYE_ROW_DEFS.map((row) => {
+              const lines = linesForColors(row.colors)
+              const isTriple = row.colors.length === 3
+              return (
+                <tr key={row.fertilizer}>
+                  <td>
+                    {row.randomColorNote ? (
+                      <div className="seed-detail-dye-fertilizer-stack">
+                        <FlowerpotFertilizerCell
+                          fertilizer={row.fertilizer}
+                          onCopied={onCopied}
+                        />
+                        <span className="seed-detail-muted seed-detail-dye-fertilizer-sub">
+                          {FLOWERPOT_DYE_RANDOM_NOTE}
+                        </span>
+                      </div>
+                    ) : (
+                      <FlowerpotFertilizerCell
+                        fertilizer={row.fertilizer}
+                        onCopied={onCopied}
+                      />
+                    )}
+                  </td>
+                  <td>
+                    {isTriple ? (
+                      <div className="seed-detail-dye-outcome-lines">
+                        {lines.map((line, i) => (
+                          <div
+                            key={i}
+                            className="seed-detail-dye-copy-row seed-detail-dye-outcome-copy-row"
+                          >
+                            <span>{line}</span>
+                            <CopyCropNameButton
+                              name={line}
+                              className="seed-detail-dye-copy-btn"
+                              ariaLabel={`複製染色結果：${line}`}
+                              title="複製"
+                              onCopied={onCopied}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="seed-detail-dye-copy-row seed-detail-dye-outcome-copy-row">
+                        <span>{lines[0] ?? '—'}</span>
+                        <CopyCropNameButton
+                          name={lines[0] ?? '—'}
+                          className="seed-detail-dye-copy-btn"
+                          ariaLabel={`複製染色結果：${lines[0] ?? '—'}`}
+                          title="複製"
+                          onCopied={onCopied}
+                        />
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )
 }
 
 /** 與畫面上作物／種子收成相同：多為「未使用 / 1–3 級黑森林土壤」以「 / 」分隔的數值。 */
@@ -527,10 +743,10 @@ export function SeedDetailPage() {
             <h1 className="seed-detail-title">{s.name}</h1>
             <CopyCropNameButton
               name={s.name}
-              onCopied={() =>
+              onCopied={(text) =>
                 setCopyToast({
                   key: Date.now(),
-                  message: '已複製作物名稱',
+                  message: `已複製作物名稱：${text}`,
                 })
               }
             />
@@ -544,10 +760,10 @@ export function SeedDetailPage() {
                 name={s.seedItemName}
                 ariaLabel={`複製種子名稱：${s.seedItemName}`}
                 title="複製種子名稱"
-                onCopied={() =>
+                onCopied={(text) =>
                   setCopyToast({
                     key: Date.now(),
-                    message: '已複製種子名稱',
+                    message: `已複製種子名稱：${text}`,
                   })
                 }
               />
@@ -611,6 +827,19 @@ export function SeedDetailPage() {
           </div>
         </dl>
       </section>
+
+      {isFlowerpotExclusiveSeed(s) ? (
+        <FlowerpotDyeSection
+          seedId={s.seedId}
+          fallbackCropName={s.name}
+          onCopied={(text) =>
+            setCopyToast({
+              key: Date.now(),
+              message: `已複製：${text}`,
+            })
+          }
+        />
+      ) : null}
 
       <section className="seed-detail-card">
         <h2 className="seed-detail-h2">雜交獲取表</h2>

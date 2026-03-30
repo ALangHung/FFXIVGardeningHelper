@@ -58,15 +58,18 @@ npm run preview
 | `npm run translate:harvest-locations` | 採集地點等翻譯處理（就地更新 `public/data/seeds-by-id.json`） |
 | `npm run download:seed-icons` | 下載種子圖示資源 |
 | `npm run report:seed-crop-same` | 檢查 seedItem 與 crop 是否同名，協助資料檢核 |
+| `npm run build:flowerpot-crops-by-color` | 依 `seeds-i18n.json` 的盆栽專用種子與腳本內混色英文對照，自 Teamcraft 產生 `public/data/flowerpot-crops-by-color.json`（八色染料＋混色收成之四語系名與 `teamcraftItemId`） |
 
-**建議更新流程**（擷取新資料後）：`scrape:seeds` → `build:seeds-i18n`（可選 `fetch:seeds-gardening-en` 若無英文對照）→ `translate:harvest-locations`（若需要）→ `build:seeds-summary`。
+**盆栽染色表**：`public/data/flowerpot-crops-by-color.json` 供種子詳情等畫面使用，記錄盆栽專用種子在八色染料與混色收成下的作物對應。種子與作物名稱以 `seeds-i18n.json` 為準；混色收成在 Teamcraft 上的英文基準須調整時，請編輯 `scripts/build-flowerpot-crops-by-color.mjs` 內的常數（如 `TEAMCRAFT_MIXED_EN`）。Teamcraft JSON 的取得方式與 `build:seeds-i18n` 相同（環境變數 `TEAMCRAFT_JSON`、本機 `ffxiv-teamcraft` 路徑，或遠端 `staging`）。`meta` 中「未染色」語意等同紅色染料，與檔案內 `note`／`fields.red` 一致。
+
+**建議更新流程**（擷取新資料後）：`scrape:seeds` → `build:seeds-i18n`（可選 `fetch:seeds-gardening-en` 若無英文對照）→ `translate:harvest-locations`（若需要）→ `build:seeds-summary`。需維護盆栽染色表時，請在 `build:seeds-i18n` 完成（或至少已更新 `seeds-i18n.json`）後執行 `npm run build:flowerpot-crops-by-color`。
 
 更新資料後請確認 `public/data/` 內容與建置流程一致，必要時重新執行 `npm run build`。
 
 ## 專案結構（精簡）
 
 ```
-├── public/data/          # 種子 JSON、i18n、摘要（腳本與前端共用路徑）
+├── public/data/          # 種子 JSON、i18n、摘要、flowerpot-crops-by-color 等（腳本與前端共用路徑）
 ├── scripts/              # Node 維護腳本（.mjs）
 ├── src/
 │   ├── App.tsx           # 路由與頂部導覽

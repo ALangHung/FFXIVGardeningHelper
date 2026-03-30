@@ -53,6 +53,7 @@
   left: 50%;
   top: max(15vh, calc(0.75rem + env(safe-area-inset-top, 0px)));
   z-index: 80;
+  max-width: min(92vw, 26rem);
   padding: 0.65rem 1.15rem;
   border-radius: 10px;
   border: 1px solid var(--border);
@@ -62,5 +63,7 @@
   font-weight: 600;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
   pointer-events: none;
+  text-align: center;
+  word-wrap: break-word;
   animation: copy-crop-name-toast-fade 2s ease forwards;
 }

@@ -1,0 +1,2433 @@
+{
+  "meta": {
+    "generatedAt": "2026-03-30T00:56:05.357Z",
+    "teamcraftSource": "C:\\ReferenceProject\\ffxiv-teamcraft\\libs\\data\\src\\lib\\json",
+    "seedItemSource": "public/data/i18n/seeds-i18n.json",
+    "defaultLocale": "zh-Hant",
+    "locales": [
+      "zh-Hant",
+      "en",
+      "ja",
+      "zh-Hans"
+    ],
+    "colorKeys": [
+      "red",
+      "blue",
+      "yellow",
+      "green",
+      "orange",
+      "purple",
+      "white",
+      "black",
+      "mixed"
+    ],
+    "note": "未染色時收成與紅色相同，請使用 red。",
+    "fields": {
+      "red": "紅色染料收成（未染色時亦為此）",
+      "blue": "藍色染料收成",
+      "yellow": "黃色染料收成",
+      "green": "綠色染料收成",
+      "orange": "橙色染料收成",
+      "purple": "紫色染料收成",
+      "white": "白色染料收成",
+      "black": "黑色染料收成",
+      "mixed": "混色（三色油粕齊：多數為 Rainbow…；櫻花為 Pink Cherry Blossoms；菊花為 Rainbow Chrysanthemum Bouquet）",
+      "names": "各語系顯示名（tw / items.en / items.ja / zh）",
+      "teamcraftItemId": "Teamcraft 道具 id"
+    }
+  },
+  "bySeedId": {
+    "72": {
+      "seedId": 72,
+      "seedItem": {
+        "zh-Hant": "古典玫瑰種子",
+        "en": "Oldrose Seeds",
+        "ja": "オールドローズの種",
+        "zh-Hans": "古典玫瑰种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "14071",
+          "names": {
+            "zh-Hant": "紅色古典玫瑰",
+            "en": "Red Oldroses",
+            "ja": "オールドローズ:レッド",
+            "zh-Hans": "红色古典玫瑰"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "14072",
+          "names": {
+            "zh-Hant": "藍色古典玫瑰",
+            "en": "Blue Oldroses",
+            "ja": "オールドローズ:ブルー",
+            "zh-Hans": "蓝色古典玫瑰"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "14073",
+          "names": {
+            "zh-Hant": "黃色古典玫瑰",
+            "en": "Yellow Oldroses",
+            "ja": "オールドローズ:イエロー",
+            "zh-Hans": "黄色古典玫瑰"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "14074",
+          "names": {
+            "zh-Hant": "綠色古典玫瑰",
+            "en": "Green Oldroses",
+            "ja": "オールドローズ:グリーン",
+            "zh-Hans": "绿色古典玫瑰"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "14075",
+          "names": {
+            "zh-Hant": "橙色古典玫瑰",
+            "en": "Orange Oldroses",
+            "ja": "オールドローズ:オレンジ",
+            "zh-Hans": "橙色古典玫瑰"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "14076",
+          "names": {
+            "zh-Hant": "紫色古典玫瑰",
+            "en": "Purple Oldroses",
+            "ja": "オールドローズ:パープル",
+            "zh-Hans": "紫色古典玫瑰"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "14077",
+          "names": {
+            "zh-Hant": "白色古典玫瑰",
+            "en": "White Oldroses",
+            "ja": "オールドローズ:ホワイト",
+            "zh-Hans": "白色古典玫瑰"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "14078",
+          "names": {
+            "zh-Hant": "黑色古典玫瑰",
+            "en": "Black Oldroses",
+            "ja": "オールドローズ:ブラック",
+            "zh-Hans": "黑色古典玫瑰"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "14079",
+          "names": {
+            "zh-Hant": "混色古典玫瑰",
+            "en": "Rainbow Oldroses",
+            "ja": "オールドローズ:ブレンド",
+            "zh-Hans": "混色古典玫瑰"
+          }
+        }
+      }
+    },
+    "79": {
+      "seedId": 79,
+      "seedItem": {
+        "zh-Hant": "三色堇種子",
+        "en": "Viola Seeds",
+        "ja": "パンジーの種",
+        "zh-Hans": "三色堇种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "16017",
+          "names": {
+            "zh-Hant": "紅色三色堇",
+            "en": "Red Violas",
+            "ja": "パンジー:レッド",
+            "zh-Hans": "红色三色堇"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "16018",
+          "names": {
+            "zh-Hant": "藍色三色堇",
+            "en": "Blue Violas",
+            "ja": "パンジー:ブルー",
+            "zh-Hans": "蓝色三色堇"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "16019",
+          "names": {
+            "zh-Hant": "黃色三色堇",
+            "en": "Yellow Violas",
+            "ja": "パンジー:イエロー",
+            "zh-Hans": "黄色三色堇"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "16020",
+          "names": {
+            "zh-Hant": "綠色三色堇",
+            "en": "Green Violas",
+            "ja": "パンジー:グリーン",
+            "zh-Hans": "绿色三色堇"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "16021",
+          "names": {
+            "zh-Hant": "橙色三色堇",
+            "en": "Orange Violas",
+            "ja": "パンジー:オレンジ",
+            "zh-Hans": "橙色三色堇"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "16022",
+          "names": {
+            "zh-Hant": "紫色三色堇",
+            "en": "Purple Violas",
+            "ja": "パンジー:パープル",
+            "zh-Hans": "紫色三色堇"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "16023",
+          "names": {
+            "zh-Hant": "白色三色堇",
+            "en": "White Violas",
+            "ja": "パンジー:ホワイト",
+            "zh-Hans": "白色三色堇"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "16024",
+          "names": {
+            "zh-Hant": "黑色三色堇",
+            "en": "Black Violas",
+            "ja": "パンジー:ブラック",
+            "zh-Hans": "黑色三色堇"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "16025",
+          "names": {
+            "zh-Hant": "混色三色堇",
+            "en": "Rainbow Violas",
+            "ja": "パンジー:ブレンド",
+            "zh-Hans": "混色三色堇"
+          }
+        }
+      }
+    },
+    "81": {
+      "seedId": 81,
+      "seedItem": {
+        "zh-Hant": "櫻花樹幼苗",
+        "en": "Shroud Cherry Sapling",
+        "ja": "シュラウドチェリーの苗",
+        "zh-Hans": "樱花树幼苗"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "17048",
+          "names": {
+            "zh-Hant": "紅色櫻花",
+            "en": "Red Cherry Blossoms",
+            "ja": "チェリーブロッサム:レッド",
+            "zh-Hans": "红色樱花"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "17049",
+          "names": {
+            "zh-Hant": "藍色櫻花",
+            "en": "Blue Cherry Blossoms",
+            "ja": "チェリーブロッサム:ブルー",
+            "zh-Hans": "蓝色樱花"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "17050",
+          "names": {
+            "zh-Hant": "黃色櫻花",
+            "en": "Yellow Cherry Blossoms",
+            "ja": "チェリーブロッサム:イエロー",
+            "zh-Hans": "黄色樱花"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "17051",
+          "names": {
+            "zh-Hant": "綠色櫻花",
+            "en": "Green Cherry Blossoms",
+            "ja": "チェリーブロッサム:グリーン",
+            "zh-Hans": "绿色樱花"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "17052",
+          "names": {
+            "zh-Hant": "橙色櫻花",
+            "en": "Orange Cherry Blossoms",
+            "ja": "チェリーブロッサム:オレンジ",
+            "zh-Hans": "橙色樱花"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "17053",
+          "names": {
+            "zh-Hant": "紫色櫻花",
+            "en": "Purple Cherry Blossoms",
+            "ja": "チェリーブロッサム:パープル",
+            "zh-Hans": "紫色樱花"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "17054",
+          "names": {
+            "zh-Hant": "白色櫻花",
+            "en": "White Cherry Blossoms",
+            "ja": "チェリーブロッサム:ホワイト",
+            "zh-Hans": "白色樱花"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "17055",
+          "names": {
+            "zh-Hant": "黑色櫻花",
+            "en": "Black Cherry Blossoms",
+            "ja": "チェリーブロッサム:ブラック",
+            "zh-Hans": "黑色樱花"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "17056",
+          "names": {
+            "zh-Hant": "粉色櫻花",
+            "en": "Pink Cherry Blossoms",
+            "ja": "チェリーブロッサム:ピンク",
+            "zh-Hans": "粉色樱花"
+          }
+        }
+      }
+    },
+    "82": {
+      "seedId": 82,
+      "seedItem": {
+        "zh-Hant": "雛菊種子",
+        "en": "Daisy Seeds",
+        "ja": "マーガレットの種",
+        "zh-Hans": "雏菊种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "17997",
+          "names": {
+            "zh-Hant": "紅色雛菊",
+            "en": "Red Daisies",
+            "ja": "マーガレット:レッド",
+            "zh-Hans": "红色雏菊"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "17998",
+          "names": {
+            "zh-Hant": "藍色雛菊",
+            "en": "Blue Daisies",
+            "ja": "マーガレット:ブルー",
+            "zh-Hans": "蓝色雏菊"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "17999",
+          "names": {
+            "zh-Hant": "黃色雛菊",
+            "en": "Yellow Daisies",
+            "ja": "マーガレット:イエロー",
+            "zh-Hans": "黄色雏菊"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "18000",
+          "names": {
+            "zh-Hant": "綠色雛菊",
+            "en": "Green Daisies",
+            "ja": "マーガレット:グリーン",
+            "zh-Hans": "绿色雏菊"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "18001",
+          "names": {
+            "zh-Hant": "橙色雛菊",
+            "en": "Orange Daisies",
+            "ja": "マーガレット:オレンジ",
+            "zh-Hans": "橙色雏菊"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "18002",
+          "names": {
+            "zh-Hant": "紫色雛菊",
+            "en": "Purple Daisies",
+            "ja": "マーガレット:パープル",
+            "zh-Hans": "紫色雏菊"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "18003",
+          "names": {
+            "zh-Hant": "白色雛菊",
+            "en": "White Daisies",
+            "ja": "マーガレット:ホワイト",
+            "zh-Hans": "白色雏菊"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "18004",
+          "names": {
+            "zh-Hant": "黑色雛菊",
+            "en": "Black Daisies",
+            "ja": "マーガレット:ブラック",
+            "zh-Hans": "黑色雏菊"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "18005",
+          "names": {
+            "zh-Hant": "混色雛菊",
+            "en": "Rainbow Daisies",
+            "ja": "マーガレット:ブレンド",
+            "zh-Hans": "混色雏菊"
+          }
+        }
+      }
+    },
+    "83": {
+      "seedId": 83,
+      "seedItem": {
+        "zh-Hant": "光明百合種子",
+        "en": "Brightlily Seeds",
+        "ja": "ブライトリリーの種",
+        "zh-Hans": "光明百合种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "20796",
+          "names": {
+            "zh-Hant": "紅色光明百合",
+            "en": "Red Brightlilies",
+            "ja": "ブライトリリー:レッド",
+            "zh-Hans": "红色光明百合"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "20797",
+          "names": {
+            "zh-Hant": "藍色光明百合",
+            "en": "Blue Brightlilies",
+            "ja": "ブライトリリー:ブルー",
+            "zh-Hans": "蓝色光明百合"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "20798",
+          "names": {
+            "zh-Hant": "黃色光明百合",
+            "en": "Yellow Brightlilies",
+            "ja": "ブライトリリー:イエロー",
+            "zh-Hans": "黄色光明百合"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "20799",
+          "names": {
+            "zh-Hant": "綠色光明百合",
+            "en": "Green Brightlilies",
+            "ja": "ブライトリリー:グリーン",
+            "zh-Hans": "绿色光明百合"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "20800",
+          "names": {
+            "zh-Hant": "橙色光明百合",
+            "en": "Orange Brightlilies",
+            "ja": "ブライトリリー:オレンジ",
+            "zh-Hans": "橙色光明百合"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "20801",
+          "names": {
+            "zh-Hant": "紫色光明百合",
+            "en": "Purple Brightlilies",
+            "ja": "ブライトリリー:パープル",
+            "zh-Hans": "紫色光明百合"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "20802",
+          "names": {
+            "zh-Hant": "白色光明百合",
+            "en": "White Brightlilies",
+            "ja": "ブライトリリー:ホワイト",
+            "zh-Hans": "白色光明百合"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "20803",
+          "names": {
+            "zh-Hant": "黑色光明百合",
+            "en": "Black Brightlilies",
+            "ja": "ブライトリリー:ブラック",
+            "zh-Hans": "黑色光明百合"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "20804",
+          "names": {
+            "zh-Hant": "混色光明百合",
+            "en": "Rainbow Brightlilies",
+            "ja": "ブライトリリー:ブレンド",
+            "zh-Hans": "混色光明百合"
+          }
+        }
+      }
+    },
+    "86": {
+      "seedId": 86,
+      "seedItem": {
+        "zh-Hant": "鬱金香球根",
+        "en": "Tulip Bulbs",
+        "ja": "チューリップの球根",
+        "zh-Hans": "郁金香球根"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "21876",
+          "names": {
+            "zh-Hant": "紅色鬱金香",
+            "en": "Red Tulips",
+            "ja": "チューリップ:レッド",
+            "zh-Hans": "红色郁金香"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "21877",
+          "names": {
+            "zh-Hant": "藍色鬱金香",
+            "en": "Blue Tulips",
+            "ja": "チューリップ:ブルー",
+            "zh-Hans": "蓝色郁金香"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "21878",
+          "names": {
+            "zh-Hant": "黃色鬱金香",
+            "en": "Yellow Tulips",
+            "ja": "チューリップ:イエロー",
+            "zh-Hans": "黄色郁金香"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "21879",
+          "names": {
+            "zh-Hant": "綠色鬱金香",
+            "en": "Green Tulips",
+            "ja": "チューリップ:グリーン",
+            "zh-Hans": "绿色郁金香"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "21880",
+          "names": {
+            "zh-Hant": "橙色鬱金香",
+            "en": "Orange Tulips",
+            "ja": "チューリップ:オレンジ",
+            "zh-Hans": "橙色郁金香"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "21881",
+          "names": {
+            "zh-Hant": "紫色鬱金香",
+            "en": "Purple Tulips",
+            "ja": "チューリップ:パープル",
+            "zh-Hans": "紫色郁金香"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "21882",
+          "names": {
+            "zh-Hant": "白色鬱金香",
+            "en": "White Tulips",
+            "ja": "チューリップ:ホワイト",
+            "zh-Hans": "白色郁金香"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "21883",
+          "names": {
+            "zh-Hant": "黑色鬱金香",
+            "en": "Black Tulips",
+            "ja": "チューリップ:ブラック",
+            "zh-Hans": "黑色郁金香"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "21884",
+          "names": {
+            "zh-Hant": "混色鬱金香",
+            "en": "Rainbow Tulips",
+            "ja": "チューリップ:ブレンド",
+            "zh-Hans": "混色郁金香"
+          }
+        }
+      }
+    },
+    "87": {
+      "seedId": 87,
+      "seedItem": {
+        "zh-Hant": "大麗花的球根",
+        "en": "Dahlia Bulbs",
+        "ja": "ダリアの球根",
+        "zh-Hans": "大丽花的球根"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "22590",
+          "names": {
+            "zh-Hant": "紅色大麗花",
+            "en": "Red Dahlias",
+            "ja": "ダリア:レッド",
+            "zh-Hans": "红色大丽花"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "22591",
+          "names": {
+            "zh-Hant": "藍色大麗花",
+            "en": "Blue Dahlias",
+            "ja": "ダリア:ブルー",
+            "zh-Hans": "蓝色大丽花"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "22592",
+          "names": {
+            "zh-Hant": "黃色大麗花",
+            "en": "Yellow Dahlias",
+            "ja": "ダリア:イエロー",
+            "zh-Hans": "黄色大丽花"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "22593",
+          "names": {
+            "zh-Hant": "綠色大麗花",
+            "en": "Green Dahlias",
+            "ja": "ダリア:グリーン",
+            "zh-Hans": "绿色大丽花"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "22594",
+          "names": {
+            "zh-Hant": "橙色大麗花",
+            "en": "Orange Dahlias",
+            "ja": "ダリア:オレンジ",
+            "zh-Hans": "橙色大丽花"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "22595",
+          "names": {
+            "zh-Hant": "紫色大麗花",
+            "en": "Purple Dahlias",
+            "ja": "ダリア:パープル",
+            "zh-Hans": "紫色大丽花"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "22596",
+          "names": {
+            "zh-Hant": "白色大麗花",
+            "en": "White Dahlias",
+            "ja": "ダリア:ホワイト",
+            "zh-Hans": "白色大丽花"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "22597",
+          "names": {
+            "zh-Hant": "黑色大麗花",
+            "en": "Black Dahlias",
+            "ja": "ダリア:ブラック",
+            "zh-Hans": "黑色大丽花"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "22598",
+          "names": {
+            "zh-Hant": "混色大麗花",
+            "en": "Rainbow Dahlias",
+            "ja": "ダリア:ブレンド",
+            "zh-Hans": "混色大丽花"
+          }
+        }
+      }
+    },
+    "88": {
+      "seedId": 88,
+      "seedItem": {
+        "zh-Hant": "馬蹄蓮球莖",
+        "en": "Arum Bulbs",
+        "ja": "カラーの球根",
+        "zh-Hans": "马蹄莲球茎"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "24166",
+          "names": {
+            "zh-Hant": "紅色馬蹄蓮",
+            "en": "Red Arums",
+            "ja": "カラー:レッド",
+            "zh-Hans": "红色马蹄莲"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "24167",
+          "names": {
+            "zh-Hant": "藍色馬蹄蓮",
+            "en": "Blue Arums",
+            "ja": "カラー:ブルー",
+            "zh-Hans": "蓝色马蹄莲"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "24168",
+          "names": {
+            "zh-Hant": "黃色馬蹄蓮",
+            "en": "Yellow Arums",
+            "ja": "カラー:イエロー",
+            "zh-Hans": "黄色马蹄莲"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "24169",
+          "names": {
+            "zh-Hant": "綠色馬蹄蓮",
+            "en": "Green Arums",
+            "ja": "カラー:グリーン",
+            "zh-Hans": "绿色马蹄莲"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "24170",
+          "names": {
+            "zh-Hant": "橙色馬蹄蓮",
+            "en": "Orange Arums",
+            "ja": "カラー:オレンジ",
+            "zh-Hans": "橙色马蹄莲"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "24171",
+          "names": {
+            "zh-Hant": "紫色馬蹄蓮",
+            "en": "Purple Arums",
+            "ja": "カラー:パープル",
+            "zh-Hans": "紫色马蹄莲"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "24172",
+          "names": {
+            "zh-Hant": "白色馬蹄蓮",
+            "en": "White Arums",
+            "ja": "カラー:ホワイト",
+            "zh-Hans": "白色马蹄莲"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "24173",
+          "names": {
+            "zh-Hant": "黑色馬蹄蓮",
+            "en": "Black Arums",
+            "ja": "カラー:ブラック",
+            "zh-Hans": "黑色马蹄莲"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "24174",
+          "names": {
+            "zh-Hant": "混色馬蹄蓮",
+            "en": "Rainbow Arums",
+            "ja": "カラー:ブレンド",
+            "zh-Hans": "混色马蹄莲"
+          }
+        }
+      }
+    },
+    "89": {
+      "seedId": 89,
+      "seedItem": {
+        "zh-Hant": "鈴蘭的幼苗",
+        "en": "Lily of the Valley Pips",
+        "ja": "リリーオブバレーの苗",
+        "zh-Hans": "铃兰的幼苗"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "24542",
+          "names": {
+            "zh-Hant": "紅色鈴蘭",
+            "en": "Red Lilies of the Valley",
+            "ja": "リリーオブバレー:レッド",
+            "zh-Hans": "红色铃兰"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "24543",
+          "names": {
+            "zh-Hant": "藍色鈴蘭",
+            "en": "Blue Lilies of the Valley",
+            "ja": "リリーオブバレー:ブルー",
+            "zh-Hans": "蓝色铃兰"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "24544",
+          "names": {
+            "zh-Hant": "黃色鈴蘭",
+            "en": "Yellow Lilies of the Valley",
+            "ja": "リリーオブバレー:イエロー",
+            "zh-Hans": "黄色铃兰"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "24545",
+          "names": {
+            "zh-Hant": "綠色鈴蘭",
+            "en": "Green Lilies of the Valley",
+            "ja": "リリーオブバレー:グリーン",
+            "zh-Hans": "绿色铃兰"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "24546",
+          "names": {
+            "zh-Hant": "橙色鈴蘭",
+            "en": "Orange Lilies of the Valley",
+            "ja": "リリーオブバレー:オレンジ",
+            "zh-Hans": "橙色铃兰"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "24547",
+          "names": {
+            "zh-Hant": "紫色鈴蘭",
+            "en": "Purple Lilies of the Valley",
+            "ja": "リリーオブバレー:パープル",
+            "zh-Hans": "紫色铃兰"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "24548",
+          "names": {
+            "zh-Hant": "白色鈴蘭",
+            "en": "White Lilies of the Valley",
+            "ja": "リリーオブバレー:ホワイト",
+            "zh-Hans": "白色铃兰"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "24549",
+          "names": {
+            "zh-Hant": "黑色鈴蘭",
+            "en": "Black Lilies of the Valley",
+            "ja": "リリーオブバレー:ブラック",
+            "zh-Hans": "黑色铃兰"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "24550",
+          "names": {
+            "zh-Hant": "混色鈴蘭",
+            "en": "Rainbow Lilies of the Valley",
+            "ja": "リリーオブバレー:ブレンド",
+            "zh-Hans": "混色铃兰"
+          }
+        }
+      }
+    },
+    "90": {
+      "seedId": 90,
+      "seedItem": {
+        "zh-Hant": "繡球花的種子",
+        "en": "Hydrangea Seeds",
+        "ja": "ハイドレインジャの種",
+        "zh-Hans": "绣球花的种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "27321",
+          "names": {
+            "zh-Hant": "紅色繡球花",
+            "en": "Red Hydrangeas",
+            "ja": "ハイドレインジャ:レッド",
+            "zh-Hans": "红色绣球花"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "27322",
+          "names": {
+            "zh-Hant": "藍色繡球花",
+            "en": "Blue Hydrangeas",
+            "ja": "ハイドレインジャ:ブルー",
+            "zh-Hans": "蓝色绣球花"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "27323",
+          "names": {
+            "zh-Hant": "黃色繡球花",
+            "en": "Yellow Hydrangeas",
+            "ja": "ハイドレインジャ:イエロー",
+            "zh-Hans": "黄色绣球花"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "27324",
+          "names": {
+            "zh-Hant": "綠色繡球花",
+            "en": "Green Hydrangeas",
+            "ja": "ハイドレインジャ:グリーン",
+            "zh-Hans": "绿色绣球花"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "27325",
+          "names": {
+            "zh-Hant": "橙色繡球花",
+            "en": "Orange Hydrangeas",
+            "ja": "ハイドレインジャ:オレンジ",
+            "zh-Hans": "橙色绣球花"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "27326",
+          "names": {
+            "zh-Hant": "紫色繡球花",
+            "en": "Purple Hydrangeas",
+            "ja": "ハイドレインジャ:パープル",
+            "zh-Hans": "紫色绣球花"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "27327",
+          "names": {
+            "zh-Hant": "白色繡球花",
+            "en": "White Hydrangeas",
+            "ja": "ハイドレインジャ:ホワイト",
+            "zh-Hans": "白色绣球花"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "27328",
+          "names": {
+            "zh-Hant": "黑色繡球花",
+            "en": "Black Hydrangeas",
+            "ja": "ハイドレインジャ:ブラック",
+            "zh-Hans": "黑色绣球花"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "27329",
+          "names": {
+            "zh-Hant": "混色繡球花",
+            "en": "Rainbow Hydrangeas",
+            "ja": "ハイドレインジャ:ブレンド",
+            "zh-Hans": "混色绣球花"
+          }
+        }
+      }
+    },
+    "91": {
+      "seedId": 91,
+      "seedItem": {
+        "zh-Hant": "風鈴草種子",
+        "en": "Campanula Seeds",
+        "ja": "カンパニュラの種",
+        "zh-Hans": "风铃草种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "28176",
+          "names": {
+            "zh-Hant": "紅色風鈴草",
+            "en": "Red Campanulas",
+            "ja": "カンパニュラ:レッド",
+            "zh-Hans": "红色风铃草"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "28177",
+          "names": {
+            "zh-Hant": "藍色風鈴草",
+            "en": "Blue Campanulas",
+            "ja": "カンパニュラ:ブルー",
+            "zh-Hans": "蓝色风铃草"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "28178",
+          "names": {
+            "zh-Hant": "黃色風鈴草",
+            "en": "Yellow Campanulas",
+            "ja": "カンパニュラ:イエロー",
+            "zh-Hans": "黄色风铃草"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "28179",
+          "names": {
+            "zh-Hant": "綠色風鈴草",
+            "en": "Green Campanulas",
+            "ja": "カンパニュラ:グリーン",
+            "zh-Hans": "绿色风铃草"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "28180",
+          "names": {
+            "zh-Hant": "橙色風鈴草",
+            "en": "Orange Campanulas",
+            "ja": "カンパニュラ:オレンジ",
+            "zh-Hans": "橙色风铃草"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "28181",
+          "names": {
+            "zh-Hant": "紫色風鈴草",
+            "en": "Purple Campanulas",
+            "ja": "カンパニュラ:パープル",
+            "zh-Hans": "紫色风铃草"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "28182",
+          "names": {
+            "zh-Hant": "白色風鈴草",
+            "en": "White Campanulas",
+            "ja": "カンパニュラ:ホワイト",
+            "zh-Hans": "白色风铃草"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "28183",
+          "names": {
+            "zh-Hant": "黑色風鈴草",
+            "en": "Black Campanulas",
+            "ja": "カンパニュラ:ブラック",
+            "zh-Hans": "黑色风铃草"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "28184",
+          "names": {
+            "zh-Hant": "混色風鈴草",
+            "en": "Rainbow Campanulas",
+            "ja": "カンパニュラ:ブレンド",
+            "zh-Hans": "混色风铃草"
+          }
+        }
+      }
+    },
+    "92": {
+      "seedId": 92,
+      "seedItem": {
+        "zh-Hant": "風信子種子",
+        "en": "Hyacinth Bulbs",
+        "ja": "ヒヤシンスの種",
+        "zh-Hans": "风信子种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "28948",
+          "names": {
+            "zh-Hant": "紅色風信子",
+            "en": "Red Hyacinths",
+            "ja": "ヒヤシンス:レッド",
+            "zh-Hans": "红色风信子"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "28949",
+          "names": {
+            "zh-Hant": "藍色風信子",
+            "en": "Blue Hyacinths",
+            "ja": "ヒヤシンス:ブルー",
+            "zh-Hans": "蓝色风信子"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "28950",
+          "names": {
+            "zh-Hant": "黃色風信子",
+            "en": "Yellow Hyacinths",
+            "ja": "ヒヤシンス:イエロー",
+            "zh-Hans": "黄色风信子"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "28951",
+          "names": {
+            "zh-Hant": "綠色風信子",
+            "en": "Green Hyacinths",
+            "ja": "ヒヤシンス:グリーン",
+            "zh-Hans": "绿色风信子"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "28952",
+          "names": {
+            "zh-Hant": "橙色風信子",
+            "en": "Orange Hyacinths",
+            "ja": "ヒヤシンス:オレンジ",
+            "zh-Hans": "橙色风信子"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "28953",
+          "names": {
+            "zh-Hant": "紫色風信子",
+            "en": "Purple Hyacinths",
+            "ja": "ヒヤシンス:パープル",
+            "zh-Hans": "紫色风信子"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "28954",
+          "names": {
+            "zh-Hant": "白色風信子",
+            "en": "White Hyacinths",
+            "ja": "ヒヤシンス:ホワイト",
+            "zh-Hans": "白色风信子"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "28955",
+          "names": {
+            "zh-Hant": "黑色風信子",
+            "en": "Black Hyacinths",
+            "ja": "ヒヤシンス:ブラック",
+            "zh-Hans": "黑色风信子"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "28956",
+          "names": {
+            "zh-Hant": "混色風信子",
+            "en": "Rainbow Hyacinths",
+            "ja": "ヒヤシンス:ブレンド",
+            "zh-Hans": "混色风信子"
+          }
+        }
+      }
+    },
+    "94": {
+      "seedId": 94,
+      "seedItem": {
+        "zh-Hant": "大波斯菊種子",
+        "en": "Cosmos Seeds",
+        "ja": "コスモスの種",
+        "zh-Hans": "秋英种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "30366",
+          "names": {
+            "zh-Hant": "紅色大波斯菊",
+            "en": "Red Cosmos",
+            "ja": "コスモス:レッド",
+            "zh-Hans": "红色秋英"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "30367",
+          "names": {
+            "zh-Hant": "藍色大波斯菊",
+            "en": "Blue Cosmos",
+            "ja": "コスモス:ブルー",
+            "zh-Hans": "蓝色秋英"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "30368",
+          "names": {
+            "zh-Hant": "黃色大波斯菊",
+            "en": "Yellow Cosmos",
+            "ja": "コスモス:イエロー",
+            "zh-Hans": "黄色秋英"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "30369",
+          "names": {
+            "zh-Hant": "綠色大波斯菊",
+            "en": "Green Cosmos",
+            "ja": "コスモス:グリーン",
+            "zh-Hans": "绿色秋英"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "30370",
+          "names": {
+            "zh-Hant": "橙色大波斯菊",
+            "en": "Orange Cosmos",
+            "ja": "コスモス:オレンジ",
+            "zh-Hans": "橙色秋英"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "30371",
+          "names": {
+            "zh-Hant": "紫色大波斯菊",
+            "en": "Purple Cosmos",
+            "ja": "コスモス:パープル",
+            "zh-Hans": "紫色秋英"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "30372",
+          "names": {
+            "zh-Hant": "白色大波斯菊",
+            "en": "White Cosmos",
+            "ja": "コスモス:ホワイト",
+            "zh-Hans": "白色秋英"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "30373",
+          "names": {
+            "zh-Hant": "黑色大波斯菊",
+            "en": "Black Cosmos",
+            "ja": "コスモス:ブラック",
+            "zh-Hans": "黑色秋英"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "30374",
+          "names": {
+            "zh-Hant": "混色大波斯菊",
+            "en": "Rainbow Cosmos",
+            "ja": "コスモス:ブレンド",
+            "zh-Hans": "混色秋英"
+          }
+        }
+      }
+    },
+    "95": {
+      "seedId": 95,
+      "seedItem": {
+        "zh-Hant": "康乃馨種子",
+        "en": "Carnation Seeds",
+        "ja": "カーネーションの種",
+        "zh-Hans": "康乃馨种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "32813",
+          "names": {
+            "zh-Hant": "紅色康乃馨",
+            "en": "Red Carnations",
+            "ja": "カーネーション:レッド",
+            "zh-Hans": "红色康乃馨"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "32814",
+          "names": {
+            "zh-Hant": "藍色康乃馨",
+            "en": "Blue Carnations",
+            "ja": "カーネーション:ブルー",
+            "zh-Hans": "蓝色康乃馨"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "32815",
+          "names": {
+            "zh-Hant": "黃色康乃馨",
+            "en": "Yellow Carnations",
+            "ja": "カーネーション:イエロー",
+            "zh-Hans": "黄色康乃馨"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "32816",
+          "names": {
+            "zh-Hant": "綠色康乃馨",
+            "en": "Green Carnations",
+            "ja": "カーネーション:グリーン",
+            "zh-Hans": "绿色康乃馨"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "32817",
+          "names": {
+            "zh-Hant": "橙色康乃馨",
+            "en": "Orange Carnations",
+            "ja": "カーネーション:オレンジ",
+            "zh-Hans": "橙色康乃馨"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "32818",
+          "names": {
+            "zh-Hant": "紫色康乃馨",
+            "en": "Purple Carnations",
+            "ja": "カーネーション:パープル",
+            "zh-Hans": "紫色康乃馨"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "32819",
+          "names": {
+            "zh-Hant": "白色康乃馨",
+            "en": "White Carnations",
+            "ja": "カーネーション:ホワイト",
+            "zh-Hans": "白色康乃馨"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "32820",
+          "names": {
+            "zh-Hant": "黑色康乃馨",
+            "en": "Black Carnations",
+            "ja": "カーネーション:ブラック",
+            "zh-Hans": "黑色康乃馨"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "32821",
+          "names": {
+            "zh-Hant": "混色康乃馨",
+            "en": "Rainbow Carnations",
+            "ja": "カーネーション:ブレンド",
+            "zh-Hans": "混色康乃馨"
+          }
+        }
+      }
+    },
+    "96": {
+      "seedId": 96,
+      "seedItem": {
+        "zh-Hant": "蝴蝶蘭幼苗",
+        "en": "Moth Orchid Seeds",
+        "ja": "胡蝶蘭の苗",
+        "zh-Hans": "蝴蝶兰幼苗"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "33307",
+          "names": {
+            "zh-Hant": "紅色蝴蝶蘭",
+            "en": "Red Moth Orchids",
+            "ja": "胡蝶蘭:紅",
+            "zh-Hans": "红色蝴蝶兰"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "33308",
+          "names": {
+            "zh-Hant": "藍色蝴蝶蘭",
+            "en": "Blue Moth Orchids",
+            "ja": "胡蝶蘭:蒼",
+            "zh-Hans": "蓝色蝴蝶兰"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "33309",
+          "names": {
+            "zh-Hant": "黃色蝴蝶蘭",
+            "en": "Yellow Moth Orchids",
+            "ja": "胡蝶蘭:黄",
+            "zh-Hans": "黄色蝴蝶兰"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "33310",
+          "names": {
+            "zh-Hant": "綠色蝴蝶蘭",
+            "en": "Green Moth Orchids",
+            "ja": "胡蝶蘭:翠",
+            "zh-Hans": "绿色蝴蝶兰"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "33311",
+          "names": {
+            "zh-Hant": "橙色蝴蝶蘭",
+            "en": "Orange Moth Orchids",
+            "ja": "胡蝶蘭:橙",
+            "zh-Hans": "橙色蝴蝶兰"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "33312",
+          "names": {
+            "zh-Hant": "紫色蝴蝶蘭",
+            "en": "Purple Moth Orchids",
+            "ja": "胡蝶蘭:紫",
+            "zh-Hans": "紫色蝴蝶兰"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "33313",
+          "names": {
+            "zh-Hant": "白色蝴蝶蘭",
+            "en": "White Moth Orchids",
+            "ja": "胡蝶蘭:白",
+            "zh-Hans": "白色蝴蝶兰"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "33314",
+          "names": {
+            "zh-Hant": "黑色蝴蝶蘭",
+            "en": "Black Moth Orchids",
+            "ja": "胡蝶蘭:黒",
+            "zh-Hans": "黑色蝴蝶兰"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "33315",
+          "names": {
+            "zh-Hant": "混色蝴蝶蘭",
+            "en": "Rainbow Moth Orchids",
+            "ja": "胡蝶蘭:彩",
+            "zh-Hans": "混色蝴蝶兰"
+          }
+        }
+      }
+    },
+    "97": {
+      "seedId": 97,
+      "seedItem": {
+        "zh-Hant": "紫燈花的種子",
+        "en": "Triteleia Seeds",
+        "ja": "トリテレイアの種",
+        "zh-Hans": "紫灯花的种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "35745",
+          "names": {
+            "zh-Hant": "紅色紫燈花",
+            "en": "Red Triteleia",
+            "ja": "トリテレイア:レッド",
+            "zh-Hans": "红色紫灯花"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "35746",
+          "names": {
+            "zh-Hant": "藍色紫燈花",
+            "en": "Blue Triteleia",
+            "ja": "トリテレイア:ブルー",
+            "zh-Hans": "蓝色紫灯花"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "35747",
+          "names": {
+            "zh-Hant": "黃色紫燈花",
+            "en": "Yellow Triteleia",
+            "ja": "トリテレイア:イエロー",
+            "zh-Hans": "黄色紫灯花"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "35748",
+          "names": {
+            "zh-Hant": "綠色紫燈花",
+            "en": "Green Triteleia",
+            "ja": "トリテレイア:グリーン",
+            "zh-Hans": "绿色紫灯花"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "35749",
+          "names": {
+            "zh-Hant": "橙色紫燈花",
+            "en": "Orange Triteleia",
+            "ja": "トリテレイア:オレンジ",
+            "zh-Hans": "橙色紫灯花"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "35750",
+          "names": {
+            "zh-Hant": "紫色紫燈花",
+            "en": "Purple Triteleia",
+            "ja": "トリテレイア:パープル",
+            "zh-Hans": "紫色紫灯花"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "35751",
+          "names": {
+            "zh-Hant": "白色紫燈花",
+            "en": "White Triteleia",
+            "ja": "トリテレイア:ホワイト",
+            "zh-Hans": "白色紫灯花"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "35752",
+          "names": {
+            "zh-Hant": "黑色紫燈花",
+            "en": "Black Triteleia",
+            "ja": "トリテレイア:ブラック",
+            "zh-Hans": "黑色紫灯花"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "35753",
+          "names": {
+            "zh-Hant": "混色紫燈花",
+            "en": "Rainbow Triteleia",
+            "ja": "トリテレイア:ブレンド",
+            "zh-Hans": "混色紫灯花"
+          }
+        }
+      }
+    },
+    "98": {
+      "seedId": 98,
+      "seedItem": {
+        "zh-Hant": "比爾格紫羅蘭的種子",
+        "en": "Byregotia Seeds",
+        "ja": "ビエルゴヴァイオレットの種",
+        "zh-Hans": "比尔格紫罗兰的种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "37303",
+          "names": {
+            "zh-Hant": "紅色比爾格紫羅蘭",
+            "en": "Red Byregotia",
+            "ja": "ビエルゴヴァイオレット:レッド",
+            "zh-Hans": "红色比尔格紫罗兰"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "37304",
+          "names": {
+            "zh-Hant": "藍色比爾格紫羅蘭",
+            "en": "Blue Byregotia",
+            "ja": "ビエルゴヴァイオレット:ブルー",
+            "zh-Hans": "蓝色比尔格紫罗兰"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "37305",
+          "names": {
+            "zh-Hant": "黃色比爾格紫羅蘭",
+            "en": "Yellow Byregotia",
+            "ja": "ビエルゴヴァイオレット:イエロー",
+            "zh-Hans": "黄色比尔格紫罗兰"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "37306",
+          "names": {
+            "zh-Hant": "綠色比爾格紫羅蘭",
+            "en": "Green Byregotia",
+            "ja": "ビエルゴヴァイオレット:グリーン",
+            "zh-Hans": "绿色比尔格紫罗兰"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "37307",
+          "names": {
+            "zh-Hant": "橙色比爾格紫羅蘭",
+            "en": "Orange Byregotia",
+            "ja": "ビエルゴヴァイオレット:オレンジ",
+            "zh-Hans": "橙色比尔格紫罗兰"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "37308",
+          "names": {
+            "zh-Hant": "紫色比爾格紫羅蘭",
+            "en": "Purple Byregotia",
+            "ja": "ビエルゴヴァイオレット:パープル",
+            "zh-Hans": "紫色比尔格紫罗兰"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "37309",
+          "names": {
+            "zh-Hant": "白色比爾格紫羅蘭",
+            "en": "White Byregotia",
+            "ja": "ビエルゴヴァイオレット:ホワイト",
+            "zh-Hans": "白色比尔格紫罗兰"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "37310",
+          "names": {
+            "zh-Hant": "黑色比爾格紫羅蘭",
+            "en": "Black Byregotia",
+            "ja": "ビエルゴヴァイオレット:ブラック",
+            "zh-Hans": "黑色比尔格紫罗兰"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "37311",
+          "names": {
+            "zh-Hant": "混色比爾格紫羅蘭",
+            "en": "Rainbow Byregotia",
+            "ja": "ビエルゴヴァイオレット:ブレンド",
+            "zh-Hans": "混色比尔格紫罗兰"
+          }
+        }
+      }
+    },
+    "99": {
+      "seedId": 99,
+      "seedItem": {
+        "zh-Hant": "香豌豆花的種子",
+        "en": "Sweet Pea Seeds",
+        "ja": "スイートピーの種",
+        "zh-Hans": "香豌豆花的种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "38660",
+          "names": {
+            "zh-Hant": "紅色香豌豆花",
+            "en": "Red Sweet Peas",
+            "ja": "スイートピー:レッド",
+            "zh-Hans": "红色香豌豆花"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "38661",
+          "names": {
+            "zh-Hant": "藍色香豌豆花",
+            "en": "Blue Sweet Peas",
+            "ja": "スイートピー:ブルー",
+            "zh-Hans": "蓝色香豌豆花"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "38662",
+          "names": {
+            "zh-Hant": "黃色香豌豆花",
+            "en": "Yellow Sweet Peas",
+            "ja": "スイートピー:イエロー",
+            "zh-Hans": "黄色香豌豆花"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "38663",
+          "names": {
+            "zh-Hant": "綠色香豌豆花",
+            "en": "Green Sweet Peas",
+            "ja": "スイートピー:グリーン",
+            "zh-Hans": "绿色香豌豆花"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "38664",
+          "names": {
+            "zh-Hant": "橙色香豌豆花",
+            "en": "Orange Sweet Peas",
+            "ja": "スイートピー:オレンジ",
+            "zh-Hans": "橙色香豌豆花"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "38665",
+          "names": {
+            "zh-Hant": "紫色香豌豆花",
+            "en": "Purple Sweet Peas",
+            "ja": "スイートピー:パープル",
+            "zh-Hans": "紫色香豌豆花"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "38666",
+          "names": {
+            "zh-Hant": "白色香豌豆花",
+            "en": "White Sweet Peas",
+            "ja": "スイートピー:ホワイト",
+            "zh-Hans": "白色香豌豆花"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "38667",
+          "names": {
+            "zh-Hant": "黑色香豌豆花",
+            "en": "Black Sweet Peas",
+            "ja": "スイートピー:ブラック",
+            "zh-Hans": "黑色香豌豆花"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "38668",
+          "names": {
+            "zh-Hant": "混色香豌豆花",
+            "en": "Rainbow Sweet Peas",
+            "ja": "スイートピー:ブレンド",
+            "zh-Hans": "混色香豌豆花"
+          }
+        }
+      }
+    },
+    "100": {
+      "seedId": 100,
+      "seedItem": {
+        "zh-Hant": "牽牛花的種子",
+        "en": "Morning Glory Seeds",
+        "ja": "モーニンググローリーの種",
+        "zh-Hans": "牵牛花的种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "39461",
+          "names": {
+            "zh-Hant": "紅色牽牛花",
+            "en": "Red Morning Glories",
+            "ja": "モーニンググローリー:レッド",
+            "zh-Hans": "红色牵牛花"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "39462",
+          "names": {
+            "zh-Hant": "藍色牽牛花",
+            "en": "Blue Morning Glories",
+            "ja": "モーニンググローリー:ブルー",
+            "zh-Hans": "蓝色牵牛花"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "39463",
+          "names": {
+            "zh-Hant": "黃色牽牛花",
+            "en": "Yellow Morning Glories",
+            "ja": "モーニンググローリー:イエロー",
+            "zh-Hans": "黄色牵牛花"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "39464",
+          "names": {
+            "zh-Hant": "綠色牽牛花",
+            "en": "Green Morning Glories",
+            "ja": "モーニンググローリー:グリーン",
+            "zh-Hans": "绿色牵牛花"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "39465",
+          "names": {
+            "zh-Hant": "橙色牽牛花",
+            "en": "Orange Morning Glories",
+            "ja": "モーニンググローリー:オレンジ",
+            "zh-Hans": "橙色牵牛花"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "39466",
+          "names": {
+            "zh-Hant": "紫色牽牛花",
+            "en": "Purple Morning Glories",
+            "ja": "モーニンググローリー:パープル",
+            "zh-Hans": "紫色牵牛花"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "39467",
+          "names": {
+            "zh-Hant": "白色牽牛花",
+            "en": "White Morning Glories",
+            "ja": "モーニンググローリー:ホワイト",
+            "zh-Hans": "白色牵牛花"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "39468",
+          "names": {
+            "zh-Hant": "黑色牽牛花",
+            "en": "Black Morning Glories",
+            "ja": "モーニンググローリー:ブラック",
+            "zh-Hans": "黑色牵牛花"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "39469",
+          "names": {
+            "zh-Hant": "混色牽牛花",
+            "en": "Rainbow Morning Glories",
+            "ja": "モーニンググローリー:ブレンド",
+            "zh-Hans": "混色牵牛花"
+          }
+        }
+      }
+    },
+    "101": {
+      "seedId": 101,
+      "seedItem": {
+        "zh-Hant": "菊花種子",
+        "en": "Chrysanthemum Seeds",
+        "ja": "クリサンセマムの種",
+        "zh-Hans": "菊花种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "40687",
+          "names": {
+            "zh-Hant": "紅色菊花",
+            "en": "Red Chrysanthemums",
+            "ja": "クリサンセマム:レッド",
+            "zh-Hans": "红色菊花"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "40688",
+          "names": {
+            "zh-Hant": "藍色菊花",
+            "en": "Blue Chrysanthemums",
+            "ja": "クリサンセマム:ブルー",
+            "zh-Hans": "蓝色菊花"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "40689",
+          "names": {
+            "zh-Hant": "黃色菊花",
+            "en": "Yellow Chrysanthemums",
+            "ja": "クリサンセマム:イエロー",
+            "zh-Hans": "黄色菊花"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "40690",
+          "names": {
+            "zh-Hant": "綠色菊花",
+            "en": "Green Chrysanthemums",
+            "ja": "クリサンセマム:グリーン",
+            "zh-Hans": "绿色菊花"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "40691",
+          "names": {
+            "zh-Hant": "橙色菊花",
+            "en": "Orange Chrysanthemums",
+            "ja": "クリサンセマム:オレンジ",
+            "zh-Hans": "橙色菊花"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "40692",
+          "names": {
+            "zh-Hant": "紫色菊花",
+            "en": "Purple Chrysanthemums",
+            "ja": "クリサンセマム:パープル",
+            "zh-Hans": "紫色菊花"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "40693",
+          "names": {
+            "zh-Hant": "白色菊花",
+            "en": "White Chrysanthemums",
+            "ja": "クリサンセマム:ホワイト",
+            "zh-Hans": "白色菊花"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "40694",
+          "names": {
+            "zh-Hant": "黑色菊花",
+            "en": "Black Chrysanthemums",
+            "ja": "クリサンセマム:ブラック",
+            "zh-Hans": "黑色菊花"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "40695",
+          "names": {
+            "zh-Hant": "混色菊花",
+            "en": "Rainbow Chrysanthemum Bouquet",
+            "ja": "クリサンセマム:ブレンド",
+            "zh-Hans": "混色菊花"
+          }
+        }
+      }
+    },
+    "102": {
+      "seedId": 102,
+      "seedItem": {
+        "zh-Hant": "魯冰花種子",
+        "en": "Lupin Seeds",
+        "ja": "ルピナスの種",
+        "zh-Hans": "鲁冰花种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "41161",
+          "names": {
+            "zh-Hant": "紅色魯冰花",
+            "en": "Red Lupins",
+            "ja": "ルピナス:レッド",
+            "zh-Hans": "红色鲁冰花"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "41162",
+          "names": {
+            "zh-Hant": "藍色魯冰花",
+            "en": "Blue Lupins",
+            "ja": "ルピナス:ブルー",
+            "zh-Hans": "蓝色鲁冰花"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "41163",
+          "names": {
+            "zh-Hant": "黃色魯冰花",
+            "en": "Yellow Lupins",
+            "ja": "ルピナス:イエロー",
+            "zh-Hans": "黄色鲁冰花"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "41164",
+          "names": {
+            "zh-Hant": "綠色魯冰花",
+            "en": "Green Lupins",
+            "ja": "ルピナス:グリーン",
+            "zh-Hans": "绿色鲁冰花"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "41165",
+          "names": {
+            "zh-Hant": "橙色魯冰花",
+            "en": "Orange Lupins",
+            "ja": "ルピナス:オレンジ",
+            "zh-Hans": "橙色鲁冰花"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "41166",
+          "names": {
+            "zh-Hant": "紫色魯冰花",
+            "en": "Purple Lupins",
+            "ja": "ルピナス:パープル",
+            "zh-Hans": "紫色鲁冰花"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "41167",
+          "names": {
+            "zh-Hant": "白色魯冰花",
+            "en": "White Lupins",
+            "ja": "ルピナス:ホワイト",
+            "zh-Hans": "白色鲁冰花"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "41168",
+          "names": {
+            "zh-Hant": "黑色魯冰花",
+            "en": "Black Lupins",
+            "ja": "ルピナス:ブラック",
+            "zh-Hans": "黑色鲁冰花"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "41169",
+          "names": {
+            "zh-Hant": "混色魯冰花",
+            "en": "Rainbow Lupins",
+            "ja": "ルピナス:ブレンド",
+            "zh-Hans": "混色鲁冰花"
+          }
+        }
+      }
+    },
+    "103": {
+      "seedId": 103,
+      "seedItem": {
+        "zh-Hant": "葵花籽",
+        "en": "Sunflower Seeds",
+        "ja": "サンフラワーシード",
+        "zh-Hans": "葵花籽"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "43963",
+          "names": {
+            "zh-Hant": "紅色向日葵",
+            "en": "Red Sunflowers",
+            "ja": "サンフラワー:レッド",
+            "zh-Hans": "红色向日葵"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "43964",
+          "names": {
+            "zh-Hant": "藍色向日葵",
+            "en": "Blue Sunflowers",
+            "ja": "サンフラワー:ブルー",
+            "zh-Hans": "蓝色向日葵"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "43965",
+          "names": {
+            "zh-Hant": "黃色向日葵",
+            "en": "Yellow Sunflowers",
+            "ja": "サンフラワー:イエロー",
+            "zh-Hans": "黄色向日葵"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "43966",
+          "names": {
+            "zh-Hant": "綠色向日葵",
+            "en": "Green Sunflowers",
+            "ja": "サンフラワー:グリーン",
+            "zh-Hans": "绿色向日葵"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "43967",
+          "names": {
+            "zh-Hant": "橙色向日葵",
+            "en": "Orange Sunflowers",
+            "ja": "サンフラワー:オレンジ",
+            "zh-Hans": "橙色向日葵"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "43968",
+          "names": {
+            "zh-Hant": "紫色向日葵",
+            "en": "Purple Sunflowers",
+            "ja": "サンフラワー:パープル",
+            "zh-Hans": "紫色向日葵"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "43969",
+          "names": {
+            "zh-Hant": "白色向日葵",
+            "en": "White Sunflowers",
+            "ja": "サンフラワー:ホワイト",
+            "zh-Hans": "白色向日葵"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "43970",
+          "names": {
+            "zh-Hant": "黑色向日葵",
+            "en": "Black Sunflowers",
+            "ja": "サンフラワー:ブラック",
+            "zh-Hans": "黑色向日葵"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "43971",
+          "names": {
+            "zh-Hant": "混色向日葵",
+            "en": "Rainbow Sunflowers",
+            "ja": "サンフラワー:ブレンド",
+            "zh-Hans": "混色向日葵"
+          }
+        }
+      }
+    },
+    "104": {
+      "seedId": 104,
+      "seedItem": {
+        "zh-Hant": "",
+        "en": "Cattleya Seeds",
+        "ja": "カトレアの種",
+        "zh-Hans": "卡特兰种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "44833",
+          "names": {
+            "zh-Hant": "",
+            "en": "Red Cattleyas",
+            "ja": "カトレア:レッド",
+            "zh-Hans": "红色卡特兰"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "44834",
+          "names": {
+            "zh-Hant": "",
+            "en": "Blue Cattleyas",
+            "ja": "カトレア:ブルー",
+            "zh-Hans": "蓝色卡特兰"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "44835",
+          "names": {
+            "zh-Hant": "",
+            "en": "Yellow Cattleyas",
+            "ja": "カトレア:イエロー",
+            "zh-Hans": "黄色卡特兰"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "44836",
+          "names": {
+            "zh-Hant": "",
+            "en": "Green Cattleyas",
+            "ja": "カトレア:グリーン",
+            "zh-Hans": "绿色卡特兰"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "44837",
+          "names": {
+            "zh-Hant": "",
+            "en": "Orange Cattleyas",
+            "ja": "カトレア:オレンジ",
+            "zh-Hans": "橙色卡特兰"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "44838",
+          "names": {
+            "zh-Hant": "",
+            "en": "Purple Cattleyas",
+            "ja": "カトレア:パープル",
+            "zh-Hans": "紫色卡特兰"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "44839",
+          "names": {
+            "zh-Hant": "",
+            "en": "White Cattleyas",
+            "ja": "カトレア:ホワイト",
+            "zh-Hans": "白色卡特兰"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "44840",
+          "names": {
+            "zh-Hant": "",
+            "en": "Black Cattleyas",
+            "ja": "カトレア:ブラック",
+            "zh-Hans": "黑色卡特兰"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "44841",
+          "names": {
+            "zh-Hant": "",
+            "en": "Rainbow Cattleyas",
+            "ja": "カトレア:ブレンド",
+            "zh-Hans": "混色卡特兰"
+          }
+        }
+      }
+    },
+    "105": {
+      "seedId": 105,
+      "seedItem": {
+        "zh-Hant": "",
+        "en": "Paperflower Seeds",
+        "ja": "ペーパーフラワーの種",
+        "zh-Hans": "叶子花的种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "47951",
+          "names": {
+            "zh-Hant": "",
+            "en": "Red Paperflowers",
+            "ja": "ペーパーフラワー:レッド",
+            "zh-Hans": "红色叶子花"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "47952",
+          "names": {
+            "zh-Hant": "",
+            "en": "Blue Paperflowers",
+            "ja": "ペーパーフラワー:ブルー",
+            "zh-Hans": "蓝色叶子花"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "47953",
+          "names": {
+            "zh-Hant": "",
+            "en": "Yellow Paperflowers",
+            "ja": "ペーパーフラワー:イエロー",
+            "zh-Hans": "黄色叶子花"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "47954",
+          "names": {
+            "zh-Hant": "",
+            "en": "Green Paperflowers",
+            "ja": "ペーパーフラワー:グリーン",
+            "zh-Hans": "绿色叶子花"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "47955",
+          "names": {
+            "zh-Hant": "",
+            "en": "Orange Paperflowers",
+            "ja": "ペーパーフラワー:オレンジ",
+            "zh-Hans": "橙色叶子花"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "47956",
+          "names": {
+            "zh-Hant": "",
+            "en": "Purple Paperflowers",
+            "ja": "ペーパーフラワー:パープル",
+            "zh-Hans": "紫色叶子花"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "47957",
+          "names": {
+            "zh-Hant": "",
+            "en": "White Paperflowers",
+            "ja": "ペーパーフラワー:ホワイト",
+            "zh-Hans": "白色叶子花"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "47958",
+          "names": {
+            "zh-Hant": "",
+            "en": "Black Paperflowers",
+            "ja": "ペーパーフラワー:ブラック",
+            "zh-Hans": "黑色叶子花"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "47959",
+          "names": {
+            "zh-Hant": "",
+            "en": "Rainbow Paperflowers",
+            "ja": "ペーパーフラワー:ブレンド",
+            "zh-Hans": "混色叶子花"
+          }
+        }
+      }
+    },
+    "106": {
+      "seedId": 106,
+      "seedItem": {
+        "zh-Hant": "",
+        "en": "Champa Seeds",
+        "ja": "チャンパーの種",
+        "zh-Hans": "大季花的种子"
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "46804",
+          "names": {
+            "zh-Hant": "",
+            "en": "Red Champa",
+            "ja": "チャンパー:レッド",
+            "zh-Hans": "红色大季花"
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "46805",
+          "names": {
+            "zh-Hant": "",
+            "en": "Blue Champa",
+            "ja": "チャンパー:ブルー",
+            "zh-Hans": "蓝色大季花"
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "46806",
+          "names": {
+            "zh-Hant": "",
+            "en": "Yellow Champa",
+            "ja": "チャンパー:イエロー",
+            "zh-Hans": "黄色大季花"
+          }
+        },
+        "green": {
+          "teamcraftItemId": "46807",
+          "names": {
+            "zh-Hant": "",
+            "en": "Green Champa",
+            "ja": "チャンパー:グリーン",
+            "zh-Hans": "绿色大季花"
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "46808",
+          "names": {
+            "zh-Hant": "",
+            "en": "Orange Champa",
+            "ja": "チャンパー:オレンジ",
+            "zh-Hans": "橙色大季花"
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "46809",
+          "names": {
+            "zh-Hant": "",
+            "en": "Purple Champa",
+            "ja": "チャンパー:パープル",
+            "zh-Hans": "紫色大季花"
+          }
+        },
+        "white": {
+          "teamcraftItemId": "46810",
+          "names": {
+            "zh-Hant": "",
+            "en": "White Champa",
+            "ja": "チャンパー:ホワイト",
+            "zh-Hans": "白色大季花"
+          }
+        },
+        "black": {
+          "teamcraftItemId": "46811",
+          "names": {
+            "zh-Hant": "",
+            "en": "Black Champa",
+            "ja": "チャンパー:ブラック",
+            "zh-Hans": "黑色大季花"
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "46812",
+          "names": {
+            "zh-Hant": "",
+            "en": "Rainbow Champa",
+            "ja": "チャンパー:ブレンド",
+            "zh-Hans": "混色大季花"
+          }
+        }
+      }
+    },
+    "107": {
+      "seedId": 107,
+      "seedItem": {
+        "zh-Hant": "",
+        "en": "Tea Flower Seeds",
+        "ja": "ティーフラワーの種",
+        "zh-Hans": ""
+      },
+      "cropsByColor": {
+        "red": {
+          "teamcraftItemId": "49774",
+          "names": {
+            "zh-Hant": "",
+            "en": "Red Tea Flowers",
+            "ja": "ティーフラワー:レッド",
+            "zh-Hans": ""
+          }
+        },
+        "blue": {
+          "teamcraftItemId": "49775",
+          "names": {
+            "zh-Hant": "",
+            "en": "Blue Tea Flowers",
+            "ja": "ティーフラワー:ブルー",
+            "zh-Hans": ""
+          }
+        },
+        "yellow": {
+          "teamcraftItemId": "49776",
+          "names": {
+            "zh-Hant": "",
+            "en": "Yellow Tea Flowers",
+            "ja": "ティーフラワー:イエロー",
+            "zh-Hans": ""
+          }
+        },
+        "green": {
+          "teamcraftItemId": "49777",
+          "names": {
+            "zh-Hant": "",
+            "en": "Green Tea Flowers",
+            "ja": "ティーフラワー:グリーン",
+            "zh-Hans": ""
+          }
+        },
+        "orange": {
+          "teamcraftItemId": "49778",
+          "names": {
+            "zh-Hant": "",
+            "en": "Orange Tea Flowers",
+            "ja": "ティーフラワー:オレンジ",
+            "zh-Hans": ""
+          }
+        },
+        "purple": {
+          "teamcraftItemId": "49779",
+          "names": {
+            "zh-Hant": "",
+            "en": "Purple Tea Flowers",
+            "ja": "ティーフラワー:パープル",
+            "zh-Hans": ""
+          }
+        },
+        "white": {
+          "teamcraftItemId": "49780",
+          "names": {
+            "zh-Hant": "",
+            "en": "White Tea Flowers",
+            "ja": "ティーフラワー:ホワイト",
+            "zh-Hans": ""
+          }
+        },
+        "black": {
+          "teamcraftItemId": "49781",
+          "names": {
+            "zh-Hant": "",
+            "en": "Black Tea Flowers",
+            "ja": "ティーフラワー:ブラック",
+            "zh-Hans": ""
+          }
+        },
+        "mixed": {
+          "teamcraftItemId": "49782",
+          "names": {
+            "zh-Hant": "",
+            "en": "Rainbow Tea Flowers",
+            "ja": "ティーフラワー:ブレンド",
+            "zh-Hans": ""
+          }
+        }
+      }
+    }
+  }
+}

@@ -13,7 +13,8 @@
     "build:seeds-summary": "node scripts/build-seeds-summary.mjs",
     "translate:harvest-locations": "node scripts/translate-harvest-locations.mjs",
     "download:seed-icons": "node scripts/download-seed-icons.mjs",
-    "report:seed-crop-same": "node scripts/report-seed-crop-same-names.mjs"
+    "report:seed-crop-same": "node scripts/report-seed-crop-same-names.mjs",
+    "build:flowerpot-crops-by-color": "node scripts/build-flowerpot-crops-by-color.mjs"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",

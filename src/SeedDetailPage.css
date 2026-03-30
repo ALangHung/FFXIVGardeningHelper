@@ -112,6 +112,121 @@ button.seed-detail-back {
   gap: 0.85rem;
 }
 
+/* 染色詳情：表格總寬可改 --seed-detail-dye-table-max-width；肥料欄寬 --seed-detail-dye-fertilizer-col-width */
+.seed-detail-dye-table-wrap {
+  --seed-detail-dye-table-max-width: 40rem;
+  --seed-detail-dye-fertilizer-col-width: 20rem;
+  max-height: none;
+  width: fit-content;
+  max-width: min(100%, var(--seed-detail-dye-table-max-width));
+  margin-inline: 0;
+}
+
+.seed-detail-table.seed-detail-dye-table {
+  min-width: 0;
+  width: max-content;
+  max-width: 100%;
+  table-layout: auto;
+}
+
+/* 肥料欄固定寬度（與列表總寬一併由 wrap 的變數調整）；勿對 td 用 display:flex 以免無法垂直置中 */
+.seed-detail-dye-table th:first-child,
+.seed-detail-dye-table td:first-child {
+  width: var(--seed-detail-dye-fertilizer-col-width);
+  min-width: var(--seed-detail-dye-fertilizer-col-width);
+  max-width: var(--seed-detail-dye-fertilizer-col-width);
+  padding: 0.45rem 0.65rem;
+  text-align: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+.seed-detail-dye-table th:last-child,
+.seed-detail-dye-table td:last-child {
+  text-align: left;
+  vertical-align: middle;
+  width: auto;
+}
+
+/* 單行肥料名，欄寬由最長一行決定 */
+.seed-detail-dye-fertilizer-line {
+  white-space: nowrap;
+}
+
+.seed-detail-dye-fertilizer-stack {
+  padding-top: 0.5rem;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.seed-detail-dye-fertilizer-sub {
+  white-space: nowrap;
+}
+
+/* 多段肥料：青藍色油粕[複製]+金黃色油粕[複製] */
+.seed-detail-dye-fertilizer-segments {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.12rem 0.18rem;
+  max-width: 100%;
+}
+
+.seed-detail-dye-fertilizer-segment-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12rem;
+}
+
+.seed-detail-dye-fertilizer-plus {
+  color: var(--muted);
+  font-weight: 600;
+  user-select: none;
+  line-height: 1.4;
+}
+
+/* 肥料／染色結果與複製按鈕同一行高、緊貼文案 */
+.seed-detail-dye-copy-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12rem;
+  line-height: 1.4;
+}
+
+.seed-detail-dye-copy-row .copy-crop-name-btn.seed-detail-dye-copy-btn {
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 4px;
+  height: 1.35em;
+  width: 1.35em;
+  min-width: 1.35em;
+  box-sizing: border-box;
+}
+
+.seed-detail-dye-copy-row .copy-crop-name-icon {
+  width: 0.88em;
+  height: 0.88em;
+}
+
+/* 每行不斷行，染色結果欄寬≈各行最寬者（盆栽最後一列三行時通常最寬） */
+.seed-detail-dye-outcome-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  line-height: 1.4;
+  width: max-content;
+}
+
+.seed-detail-dye-outcome-lines .seed-detail-dye-outcome-copy-row {
+  white-space: nowrap;
+}
+
 .seed-detail-dl-row {
   display: grid;
   gap: 0.55rem 1.25rem;
