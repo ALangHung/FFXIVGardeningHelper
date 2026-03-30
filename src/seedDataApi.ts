@@ -39,6 +39,19 @@ function nameForSeedId(
   return label || fallbackSeedName(seedId)
 }
 
+/** 與 `mergeSeedSummaryRow`／詳情頁種子副標相同：種子包名 > 作物名 > 顯示名 */
+function seedItemNameForSeedId(
+  byI18n: Record<string, import('./seedI18nTypes').SeedI18nEntry>,
+  seedId: number | null,
+): string | null {
+  if (seedId == null || !Number.isFinite(seedId)) return null
+  const e = byI18n[String(seedId)]
+  const cropName = cropDisplayName(e)
+  const seedName = seedItemDisplayName(e)
+  const displayName = cropOrSeedDisplayName(e) || fallbackSeedName(seedId)
+  return seedName || cropName || displayName
+}
+
 function enrichCrossParent(
   p: CrossParent,
   byI18n: Record<string, import('./seedI18nTypes').SeedI18nEntry>,
@@ -46,6 +59,7 @@ function enrichCrossParent(
   return {
     ...p,
     name: nameForSeedId(byI18n, p.seedId),
+    seedItemName: seedItemNameForSeedId(byI18n, p.seedId),
   }
 }
 
@@ -56,6 +70,7 @@ function enrichAlternate(
   return {
     ...a,
     name: nameForSeedId(byI18n, a.seedId),
+    seedItemName: seedItemNameForSeedId(byI18n, a.seedId),
   }
 }
 

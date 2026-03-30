@@ -3,12 +3,16 @@ export type CrossParent = {
   growDays: number | null
   /** 執行期由 `seeds-i18n.json` 依 seedId 填入（作物／收成道具顯示名） */
   name?: string | null
+  /** 執行期由 i18n 填入（種子包道具名，與詳情頁「種子：」同列） */
+  seedItemName?: string | null
 }
 
 export type CrossAlternate = {
   seedId: number | null
   /** 執行期由 i18n 填入 */
   name?: string | null
+  /** 執行期由 i18n 填入（種子包道具名） */
+  seedItemName?: string | null
 }
 
 export type ConfirmedCross = {

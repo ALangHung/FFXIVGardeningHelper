@@ -474,9 +474,11 @@ function compareCross(
 function ConfirmedCrossesTable({
   seedId,
   crosses,
+  onSeedItemCopied,
 }: {
   seedId: number
   crosses: ConfirmedCross[]
+  onSeedItemCopied: (copiedText: string) => void
 }) {
   const [query, setQuery] = useState('')
   const [nameSearchById, setNameSearchById] = useState<Record<string, string>>(
@@ -614,24 +616,60 @@ function ConfirmedCrossesTable({
             {sorted.map((item, i) => (
               <tr key={i}>
                 <td>
-                  <SeedLink
-                    seedId={item.displayA.seedId}
-                    name={item.displayA.name}
-                    growDays={item.displayA.growDays}
-                  />
+                  <div className="seed-detail-cross-name-row">
+                    <SeedLink
+                      seedId={item.displayA.seedId}
+                      name={item.displayA.name}
+                      growDays={item.displayA.growDays}
+                    />
+                    {item.displayA.seedId != null &&
+                    item.displayA.seedItemName ? (
+                      <CopyCropNameButton
+                        name={item.displayA.seedItemName}
+                        className="seed-detail-cross-copy-btn"
+                        ariaLabel={`複製種子名稱：${item.displayA.seedItemName}`}
+                        title="複製種子名稱"
+                        onCopied={(text) => onSeedItemCopied(text)}
+                      />
+                    ) : null}
+                  </div>
                 </td>
                 <td>
-                  <SeedLink
-                    seedId={item.displayB.seedId}
-                    name={item.displayB.name}
-                    growDays={item.displayB.growDays}
-                  />
+                  <div className="seed-detail-cross-name-row">
+                    <SeedLink
+                      seedId={item.displayB.seedId}
+                      name={item.displayB.name}
+                      growDays={item.displayB.growDays}
+                    />
+                    {item.displayB.seedId != null &&
+                    item.displayB.seedItemName ? (
+                      <CopyCropNameButton
+                        name={item.displayB.seedItemName}
+                        className="seed-detail-cross-copy-btn"
+                        ariaLabel={`複製種子名稱：${item.displayB.seedItemName}`}
+                        title="複製種子名稱"
+                        onCopied={(text) => onSeedItemCopied(text)}
+                      />
+                    ) : null}
+                  </div>
                 </td>
                 <td>
-                  <SeedLink
-                    seedId={item.row.alternate.seedId}
-                    name={item.row.alternate.name}
-                  />
+                  <div className="seed-detail-cross-name-row">
+                    <SeedLink
+                      seedId={item.row.alternate.seedId}
+                      name={item.row.alternate.name}
+                    />
+                    {item.row.alternate.seedId != null &&
+                    item.row.alternate.seedItemName ? (
+                      <CopyCropNameButton
+                        name={item.row.alternate.seedItemName}
+                        className="seed-detail-cross-copy-btn"
+                        ariaLabel={`複製種子名稱：${item.row.alternate.seedItemName}`}
+                        title="複製種子名稱"
+                        onCopied={(text) => onSeedItemCopied(text)}
+                      />
+                    ) : null}
+                  </div>
                 </td>
                 <td>
                   <span
@@ -847,7 +885,16 @@ export function SeedDetailPage() {
           <p className="seed-detail-muted">此種子無法透過雜交取得。</p>
         ) : null}
         {s.confirmedCrosses.length > 0 ? (
-          <ConfirmedCrossesTable seedId={s.seedId} crosses={s.confirmedCrosses} />
+          <ConfirmedCrossesTable
+            seedId={s.seedId}
+            crosses={s.confirmedCrosses}
+            onSeedItemCopied={(text) =>
+              setCopyToast({
+                key: Date.now(),
+                message: `已複製種子名稱：${text}`,
+              })
+            }
+          />
         ) : !s.notObtainableViaIntercrossing ? (
           <p className="seed-detail-muted">無確認雜交配方。</p>
         ) : null}

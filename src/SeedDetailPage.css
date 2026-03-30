@@ -435,6 +435,28 @@ button.seed-detail-back {
   color: #d1d5db;
 }
 
+.seed-detail-cross-name-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12rem;
+  line-height: 1.45;
+}
+
+.seed-detail-cross-name-row .copy-crop-name-btn.seed-detail-cross-copy-btn {
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 4px;
+  height: 1.35em;
+  width: 1.35em;
+  min-width: 1.35em;
+  box-sizing: border-box;
+}
+
+.seed-detail-cross-name-row .copy-crop-name-icon {
+  width: 0.88em;
+  height: 0.88em;
+}
+
 .seed-detail-th-btn {
   display: inline-flex;
   align-items: center;
@@ -495,14 +517,17 @@ button.seed-detail-back {
   background: rgba(42, 33, 64, 0.5);
 }
 
+/* hover 與種子列表 `.seed-name-link` 一致 */
 .seed-detail-link {
   color: #e9d5ff;
   text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 .seed-detail-link:hover {
   color: var(--gold);
-  text-decoration: underline;
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+  text-decoration: none;
 }
 
 .seed-detail-eff {
