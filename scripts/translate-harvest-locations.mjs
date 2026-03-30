@@ -5,6 +5,7 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { stripSlotPrefixFromHarvestLocation } from './lib/seeds-by-id-utils.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -61,6 +62,7 @@ function buildPlacePairs(places, twPlaces) {
 
 function translateLocation(raw, pairs) {
   if (raw == null || typeof raw !== 'string') return raw
+  raw = stripSlotPrefixFromHarvestLocation(raw)
   const t = raw.trim()
   if (!t) return raw
 
@@ -74,7 +76,7 @@ function translateLocation(raw, pairs) {
     out = out.replace(new RegExp(escapeRegExp(en), 'g'), tw)
   }
 
-  // 階級維持繁體；槽位保留英文 Slot（與園藝站原文一致）
+  // 階級維持繁體（「Slot N @ 」已在 stripSlotPrefixFromHarvestLocation 移除）
   out = out.replace(/\bRank (\d+)\b/g, '階級 $1')
 
   return out

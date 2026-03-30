@@ -9,6 +9,7 @@ import { writeFile, mkdir } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as cheerio from 'cheerio'
+import { stripSlotPrefixFromHarvestLocation } from './lib/seeds-by-id-utils.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -51,7 +52,9 @@ function parseMainDetails($) {
     wiltTime: fields['Wilt Time'] ?? null,
     cropYield: fields['Crop Yield'] ?? null,
     seedYield: fields['Seed Yield'] ?? null,
-    harvestLocation: fields['Harvest Location'] ?? null,
+    harvestLocation: stripSlotPrefixFromHarvestLocation(
+      fields['Harvest Location'] ?? null,
+    ),
     nodeLevel: fields['Node Level'] ?? null,
   }
 }

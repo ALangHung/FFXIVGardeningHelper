@@ -10,12 +10,12 @@
     "i18n": {
       "path": "public/data/i18n/seeds-i18n.json",
       "publicPath": "/data/i18n/seeds-i18n.json",
-      "generatedAt": "2026-03-26T07:44:55.019Z"
+      "generatedAt": "2026-03-27T08:48:46.695Z"
     },
     "harvestLocationLocale": "zh-Hant",
     "harvestLocationSource": "ffxiv-teamcraft places.json + tw/tw-places.json (+ manual phrases)",
     "harvestLocationTranslatedAt": "2026-03-26T07:45:06.631Z",
-    "summaryGeneratedAt": "2026-03-26T07:45:21.076Z",
+    "summaryGeneratedAt": "2026-03-30T07:34:04.431Z",
     "nameFields": "種子道具名、作物名、nameSearchText 見 /data/i18n/seeds-i18n.json"
   },
   "seeds": [
@@ -264,7 +264,7 @@
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
-      "harvestLocation": "東拉諾西亞 (Slot 1 @ 5AM)",
+      "harvestLocation": "東拉諾西亞 (5AM)",
       "nodeLevel": "50",
       "iconUrl": "/images/seed-icon/25.png",
       "detailUrl": "https://www.ffxivgardening.com/seed-details.php?SeedID=25"
@@ -274,7 +274,7 @@
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
-      "harvestLocation": "東拉諾西亞 (Slot 1 @ 1PM)",
+      "harvestLocation": "東拉諾西亞 (1PM)",
       "nodeLevel": "50",
       "iconUrl": "/images/seed-icon/26.png",
       "detailUrl": "https://www.ffxivgardening.com/seed-details.php?SeedID=26"
@@ -284,7 +284,7 @@
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
-      "harvestLocation": "東拉諾西亞 (Slot 1 @ 9AM)",
+      "harvestLocation": "東拉諾西亞 (9AM)",
       "nodeLevel": "50",
       "iconUrl": "/images/seed-icon/27.png",
       "detailUrl": "https://www.ffxivgardening.com/seed-details.php?SeedID=27"
@@ -674,7 +674,7 @@
       "seedType": "Fruit",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
-      "harvestLocation": "德拉瓦尼亞山麓地 (27, 14) (Slot 1 @ 2AM/PM)",
+      "harvestLocation": "德拉瓦尼亞山麓地 (27, 14) (2AM/PM)",
       "nodeLevel": "50",
       "iconUrl": "/images/seed-icon/66.png",
       "detailUrl": "https://www.ffxivgardening.com/seed-details.php?SeedID=66"
@@ -694,7 +694,7 @@
       "seedType": "Vegetable",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
-      "harvestLocation": "庫爾札斯西部高地 (31, 20) (Slot 2 @ 10AM/PM)",
+      "harvestLocation": "庫爾札斯西部高地 (31, 20) (10AM/PM)",
       "nodeLevel": "55",
       "iconUrl": "/images/seed-icon/68.png",
       "detailUrl": "https://www.ffxivgardening.com/seed-details.php?SeedID=68"
@@ -704,7 +704,7 @@
       "seedType": "Herb & Nut",
       "growTime": "5 Days",
       "wiltTime": "48 Hours",
-      "harvestLocation": "庫爾札斯西部高地 (31, 20) (Slot 3 @ 10AM/PM)",
+      "harvestLocation": "庫爾札斯西部高地 (31, 20) (10AM/PM)",
       "nodeLevel": "55",
       "iconUrl": "/images/seed-icon/69.png",
       "detailUrl": "https://www.ffxivgardening.com/seed-details.php?SeedID=69"
