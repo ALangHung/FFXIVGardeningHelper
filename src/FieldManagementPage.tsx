@@ -5,8 +5,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type Dispatch,
-  type SetStateAction,
 } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
@@ -47,40 +45,10 @@ import {
   formatFieldHeading,
   normalizeFieldLocation,
 } from './fieldStateTypes'
-import { dhmsToMs, formatDurationEn, msToDhms } from './seedFormat'
 import './FieldManagementPage.css'
 
 function normalize(s: string) {
   return s.trim().toLowerCase()
-}
-
-/** 收成時間彈窗：各欄允許上限（時／分／秒為常見時鐘分量；天數留較大空間供測試或長倒數）。 */
-const GROW_TIME_DHMS_MAX = {
-  days: 9999,
-  hours: 23,
-  minutes: 59,
-  seconds: 59,
-} as const
-
-function clampGrowDhmsUnit(n: number, max: number): number {
-  if (!Number.isFinite(n)) return 0
-  const x = Math.floor(n)
-  return Math.min(max, Math.max(0, x))
-}
-
-function handleGrowDhmsStepKeyDown(
-  e: ReactKeyboardEvent<HTMLInputElement>,
-  setValue: Dispatch<SetStateAction<number>>,
-  max: number,
-) {
-  if (e.nativeEvent.isComposing) return
-  if (e.key === 'ArrowUp') {
-    e.preventDefault()
-    setValue((v) => Math.min(max, v + 1))
-  } else if (e.key === 'ArrowDown') {
-    e.preventDefault()
-    setValue((v) => Math.max(0, v - 1))
-  }
 }
 
 function filterSeeds(seeds: SeedSummary[], q: string): SeedSummary[] {
@@ -239,16 +207,6 @@ export function FieldManagementPage() {
   /** 鍵盤／ARIA 用：目前選中的清單項索引 */
   const [pickerHighlight, setPickerHighlight] = useState<number | null>(null)
 
-  const [growTimeDialog, setGrowTimeDialog] = useState<{
-    fieldId: string
-    slotId: FieldSlotId
-    seed: SeedSummary
-  } | null>(null)
-  const [growDays, setGrowDays] = useState(0)
-  const [growHours, setGrowHours] = useState(0)
-  const [growMinutes, setGrowMinutes] = useState(0)
-  const [growSeconds, setGrowSeconds] = useState(0)
-
   const pickerListId = useId()
 
   const [draggingFieldId, setDraggingFieldId] = useState<string | null>(null)
@@ -400,24 +358,18 @@ export function FieldManagementPage() {
     [seedsById],
   )
 
-  const beginPlantGrowTimeStep = useCallback(
+  /** 選種後直接依種子資料中的收成時間種植（不再開啟自訂天／時／分／秒彈窗）。 */
+  const plantSelectedSeed = useCallback(
     async (fieldId: string, slotId: FieldSlotId, seed: SeedSummary) => {
       if (!seedsById) return
       const rec =
         seedsById[String(seed.seedId)] ?? (await getSeedById(seed.seedId))
-      const defaultMs = growMsFromSeedRecord(rec)
-      const p =
-        defaultMs != null && defaultMs > 0
-          ? msToDhms(defaultMs)
-          : { days: 0, hours: 0, minutes: 0, seconds: 0 }
-      setGrowDays(clampGrowDhmsUnit(p.days, GROW_TIME_DHMS_MAX.days))
-      setGrowHours(clampGrowDhmsUnit(p.hours, GROW_TIME_DHMS_MAX.hours))
-      setGrowMinutes(clampGrowDhmsUnit(p.minutes, GROW_TIME_DHMS_MAX.minutes))
-      setGrowSeconds(clampGrowDhmsUnit(p.seconds, GROW_TIME_DHMS_MAX.seconds))
-      setGrowTimeDialog({ fieldId, slotId, seed })
+      const growMs = growMsFromSeedRecord(rec)
+      if (growMs == null || growMs <= 0) return
+      await applyPlantWithGrowMs(fieldId, slotId, seed, growMs)
       setPickerTarget(null)
     },
-    [seedsById],
+    [seedsById, applyPlantWithGrowMs],
   )
 
   const clearSlot = useCallback(
@@ -738,72 +690,20 @@ export function FieldManagementPage() {
     return () => document.removeEventListener('keydown', onDocKey, true)
   }, [pickerTarget])
 
-  useEffect(() => {
-    if (!growTimeDialog) return
-    const onDocKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return
-      e.preventDefault()
-      setGrowTimeDialog(null)
-    }
-    document.addEventListener('keydown', onDocKey, true)
-    return () => document.removeEventListener('keydown', onDocKey, true)
-  }, [growTimeDialog])
-
   const closeSeedPicker = useCallback(() => {
     setPickerTarget(null)
   }, [])
 
-  const closeGrowTimeDialog = useCallback(() => {
-    setGrowTimeDialog(null)
-  }, [])
-
-  const confirmGrowTimeAndPlant = useCallback(() => {
-    if (!growTimeDialog) return
-    const totalMs = dhmsToMs(growDays, growHours, growMinutes, growSeconds)
-    if (totalMs <= 0) return
-    void applyPlantWithGrowMs(
-      growTimeDialog.fieldId,
-      growTimeDialog.slotId,
-      growTimeDialog.seed,
-      totalMs,
-    )
-    setGrowTimeDialog(null)
-  }, [
-    growTimeDialog,
-    growDays,
-    growHours,
-    growMinutes,
-    growSeconds,
-    applyPlantWithGrowMs,
-  ])
-
-  const handleGrowTimeDhmsFieldKeyDown = useCallback(
-    (
-      e: ReactKeyboardEvent<HTMLInputElement>,
-      setValue: Dispatch<SetStateAction<number>>,
-      max: number,
-    ) => {
-      if (e.nativeEvent.isComposing) return
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        confirmGrowTimeAndPlant()
-        return
-      }
-      handleGrowDhmsStepKeyDown(e, setValue, max)
-    },
-    [confirmGrowTimeAndPlant],
-  )
-
   const confirmPickerSeed = useCallback(
     (s: SeedSummary) => {
       if (!pickerTarget) return
-      void beginPlantGrowTimeStep(
+      void plantSelectedSeed(
         pickerTarget.fieldId,
         pickerTarget.slotId,
         s,
       )
     },
-    [pickerTarget, beginPlantGrowTimeStep],
+    [pickerTarget, plantSelectedSeed],
   )
 
   const handlePickerSearchKeyDown = useCallback(
@@ -1506,172 +1406,6 @@ export function FieldManagementPage() {
         </div>
       ) : null}
 
-      {growTimeDialog && !loadError ? (
-        <div
-          className="field-modal-backdrop"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="field-grow-time-title"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) closeGrowTimeDialog()
-          }}
-        >
-          <div className="field-modal field-modal--grow-time">
-            <div className="field-modal-head" id="field-grow-time-title">
-              收成時間
-            </div>
-            <div className="field-add-field-body">
-              <p className="field-grow-time-seed-name">
-                {growTimeDialog.seed.name}
-              </p>
-              <p className="field-grow-time-hint">
-                預設已帶入種子資料中的收成時間（
-                {formatDurationEn(growTimeDialog.seed.growTime)}
-                ），可自行修改天／時／分／秒。各欄範圍：天 0–{GROW_TIME_DHMS_MAX.days}
-                、時 0–{GROW_TIME_DHMS_MAX.hours}、分 0–{GROW_TIME_DHMS_MAX.minutes}
-                、秒 0–{GROW_TIME_DHMS_MAX.seconds}。
-              </p>
-              <fieldset className="field-add-field-group">
-                <legend className="field-add-field-legend">
-                  距離可收成
-                </legend>
-                <div className="field-grow-dhms-grid">
-                  <label className="field-grow-dhms-cell">
-                    <span className="field-grow-dhms-label">天</span>
-                    <input
-                      type="number"
-                      className="field-grow-dhms-input"
-                      inputMode="numeric"
-                      min={0}
-                      max={GROW_TIME_DHMS_MAX.days}
-                      step={1}
-                      value={growDays}
-                      autoFocus
-                      onChange={(e) =>
-                        setGrowDays(
-                          clampGrowDhmsUnit(
-                            Number.parseInt(e.target.value, 10) || 0,
-                            GROW_TIME_DHMS_MAX.days,
-                          ),
-                        )
-                      }
-                      onKeyDown={(e) =>
-                        handleGrowTimeDhmsFieldKeyDown(
-                          e,
-                          setGrowDays,
-                          GROW_TIME_DHMS_MAX.days,
-                        )
-                      }
-                    />
-                  </label>
-                  <label className="field-grow-dhms-cell">
-                    <span className="field-grow-dhms-label">時</span>
-                    <input
-                      type="number"
-                      className="field-grow-dhms-input"
-                      inputMode="numeric"
-                      min={0}
-                      max={GROW_TIME_DHMS_MAX.hours}
-                      step={1}
-                      value={growHours}
-                      onChange={(e) =>
-                        setGrowHours(
-                          clampGrowDhmsUnit(
-                            Number.parseInt(e.target.value, 10) || 0,
-                            GROW_TIME_DHMS_MAX.hours,
-                          ),
-                        )
-                      }
-                      onKeyDown={(e) =>
-                        handleGrowTimeDhmsFieldKeyDown(
-                          e,
-                          setGrowHours,
-                          GROW_TIME_DHMS_MAX.hours,
-                        )
-                      }
-                    />
-                  </label>
-                  <label className="field-grow-dhms-cell">
-                    <span className="field-grow-dhms-label">分</span>
-                    <input
-                      type="number"
-                      className="field-grow-dhms-input"
-                      inputMode="numeric"
-                      min={0}
-                      max={GROW_TIME_DHMS_MAX.minutes}
-                      step={1}
-                      value={growMinutes}
-                      onChange={(e) =>
-                        setGrowMinutes(
-                          clampGrowDhmsUnit(
-                            Number.parseInt(e.target.value, 10) || 0,
-                            GROW_TIME_DHMS_MAX.minutes,
-                          ),
-                        )
-                      }
-                      onKeyDown={(e) =>
-                        handleGrowTimeDhmsFieldKeyDown(
-                          e,
-                          setGrowMinutes,
-                          GROW_TIME_DHMS_MAX.minutes,
-                        )
-                      }
-                    />
-                  </label>
-                  <label className="field-grow-dhms-cell">
-                    <span className="field-grow-dhms-label">秒</span>
-                    <input
-                      type="number"
-                      className="field-grow-dhms-input"
-                      inputMode="numeric"
-                      min={0}
-                      max={GROW_TIME_DHMS_MAX.seconds}
-                      step={1}
-                      value={growSeconds}
-                      onChange={(e) =>
-                        setGrowSeconds(
-                          clampGrowDhmsUnit(
-                            Number.parseInt(e.target.value, 10) || 0,
-                            GROW_TIME_DHMS_MAX.seconds,
-                          ),
-                        )
-                      }
-                      onKeyDown={(e) =>
-                        handleGrowTimeDhmsFieldKeyDown(
-                          e,
-                          setGrowSeconds,
-                          GROW_TIME_DHMS_MAX.seconds,
-                        )
-                      }
-                    />
-                  </label>
-                </div>
-              </fieldset>
-              <div className="field-add-field-actions">
-                <button
-                  type="button"
-                  className="field-btn"
-                  onClick={closeGrowTimeDialog}
-                >
-                  取消
-                </button>
-                <button
-                  type="button"
-                  className="field-btn field-btn--primary"
-                  onClick={confirmGrowTimeAndPlant}
-                  disabled={
-                    dhmsToMs(growDays, growHours, growMinutes, growSeconds) <=
-                    0
-                  }
-                >
-                  種植
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
-
       {pickerTarget && !loadError ? (
         <div
           className="field-modal-backdrop"
@@ -1727,7 +1461,7 @@ export function FieldManagementPage() {
                     onMouseEnter={() => setPickerHighlight(i)}
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => {
-                      void beginPlantGrowTimeStep(
+                      void plantSelectedSeed(
                         pickerTarget.fieldId,
                         pickerTarget.slotId,
                         s,
