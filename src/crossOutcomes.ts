@@ -1,4 +1,4 @@
-import type { SeedRecord } from './seedDetailTypes'
+import type { ConfirmedCross, SeedRecord } from './seedDetailTypes'
 
 export type IntercrossOutcome = {
   outcomeSeedId: number
@@ -24,6 +24,45 @@ function effSortValue(e: number | null): number {
 }
 
 /**
+ * 在該種子的 confirmedCrosses 中找與兩親本 id 相符的列（順序不論）。
+ */
+function findCrossRowForParents(
+  seed: SeedRecord | undefined,
+  parentId1: number,
+  parentId2: number,
+) {
+  if (!seed?.confirmedCrosses?.length) return null
+  for (const row of seed.confirmedCrosses) {
+    if (
+      pairMatch(row.parentA.seedId, row.parentB.seedId, parentId1, parentId2)
+    ) {
+      return row
+    }
+  }
+  return null
+}
+
+/**
+ * 效率／顏色／loop 以「結果種子」頁面上 (親本A,親本B) 的列為準；若該頁無此組合（多為從他種「其他可能」欄帶出）則退回發現列。
+ */
+function efficiencyFromOutcomeRow(
+  seedsById: Record<string, SeedRecord>,
+  outcomeSeedId: number,
+  parentId1: number,
+  parentId2: number,
+  fallbackRow: ConfirmedCross,
+) {
+  const rec = seedsById[String(outcomeSeedId)]
+  const match = findCrossRowForParents(rec, parentId1, parentId2)
+  const src = match ?? fallbackRow
+  return {
+    efficiency: src.efficiency,
+    efficiencyRating: src.efficiencyRating,
+    isLoop: src.isLoop,
+  }
+}
+
+/**
  * 依 seeds-by-id 中各種子的「雜交獲取表」反查：兩親本可得到哪些結果（含主要結果與「其他可能」欄）。
  */
 export function findIntercrossOutcomes(
@@ -36,13 +75,20 @@ export function findIntercrossOutcomes(
     for (const c of seed.confirmedCrosses ?? []) {
       if (!pairMatch(c.parentA.seedId, c.parentB.seedId, parentId1, parentId2))
         continue
+      const primaryEff = efficiencyFromOutcomeRow(
+        seedsById,
+        seed.seedId,
+        parentId1,
+        parentId2,
+        c,
+      )
       raw.push({
         outcomeSeedId: seed.seedId,
         outcomeName: seed.seedItemName.trim() || seed.name,
         kind: 'primary',
-        efficiency: c.efficiency,
-        efficiencyRating: c.efficiencyRating,
-        isLoop: c.isLoop,
+        efficiency: primaryEff.efficiency,
+        efficiencyRating: primaryEff.efficiencyRating,
+        isLoop: primaryEff.isLoop,
       })
       const altId = c.alternate.seedId
       if (altId != null) {
@@ -52,13 +98,20 @@ export function findIntercrossOutcomes(
           altRec?.name ||
           c.alternate.name ||
           `種子 #${altId}`
+        const altEff = efficiencyFromOutcomeRow(
+          seedsById,
+          altId,
+          parentId1,
+          parentId2,
+          c,
+        )
         raw.push({
           outcomeSeedId: altId,
           outcomeName: altName,
           kind: 'alternate',
-          efficiency: c.efficiency,
-          efficiencyRating: c.efficiencyRating,
-          isLoop: c.isLoop,
+          efficiency: altEff.efficiency,
+          efficiencyRating: altEff.efficiencyRating,
+          isLoop: altEff.isLoop,
         })
       }
     }
