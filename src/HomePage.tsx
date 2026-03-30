@@ -89,7 +89,13 @@ export function HomePage() {
             《FFXIV 園藝小幫手》是《最終幻想 XIV》園藝用的工具網頁，此專案為玩家社群工具，遊戲內名稱、圖示與數值之版權歸 Square Enix 與相關權利人所有。
           </p>
           <p className="home-intro-lead">
-            所有遊戲道具名稱旁皆帶有複製按鈕可以快速複製道具名稱。上方導覽列可切換各頁面：
+            所有搜尋種子的地方都支援繁體中文、簡體中文、日文、英文的輸入！
+          </p>
+          <p className="home-intro-lead">
+            所有遊戲道具名稱旁皆帶有複製按鈕可以快速複製道具名稱！
+          </p>
+          <p className="home-intro-lead">
+            上方導覽列可切換各頁面：
           </p>
           <ul className="home-intro-list">
             <li>
