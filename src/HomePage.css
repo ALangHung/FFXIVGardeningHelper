@@ -1,0 +1,293 @@
+.home-page {
+  --surface: rgba(26, 20, 40, 0.75);
+  --border: rgba(167, 139, 250, 0.22);
+  --text-muted: #9ca3af;
+  --gold: #fbbf24;
+
+  width: 100%;
+  max-width: var(--app-page-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2rem 1.25rem 3.5rem;
+  box-sizing: border-box;
+}
+
+.home-page-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.home-page-title {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  text-shadow: 0 0 24px rgba(251, 191, 36, 0.25);
+}
+
+.home-page-lead {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.home-section {
+  margin-bottom: 1.75rem;
+  padding: 1.25rem 1.35rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+}
+
+.home-section:last-child {
+  margin-bottom: 0;
+}
+
+.home-section-title {
+  margin: 0 0 0.85rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #e5e7eb;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+.home-section-body {
+  color: #d1d5db;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.home-placeholder {
+  margin: 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.home-intro-lead {
+  margin: 0 0 1rem;
+}
+
+.home-intro-list {
+  margin: 0 0 1rem;
+  padding-left: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.home-intro-list li {
+  padding-left: 0.15rem;
+}
+
+/* 與種子列表 `.seed-name-link` 相同視覺（見 SeedListPage.css） */
+.home-intro-list .seed-name-link {
+  color: #f3f4f6;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.home-intro-list .seed-name-link:hover {
+  color: #fbbf24;
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+}
+
+.home-intro-list strong {
+  color: #e5e7eb;
+  font-weight: 700;
+}
+
+.home-intro-note {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.home-author-text {
+  margin: 0 0 1rem;
+}
+
+.home-author-donate-line {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.5rem;
+}
+
+.home-author-donate-btn {
+  display: inline-block;
+  margin: 0;
+  padding: 0.35rem 0.85rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fde68a;
+  text-decoration: none;
+  background: rgba(124, 58, 237, 0.28);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.home-author-donate-btn:hover {
+  color: #fffbeb;
+  background: rgba(124, 58, 237, 0.42);
+  border-color: rgba(251, 191, 36, 0.55);
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.12);
+}
+
+.home-author-donate-btn:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.75);
+  outline-offset: 2px;
+}
+
+/* —— 致謝：深色卡片網格（參考致謝區塊版型）—— */
+.home-thanks-section {
+  --thanks-bg: rgba(13, 17, 23, 0.72);
+  --thanks-card-bg: rgba(22, 27, 34, 0.85);
+  --thanks-card-border: rgba(240, 246, 252, 0.08);
+  --thanks-card-border-hover: rgba(167, 139, 250, 0.35);
+
+  background: var(--thanks-bg);
+  border-color: rgba(240, 246, 252, 0.06);
+  box-shadow:
+    0 0 0 1px rgba(88, 28, 135, 0.12) inset,
+    0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.home-thanks-header {
+  margin-bottom: 1.25rem;
+}
+
+.home-thanks-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #f9fafb;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.home-thanks-lead {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.home-thanks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+@media (max-width: 520px) {
+  .home-thanks-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.home-thanks-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1rem 1.05rem;
+  border-radius: 10px;
+  border: 1px solid var(--thanks-card-border);
+  background: var(--thanks-card-bg);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.home-thanks-card:hover {
+  border-color: var(--thanks-card-border-hover);
+  background: rgba(30, 27, 45, 0.92);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.28);
+}
+
+.home-thanks-card:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.65);
+  outline-offset: 2px;
+}
+
+.home-thanks-card-icon {
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.home-thanks-card-icon-svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.home-thanks-card-icon--garden {
+  background: rgba(34, 197, 94, 0.14);
+  color: #4ade80;
+}
+
+.home-thanks-card-icon--wiki {
+  background: rgba(59, 130, 246, 0.16);
+  color: #60a5fa;
+}
+
+.home-thanks-card-icon--code {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+}
+
+.home-thanks-card-icon--style {
+  background: rgba(245, 158, 11, 0.14);
+  color: #fbbf24;
+}
+
+.home-thanks-card-body {
+  min-width: 0;
+}
+
+.home-thanks-card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f3f4f6;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.25rem;
+  line-height: 1.35;
+}
+
+.home-thanks-card-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.home-thanks-card-desc code {
+  font-size: 0.92em;
+  padding: 0.08em 0.32em;
+  border-radius: 4px;
+  background: rgba(124, 58, 237, 0.22);
+  color: #e9d5ff;
+}

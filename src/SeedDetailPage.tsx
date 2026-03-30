@@ -299,7 +299,7 @@ function SeedDetailBackNav() {
         if (typeof window !== 'undefined' && window.history.length > 1) {
           navigate(-1)
         } else {
-          navigate('/')
+          navigate('/seeds')
         }
       }}
     >

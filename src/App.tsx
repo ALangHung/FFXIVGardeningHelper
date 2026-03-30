@@ -2,6 +2,7 @@ import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
 import { CrossCalculatorPage } from './CrossCalculatorPage'
 import { FieldManagementPage } from './FieldManagementPage'
+import { HomePage } from './HomePage'
 import { SeedDetailPage } from './SeedDetailPage'
 import { SeedListPage } from './SeedListPage'
 
@@ -14,6 +15,14 @@ export function App() {
             <NavLink
               to="/"
               end
+              className={({ isActive }) =>
+                `app-top-nav-tab${isActive ? ' app-top-nav-tab--active' : ''}`
+              }
+            >
+              首頁
+            </NavLink>
+            <NavLink
+              to="/seeds"
               className={({ isActive }) =>
                 `app-top-nav-tab${isActive ? ' app-top-nav-tab--active' : ''}`
               }
@@ -37,30 +46,12 @@ export function App() {
               田地管理
             </NavLink>
           </nav>
-          <div className="app-top-nav-source">
-            <span className="app-top-nav-source-label">資料來源:</span>
-            <div className="app-top-nav-source-links">
-              <a
-                href="https://www.ffxivgardening.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                ffxivgardening.com
-              </a>
-              <a
-                href="https://ff14.huijiwiki.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                https://ff14.huijiwiki.com
-              </a>
-            </div>
-          </div>
         </div>
       </header>
       <main id="app-main" className="app-main">
         <Routes>
-          <Route path="/" element={<SeedListPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/seeds" element={<SeedListPage />} />
           <Route path="/cross" element={<CrossCalculatorPage />} />
           <Route path="/fields" element={<FieldManagementPage />} />
           <Route path="/seed/:seedId" element={<SeedDetailPage />} />

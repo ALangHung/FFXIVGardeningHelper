@@ -30,7 +30,6 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: 0.65rem 1rem;
 }
 
@@ -39,42 +38,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.4rem;
-}
-
-.app-top-nav-source {
-  margin: 0;
-  margin-left: auto;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  line-height: 1.45;
-  color: #9ca3af;
-}
-
-.app-top-nav-source-label {
-  flex-shrink: 0;
-  line-height: 1.2;
-}
-
-.app-top-nav-source-links {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.2rem;
-  text-align: left;
-}
-
-.app-top-nav-source-links a {
-  color: #c4b5fd;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  white-space: nowrap;
-}
-
-.app-top-nav-source-links a:hover {
-  color: #ddd6fe;
 }
 
 .app-top-nav-tab {

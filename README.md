@@ -1,17 +1,18 @@
 # FFXIV 園藝小幫手
 
-以 [React](https://react.dev/) + [Vite](https://vite.dev/) 建置的《最終幻想 XIV》園藝參考網頁，介面為**繁體中文**，協助查詢種子、雜交結果與規劃田地版面。
+以 [React](https://react.dev/) + [Vite](https://vite.dev/) 建置的《最終幻想 XIV》園藝參考網頁，介面為**繁體中文**，協助查詢種子、雜交結果與規劃田地版面。頂部導覽列僅提供主要功能分頁（首頁、種子列表、雜交計算器、田地管理），**資料與美術等參考來源**集中於首頁「致謝」區塊。
 
 ## 功能概覽
 
 | 頁面 | 路徑 | 說明 |
 |------|------|------|
-| 種子列表 | `/` | 瀏覽與搜尋種子，可進入詳情；支援一鍵複製作物名稱 |
+| 首頁 | `/` | **使用簡介**：版權聲明、複製道具名稱說明、各功能導覽連結；**作者介紹**；可透過 [Ko-fi](https://ko-fi.com/alanoao) 斗內；**致謝**：卡片式列出資料來源與介面風格參考連結 |
+| 種子列表 | `/seeds` | 瀏覽與搜尋種子，可進入詳情；支援一鍵複製作物名稱 |
 | 雜交計算器 | `/cross` | 依親本組合推算雜交結果，或由結果反查另一親本；支援一鍵複製名稱 |
-| 田地管理 | `/fields` | 在格狀田地上配置種子、輔助版面規劃，並以本機儲存保留田地資料（關閉分頁／瀏覽器後仍有效） |
-| 種子詳情 | `/seed/:seedId` | 單一種子詳細資訊、已確認雜交表（多語搜尋）、作物/種子產量提示 |
+| 田地管理 | `/fields` | 在格狀田地上配置種子、輔助版面與收成時間預估，並以本機儲存保留田地資料（關閉分頁／瀏覽器後仍有效） |
+| 種子詳情 | `/seed/:seedId` | 單一種子詳細資訊、已確認雜交表（多語搜尋）、作物／種子產量、盆栽染色等 |
 
-應用程式頂部亦標示資料來源連結（[ffxivgardening.com](https://www.ffxivgardening.com/)、[灰機 Wiki](https://ff14.huijiwiki.com/) 等）。
+各頁道具／作物名稱旁之複製按鈕可快速複製遊戲內名稱。資料來源與參考連結亦見首頁「致謝」。
 
 ## 技術棧
 
@@ -73,6 +74,7 @@ npm run preview
 ├── scripts/              # Node 維護腳本（.mjs）
 ├── src/
 │   ├── App.tsx           # 路由與頂部導覽
+│   ├── HomePage.tsx      # 首頁（使用簡介、作者、致謝）
 │   ├── SeedListPage.tsx / SeedDetailPage.tsx
 │   ├── CrossCalculatorPage.tsx
 │   ├── FieldManagementPage.tsx
@@ -87,6 +89,7 @@ npm run preview
 - [FFXIV Gardening](https://www.ffxivgardening.com/)：種子、雜交配方與園藝資訊主要來源
 - [灰機 Wiki（FF14）](https://ff14.huijiwiki.com/)：中文名稱與詞彙對照參考
 - [FFXIV Teamcraft（Repo）](https://github.com/ffxiv-teamcraft/ffxiv-teamcraft)：道具多語資料來源（`items`、`tw`、`zh` JSON）
+- [繁中 XIV 市場｜貝爾的市場小屋](https://beherw.github.io/FFXIV_Market/)：網站美術風格參考（非資料來源）
 
 ## 免責與版權
 
