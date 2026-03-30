@@ -14,7 +14,7 @@ import type { SeedSummary } from './seedSummaryTypes'
 import type { SeedRecord } from './seedDetailTypes'
 import { getSeedById, loadSeedsById, loadSeedsSummaryMerged } from './seedDataApi'
 import { publicUrl } from './publicUrl'
-import { loadFieldsSession, saveFieldsSession } from './sessionUiState'
+import { loadFieldsLocal, saveFieldsLocal } from './sessionUiState'
 import {
   FIELD_SLOTS,
   computeCrossHintsAtPlant,
@@ -213,7 +213,7 @@ function FieldCellCrossTooltip({ hint }: { hint: CrossHintAtPlant }) {
 }
 
 export function FieldManagementPage() {
-  const [fields, setFields] = useState<GardenField[]>(() => loadFieldsSession())
+  const [fields, setFields] = useState<GardenField[]>(() => loadFieldsLocal())
   const [seeds, setSeeds] = useState<SeedSummary[]>([])
   const [seedsById, setSeedsById] = useState<Record<string, SeedRecord> | null>(
     null,
@@ -265,7 +265,7 @@ export function FieldManagementPage() {
   const [fieldLayoutEditMode, setFieldLayoutEditMode] = useState(false)
 
   useEffect(() => {
-    saveFieldsSession(fields)
+    saveFieldsLocal(fields)
   }, [fields])
 
   useEffect(() => {

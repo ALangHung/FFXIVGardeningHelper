@@ -1,6 +1,7 @@
 /**
  * 以 sessionStorage 保存列表／雜交計算器 UI，從種子詳情返回時可還原篩選與計算狀態。
  * （僅限同源、同一瀏覽器分頁工作階段。）
+ * 田地管理資料則以 localStorage 持久化（關閉分頁／瀏覽器後仍保留，同源有效）。
  */
 
 import { dedupeGridIndices } from './fieldBoardLayout'
@@ -145,9 +146,9 @@ export function saveCrossCalcUiState(s: CrossCalcUiState): void {
   }
 }
 
-/* ——— 田地管理 ——— */
+/* ——— 田地管理（localStorage 持久化）——— */
 
-const FIELDS_SESSION_KEY = 'ffxivgh.fields.v1'
+const FIELDS_LOCAL_KEY = 'ffxivgh.fields.v2'
 
 function isFieldSlotId(n: number): n is FieldSlotId {
   return n === 0 || n === 1 || n === 2 || n === 3 || n === 4 || n === 5 || n === 6 || n === 7
@@ -352,9 +353,9 @@ function parseGardenField(raw: unknown, index: number): GardenField | null {
   }
 }
 
-export function loadFieldsSession(): GardenField[] {
-  if (typeof sessionStorage === 'undefined') return []
-  const v = safeJsonParse(sessionStorage.getItem(FIELDS_SESSION_KEY))
+export function loadFieldsLocal(): GardenField[] {
+  if (typeof localStorage === 'undefined') return []
+  const v = safeJsonParse(localStorage.getItem(FIELDS_LOCAL_KEY))
   if (!Array.isArray(v)) return []
   const parsed: GardenField[] = []
   for (let i = 0; i < v.length; i++) {
@@ -364,10 +365,10 @@ export function loadFieldsSession(): GardenField[] {
   return dedupeGridIndices(parsed)
 }
 
-export function saveFieldsSession(fields: GardenField[]): void {
-  if (typeof sessionStorage === 'undefined') return
+export function saveFieldsLocal(fields: GardenField[]): void {
+  if (typeof localStorage === 'undefined') return
   try {
-    sessionStorage.setItem(FIELDS_SESSION_KEY, JSON.stringify(fields))
+    localStorage.setItem(FIELDS_LOCAL_KEY, JSON.stringify(fields))
   } catch {
     /* 配額等 */
   }
