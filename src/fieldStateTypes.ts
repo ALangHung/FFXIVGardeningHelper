@@ -51,7 +51,7 @@ export type GardenField = {
   locationLabel: string
   /** 田編號 1–3 */
   plotNumber: 1 | 2 | 3
-  /** 總覽棋盤格位（橫排 3 欄、由左而右由上而下） */
+  /** 總覽棋盤格位（橫排欄數依視窗寬度計算、由左而右由上而下） */
   gridIndex: number
   slots: PlotSlot[]
   /** 最近一次成功施肥的時間（毫秒），供「上次施肥」顯示；取消施肥後清空 */

@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -27,8 +28,8 @@ import {
 import {
   applyFieldGridDrop,
   buildBoardCells,
+  computeBoardColsFromContainer,
   duplicateGardenField,
-  FIELD_BOARD_COLS,
   nextFreeGridIndex,
   trimTrailingEmptyBoardCells,
 } from './fieldBoardLayout'
@@ -213,8 +214,12 @@ export function FieldManagementPage() {
   const [dragOverCellIndex, setDragOverCellIndex] = useState<number | null>(
     null,
   )
-  /** 編輯模式拖曳時，依最末列動態追加的空白列數（每列 FIELD_BOARD_COLS 格）。 */
+  /** 編輯模式拖曳時，依最末列動態追加的空白列數（每列 boardCols 格）。 */
   const [dragBoardExtraRows, setDragBoardExtraRows] = useState(0)
+
+  /** 總覽棋盤目前每橫排欄數（`computeBoardColsFromContainer`，非固定 3）。初值僅在首次測量前暫用。 */
+  const [boardCols, setBoardCols] = useState(1)
+  const fieldsBoardRef = useRef<HTMLDivElement>(null)
 
   /** 棋盤格已成功觸發 `drop` 時為 true，避免接著的 `dragend` 再套用「最後高亮空白格」邏輯。 */
   const layoutGridDropHandledRef = useRef(false)
@@ -225,6 +230,27 @@ export function FieldManagementPage() {
   useEffect(() => {
     saveFieldsLocal(fields)
   }, [fields])
+
+  useLayoutEffect(() => {
+    const board = fieldsBoardRef.current
+    if (!board) return
+    const fieldPage = board.closest('.field-page')
+    if (!(fieldPage instanceof HTMLElement)) return
+
+    const updateCols = () => {
+      const w = board.getBoundingClientRect().width
+      const cols = computeBoardColsFromContainer(
+        w,
+        getComputedStyle(fieldPage),
+      )
+      setBoardCols(cols)
+    }
+
+    updateCols()
+    const ro = new ResizeObserver(() => updateCols())
+    ro.observe(board)
+    return () => ro.disconnect()
+  }, [fields.length, fieldLayoutEditMode])
 
   useEffect(() => {
     const id = window.setInterval(() => setNowTick(Date.now()), 1000)
@@ -618,8 +644,9 @@ export function FieldManagementPage() {
     () =>
       buildBoardCells(fields, {
         padToFullRows: fieldLayoutEditMode,
+        boardCols,
       }),
-    [fields, fieldLayoutEditMode],
+    [fields, fieldLayoutEditMode, boardCols],
   )
 
   const boardCellsForView = useMemo(() => {
@@ -631,7 +658,7 @@ export function FieldManagementPage() {
     }
     const L = baseBoardCells.length
     const append = Array.from(
-      { length: dragBoardExtraRows * FIELD_BOARD_COLS },
+      { length: dragBoardExtraRows * boardCols },
       (_, i) => ({
         index: L + i,
         field: null as GardenField | null,
@@ -643,6 +670,7 @@ export function FieldManagementPage() {
     fieldLayoutEditMode,
     draggingFieldId,
     dragBoardExtraRows,
+    boardCols,
   ])
 
   const growBoardIfDragNeedsRowBelow = useCallback(
@@ -650,17 +678,17 @@ export function FieldManagementPage() {
       if (!draggingFieldId) return
       const L = baseBoardCells.length
       setDragBoardExtraRows((er) => {
-        const currentTotal = L + er * FIELD_BOARD_COLS
-        const r = Math.floor(slotIndex / FIELD_BOARD_COLS)
-        const lastRow = Math.floor((currentTotal - 1) / FIELD_BOARD_COLS)
+        const currentTotal = L + er * boardCols
+        const r = Math.floor(slotIndex / boardCols)
+        const lastRow = Math.floor((currentTotal - 1) / boardCols)
         if (r !== lastRow) return er
-        const neededCells = (r + 2) * FIELD_BOARD_COLS
+        const neededCells = (r + 2) * boardCols
         if (neededCells <= currentTotal) return er
         const delta = neededCells - currentTotal
-        return er + Math.ceil(delta / FIELD_BOARD_COLS)
+        return er + Math.ceil(delta / boardCols)
       })
     },
-    [draggingFieldId, baseBoardCells],
+    [draggingFieldId, baseBoardCells, boardCols],
   )
 
   const pickerSeeds = useMemo(
@@ -808,14 +836,14 @@ export function FieldManagementPage() {
             </li>
             <li>
               <strong>總覽棋盤</strong>
-              ：田地以每列 3 塊排列；開啟「編輯版面」後可拖曳田地卡片調整位置。
+              ：田地以固定寬度卡片排列，每列可放幾塊依視窗寬度自動計算；開啟「編輯版面」後可拖曳田地卡片調整位置。
             </li>
           </ul>
         </div>
       ) : null}
 
       {!loading && !loadError && fields.length > 0 ? (
-        <div className="field-fields-board">
+        <div className="field-fields-board" ref={fieldsBoardRef}>
           {boardCellsForView.map(({ index, field }) => (
             <div
               key={field?.id ?? `board-slot-${index}`}
@@ -824,10 +852,6 @@ export function FieldManagementPage() {
                   ? 'field-board-slot field-board-slot--drag-over'
                   : 'field-board-slot'
               }
-              style={{
-                gridColumn: (index % FIELD_BOARD_COLS) + 1,
-                gridRow: Math.floor(index / FIELD_BOARD_COLS) + 1,
-              }}
               onDragOver={(e) => {
                 if (!fieldLayoutEditMode) return
                 e.preventDefault()

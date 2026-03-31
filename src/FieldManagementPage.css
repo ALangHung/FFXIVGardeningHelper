@@ -5,6 +5,13 @@
   --text: #f1f5f9;
   --text-muted: #94a3b8;
   --gold: #fbbf24;
+  /**
+   * 每塊「田」卡片外觀寬度（含內距的欄寬基準）。調整田地卡片寬度請改此變數。
+   * 橫排可放幾塊田由容器寬度與 --field-board-gap-x 自動計算（見 FieldManagementPage 之 ResizeObserver）。
+   */
+  --field-block-width: 23.73rem;
+  --field-board-gap-x: 1.15rem;
+  --field-board-gap-y: 1rem;
   --field-cell-row-height: 8rem;
   --field-grid-gap: 0.45rem;
   --field-grid-min-height: calc(
@@ -102,13 +109,19 @@
 
 .field-fields-board {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem 1.15rem;
+  grid-template-columns: repeat(auto-fill, var(--field-block-width));
+  gap: var(--field-board-gap-y) var(--field-board-gap-x);
   align-items: stretch;
-  overflow: visible;
+  justify-content: start;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 
 .field-board-slot {
+  box-sizing: border-box;
+  width: var(--field-block-width);
+  max-width: 100%;
   min-width: 0;
   min-height: 0;
   display: flex;
@@ -157,6 +170,7 @@
 
 .field-block {
   cursor: grab;
+  box-sizing: border-box;
   width: 100%;
   flex: 0 0 auto;
   background: var(--surface);
