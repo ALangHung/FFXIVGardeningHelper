@@ -99,14 +99,34 @@
   position: relative;
 }
 
+.cross-calc-combobox {
+  position: relative;
+  min-width: 0;
+}
+
 .cross-calc-input-wrap {
   display: block;
   position: relative;
-  z-index: 1;
   min-width: 0;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: rgba(18, 12, 29, 0.65);
+}
+
+.cross-calc-picker--first .cross-calc-input-wrap {
+  z-index: 4;
+}
+
+.cross-calc-picker--first .cross-calc-suggestions {
+  z-index: 3;
+}
+
+.cross-calc-picker--second .cross-calc-input-wrap {
+  z-index: 2;
+}
+
+.cross-calc-picker--second .cross-calc-suggestions {
+  z-index: 1;
 }
 
 .cross-calc-input-wrap:focus-within {
@@ -149,7 +169,6 @@
   left: 0;
   right: 0;
   top: 100%;
-  z-index: 30;
   max-height: min(52vh, 380px);
   overflow-y: auto;
   margin: 0;

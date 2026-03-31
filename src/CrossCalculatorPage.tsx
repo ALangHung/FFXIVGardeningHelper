@@ -71,6 +71,7 @@ function ParentPicker({
   open,
   keyboardSelectEnabled,
   selectedAssistiveText,
+  stackOrder = 'first',
   onOpenChange,
   onQueryChange,
   onSelect,
@@ -84,6 +85,7 @@ function ParentPicker({
   open: boolean
   keyboardSelectEnabled?: boolean
   selectedAssistiveText?: string | null
+  stackOrder?: 'first' | 'second'
   onOpenChange: (open: boolean) => void
   onQueryChange: (q: string) => void
   onSelect: (s: SeedSummary) => void
@@ -117,87 +119,89 @@ function ParentPicker({
   }, [query, selectedId])
 
   return (
-    <div className="cross-calc-picker">
+    <div className={`cross-calc-picker cross-calc-picker--${stackOrder}`}>
       <label className="cross-calc-field-label" htmlFor={inputId}>
         {label}
       </label>
-      <div className="cross-calc-input-wrap">
-        <span className="cross-calc-input-icon" aria-hidden>
-          <SearchGlyph />
-        </span>
-        <input
-          id={inputId}
-          type="search"
-          className={`cross-calc-input${displayValue ? ' cross-calc-input--with-clear' : ''}`}
-          placeholder="搜尋名稱…"
-          autoComplete="off"
-          role="combobox"
-          aria-expanded={open}
-          aria-controls={listId}
-          aria-autocomplete="list"
-          aria-activedescendant={
-            open && activeSuggestion != null
-              ? `${listId}-opt-${activeSuggestion.seedId}`
-              : undefined
-          }
-          ref={inputRef}
-          value={displayValue}
-          onChange={(e) => {
-            onQueryChange(e.target.value)
-          }}
-          onFocus={() => onOpenChange(true)}
-          onKeyDown={(e) => {
-            if (!keyboardSelectEnabled) return
-            if (!open && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
-              e.preventDefault()
-              onOpenChange(true)
-              if (suggestions.length > 0) {
-                setActiveIndex(e.key === 'ArrowUp' ? suggestions.length - 1 : 0)
+      <div className="cross-calc-combobox">
+        <div className="cross-calc-input-wrap">
+          <span className="cross-calc-input-icon" aria-hidden>
+            <SearchGlyph />
+          </span>
+          <input
+            id={inputId}
+            type="search"
+            className={`cross-calc-input${displayValue ? ' cross-calc-input--with-clear' : ''}`}
+            placeholder="搜尋名稱…"
+            autoComplete="off"
+            role="combobox"
+            aria-expanded={open}
+            aria-controls={listId}
+            aria-autocomplete="list"
+            aria-activedescendant={
+              open && activeSuggestion != null
+                ? `${listId}-opt-${activeSuggestion.seedId}`
+                : undefined
+            }
+            ref={inputRef}
+            value={displayValue}
+            onChange={(e) => {
+              onQueryChange(e.target.value)
+            }}
+            onFocus={() => onOpenChange(true)}
+            onKeyDown={(e) => {
+              if (!keyboardSelectEnabled) return
+              if (!open && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                e.preventDefault()
+                onOpenChange(true)
+                if (suggestions.length > 0) {
+                  setActiveIndex(e.key === 'ArrowUp' ? suggestions.length - 1 : 0)
+                }
+                return
               }
-              return
-            }
-            if (!open) return
-            if (e.key === 'ArrowDown') {
-              e.preventDefault()
-              if (suggestions.length === 0) return
-              setActiveIndex((idx) =>
-                idx < 0 ? 0 : Math.min(idx + 1, suggestions.length - 1),
-              )
-              return
-            }
-            if (e.key === 'ArrowUp') {
-              e.preventDefault()
-              if (suggestions.length === 0) return
-              setActiveIndex((idx) =>
-                idx < 0 ? suggestions.length - 1 : Math.max(idx - 1, 0),
-              )
-              return
-            }
-            if (e.key === 'Enter') {
-              if (activeSuggestion == null) return
-              e.preventDefault()
-              onSelect(activeSuggestion)
-              onOpenChange(false)
-              inputRef.current?.blur()
-              return
-            }
-            if (e.key === 'Escape') {
-              e.preventDefault()
-              onOpenChange(false)
-              setActiveIndex(-1)
-            }
-          }}
-          onBlur={() => {
-            window.setTimeout(() => onOpenChange(false), 150)
-          }}
-        />
-        {displayValue ? (
-          <SearchClearButton
-            preventMousedownBlur
-            onClear={() => onQueryChange('')}
-            aria-label="清除"
+              if (!open) return
+              if (e.key === 'ArrowDown') {
+                e.preventDefault()
+                if (suggestions.length === 0) return
+                setActiveIndex((idx) =>
+                  idx < 0 ? 0 : Math.min(idx + 1, suggestions.length - 1),
+                )
+                return
+              }
+              if (e.key === 'ArrowUp') {
+                e.preventDefault()
+                if (suggestions.length === 0) return
+                setActiveIndex((idx) =>
+                  idx < 0 ? suggestions.length - 1 : Math.max(idx - 1, 0),
+                )
+                return
+              }
+              if (e.key === 'Enter') {
+                if (activeSuggestion == null) return
+                e.preventDefault()
+                onSelect(activeSuggestion)
+                onOpenChange(false)
+                inputRef.current?.blur()
+                return
+              }
+              if (e.key === 'Escape') {
+                e.preventDefault()
+                onOpenChange(false)
+                setActiveIndex(-1)
+              }
+            }}
+            onBlur={() => {
+              window.setTimeout(() => onOpenChange(false), 150)
+            }}
           />
-        ) : null}
+          {displayValue ? (
+            <SearchClearButton
+              preventMousedownBlur
+              onClear={() => onQueryChange('')}
+              aria-label="清除"
+            />
+          ) : null}
+        </div>
         {open && suggestions.length > 0 ? (
           <ul id={listId} className="cross-calc-suggestions" role="listbox">
             {suggestions.map((s, idx) => (
@@ -686,6 +690,7 @@ export function CrossCalculatorPage() {
                   selectedId={parentBId}
                   query={queryB}
                   open={openB}
+                  stackOrder="second"
                   keyboardSelectEnabled
                   selectedAssistiveText={parentBHarvestText}
                   onOpenChange={(o) => {
@@ -823,6 +828,7 @@ export function CrossCalculatorPage() {
                   selectedId={spResultId}
                   query={spQueryResult}
                   open={spOpenResult}
+                  stackOrder="second"
                   keyboardSelectEnabled
                   selectedAssistiveText={spResultHarvestText}
                   onOpenChange={(o) => {
