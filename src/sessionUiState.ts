@@ -7,9 +7,12 @@
 import { dedupeGridIndices } from './fieldBoardLayout'
 import type {
   CrossHintAtPlant,
+  FieldPlotNumber,
   FieldFertilizeEntry,
   FieldSlotId,
   GardenField,
+  PotActionUndo,
+  PotBaseColor,
   PlotSlot,
 } from './fieldStateTypes'
 import {
@@ -201,13 +204,22 @@ function parseClearUndo(raw: unknown): PlotSlot['clearUndo'] {
   const crossAtPlant = Array.isArray(hint)
     ? hint[0] ?? null
     : hint
+  const colorsRaw = Array.isArray(o.potColorSteps) ? o.potColorSteps : []
+  const potColorSteps: PotBaseColor[] = []
+  for (const c of colorsRaw) {
+    if (c === 'red' || c === 'blue' || c === 'yellow') {
+      potColorSteps.push(c)
+    }
+  }
   return {
     seedId,
     seedName,
     growMs: readNullableNumber(o.growMs),
     harvestDeadline: readNullableNumber(o.harvestDeadline),
     lastFertilizeAt: readNullableNumber(o.lastFertilizeAt),
+    potColorLastActionAt: readNullableNumber(o.potColorLastActionAt),
     crossAtPlant,
+    potColorSteps,
   }
 }
 
@@ -220,6 +232,14 @@ function parsePlotSlot(raw: unknown): PlotSlot | null {
   const crossAtPlant = Array.isArray(hintRaw)
     ? hintRaw[0] ?? null
     : hintRaw
+  const colorsRaw = Array.isArray(o.potColorSteps) ? o.potColorSteps : []
+  const potColorSteps: PotBaseColor[] = []
+  for (const c of colorsRaw) {
+    if (c === 'red' || c === 'blue' || c === 'yellow') {
+      potColorSteps.push(c)
+    }
+  }
+  const potActionUndo = parsePotActionUndo(o.potActionUndo)
   return {
     id,
     seedId: readNullableSeedId(o.seedId),
@@ -227,8 +247,49 @@ function parsePlotSlot(raw: unknown): PlotSlot | null {
     growMs: readNullableNumber(o.growMs),
     harvestDeadline: readNullableNumber(o.harvestDeadline),
     lastFertilizeAt: readNullableNumber(o.lastFertilizeAt),
+    potColorLastActionAt: readNullableNumber(o.potColorLastActionAt),
     crossAtPlant,
     clearUndo: parseClearUndo(o.clearUndo),
+    potColorSteps,
+    potActionUndo,
+  }
+}
+
+function parsePotActionUndo(raw: unknown): PotActionUndo | null {
+  if (raw == null || typeof raw !== 'object') return null
+  const o = raw as Record<string, unknown>
+  const time = readNullableNumber(o.time)
+  const action = o.action
+  const beforeRaw =
+    o.before != null && typeof o.before === 'object'
+      ? (o.before as Record<string, unknown>)
+      : null
+  if (time == null || beforeRaw == null) return null
+  if (
+    action !== 'red' &&
+    action !== 'blue' &&
+    action !== 'yellow'
+  ) {
+    return null
+  }
+  const colorsRaw = Array.isArray(beforeRaw.potColorSteps)
+    ? beforeRaw.potColorSteps
+    : []
+  const potColorSteps: PotBaseColor[] = []
+  for (const c of colorsRaw) {
+    if (c === 'red' || c === 'blue' || c === 'yellow') {
+      potColorSteps.push(c)
+    }
+  }
+  return {
+    time,
+    action,
+    before: {
+      harvestDeadline: readNullableNumber(beforeRaw.harvestDeadline),
+      lastFertilizeAt: readNullableNumber(beforeRaw.lastFertilizeAt),
+      potColorLastActionAt: readNullableNumber(beforeRaw.potColorLastActionAt),
+      potColorSteps,
+    },
   }
 }
 
@@ -288,8 +349,13 @@ function parseGardenField(raw: unknown, index: number): GardenField | null {
     locationLabel = normalizeFieldLocation('個人房')
   }
 
-  let plotNumber: 1 | 2 | 3 = 1
-  if (o.plotNumber === 1 || o.plotNumber === 2 || o.plotNumber === 3) {
+  let plotNumber: FieldPlotNumber = 1
+  if (
+    o.plotNumber === 1 ||
+    o.plotNumber === 2 ||
+    o.plotNumber === 3 ||
+    o.plotNumber === 'pot'
+  ) {
     plotNumber = o.plotNumber
   }
 
@@ -318,8 +384,11 @@ function parseGardenField(raw: unknown, index: number): GardenField | null {
         growMs: null,
         harvestDeadline: null,
         lastFertilizeAt: null,
+        potColorLastActionAt: null,
         crossAtPlant: null,
         clearUndo: null,
+        potColorSteps: [],
+        potActionUndo: null,
       },
     )
   }

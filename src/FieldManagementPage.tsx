@@ -36,8 +36,10 @@ import {
 } from './fieldBoardLayout'
 import type {
   CrossHintAtPlant,
+  FieldPlotNumber,
   FieldSlotId,
   GardenField,
+  PotBaseColor,
   PlotSlot,
 } from './fieldStateTypes'
 import {
@@ -47,6 +49,13 @@ import {
   formatFieldHeading,
   normalizeFieldLocation,
 } from './fieldStateTypes'
+import {
+  cropNameZhFromEntry,
+  fallbackFlowerpotCropLine,
+  loadFlowerpotCropsByColor,
+  type FlowerpotColorKey,
+  type FlowerpotSeedColorEntry,
+} from './flowerpotCropsByColor'
 import './FieldManagementPage.css'
 
 function normalize(s: string) {
@@ -70,9 +79,88 @@ function createEmptySlots(): PlotSlot[] {
     growMs: null,
     harvestDeadline: null,
     lastFertilizeAt: null,
+    potColorLastActionAt: null,
     crossAtPlant: null,
     clearUndo: null,
+    potColorSteps: [],
+    potActionUndo: null,
   }))
+}
+
+const POT_SLOT_IDS: FieldSlotId[] = [0, 1, 2, 3]
+const POT_ACTION_COOLDOWN_MS = 60 * 60 * 1000
+const POT_COLOR_LABEL: Record<PotBaseColor, string> = {
+  red: '紅',
+  blue: '藍',
+  yellow: '黃',
+}
+
+function isFlowerpotExclusiveSeed(seed: SeedRecord | null | undefined): boolean {
+  return seed?.seedType === 'Flowerpot'
+}
+
+function dedupePotColorSteps(steps: PotBaseColor[]): PotBaseColor[] {
+  const seen = new Set<PotBaseColor>()
+  const out: PotBaseColor[] = []
+  for (const c of steps) {
+    if (seen.has(c)) continue
+    seen.add(c)
+    out.push(c)
+  }
+  return out
+}
+
+function computePotResultColors(steps: PotBaseColor[]): FlowerpotColorKey[] {
+  const uniq = dedupePotColorSteps(steps)
+  if (uniq.length === 0) return ['red']
+  if (uniq.length === 1) return [uniq[0]]
+  if (uniq.length >= 3) return ['white', 'black', 'mixed']
+  const sorted = [...uniq].sort().join('+')
+  if (sorted === 'blue+red') return ['purple']
+  if (sorted === 'blue+yellow') return ['green']
+  return ['orange']
+}
+
+function computePotResultLines(
+  slot: PlotSlot,
+  seed: SeedRecord | null | undefined,
+  flowerpotEntry: FlowerpotSeedColorEntry | undefined,
+): string[] {
+  if (slot.seedId == null || !seed) return []
+  const colors = computePotResultColors(slot.potColorSteps)
+  const out = colors.map((color) => {
+    const fromJson = cropNameZhFromEntry(flowerpotEntry, color)
+    return fromJson ?? fallbackFlowerpotCropLine(color, seed.name)
+  })
+  return out.slice(0, 3)
+}
+
+function isPotActionUndoActive(slot: PlotSlot, now: number): boolean {
+  const u = slot.potActionUndo
+  if (!u) return false
+  return now - u.time <= FERTILIZE_UNDO_WINDOW_MS
+}
+
+function isPotActionCoolingDown(slot: PlotSlot, now: number): boolean {
+  const last = Math.max(
+    slot.lastFertilizeAt ?? Number.NEGATIVE_INFINITY,
+    slot.potColorLastActionAt ?? Number.NEGATIVE_INFINITY,
+  )
+  if (!Number.isFinite(last)) return false
+  return now - last < POT_ACTION_COOLDOWN_MS
+}
+
+function latestFertilizeAtFromSlots(slots: PlotSlot[]): number | null {
+  let latest: number | null = null
+  for (const s of slots) {
+    const candidate = Math.max(
+      s.lastFertilizeAt ?? Number.NEGATIVE_INFINITY,
+      s.potColorLastActionAt ?? Number.NEGATIVE_INFINITY,
+    )
+    if (!Number.isFinite(candidate)) continue
+    if (latest == null || candidate > latest) latest = candidate
+  }
+  return latest
 }
 
 /** 格內顯示：作物／收成道具名（`SeedRecord.name`），相容舊 session 僅存種子包名時。 */
@@ -199,6 +287,9 @@ export function FieldManagementPage() {
   const [seedsById, setSeedsById] = useState<Record<string, SeedRecord> | null>(
     null,
   )
+  const [flowerpotBySeedId, setFlowerpotBySeedId] = useState<
+    Record<string, FlowerpotSeedColorEntry> | null
+  >(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [nowTick, setNowTick] = useState(() => Date.now())
@@ -210,7 +301,7 @@ export function FieldManagementPage() {
   const [newFieldOpen, setNewFieldOpen] = useState(false)
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null)
   const [draftLocation, setDraftLocation] = useState('')
-  const [draftPlotNumber, setDraftPlotNumber] = useState<1 | 2 | 3>(1)
+  const [draftPlotNumber, setDraftPlotNumber] = useState<FieldPlotNumber>(1)
 
   const [deleteConfirmFieldId, setDeleteConfirmFieldId] = useState<
     string | null
@@ -278,11 +369,22 @@ export function FieldManagementPage() {
     setFields((prev) => {
       let changed = false
       const next = prev.map((f) => {
-        const u = f.fertilizeUndo
-        if (u == null) return f
-        if (nowTick - u.time < FERTILIZE_UNDO_WINDOW_MS) return f
-        changed = true
-        return { ...f, fertilizeUndo: null }
+        const fieldUndoExpired =
+          f.fertilizeUndo != null &&
+          nowTick - f.fertilizeUndo.time >= FERTILIZE_UNDO_WINDOW_MS
+        const slots = f.slots.map((s) => {
+          const u = s.potActionUndo
+          if (u == null) return s
+          if (nowTick - u.time < FERTILIZE_UNDO_WINDOW_MS) return s
+          changed = true
+          return { ...s, potActionUndo: null }
+        })
+        if (fieldUndoExpired) {
+          changed = true
+          return { ...f, fertilizeUndo: null, slots }
+        }
+        if (slots !== f.slots) return { ...f, slots }
+        return f
       })
       return changed ? next : prev
     })
@@ -292,13 +394,15 @@ export function FieldManagementPage() {
     let cancelled = false
     ;(async () => {
       try {
-        const [merged, byId] = await Promise.all([
+        const [merged, byId, flowerpotPayload] = await Promise.all([
           loadSeedsSummaryMerged(),
           loadSeedsById(),
+          loadFlowerpotCropsByColor().catch(() => null),
         ])
         if (cancelled) return
         setSeeds(merged)
         setSeedsById(byId)
+        setFlowerpotBySeedId(flowerpotPayload?.bySeedId ?? null)
         setLoadError(null)
       } catch (e) {
         if (!cancelled) {
@@ -380,8 +484,11 @@ export function FieldManagementPage() {
               growMs,
               harvestDeadline: deadline,
               lastFertilizeAt: null,
+              potColorLastActionAt: null,
               clearUndo: null,
               crossAtPlant: null,
+              potColorSteps: [],
+              potActionUndo: null,
             }
           })
           const hint = computeCrossHintsAtPlant(
@@ -433,8 +540,11 @@ export function FieldManagementPage() {
                 growMs: null,
                 harvestDeadline: null,
                 lastFertilizeAt: null,
+                potColorLastActionAt: null,
                 crossAtPlant: null,
                 clearUndo: null,
+                potColorSteps: [],
+                potActionUndo: null,
               }
             }
             const undo: PlotSlot['clearUndo'] =
@@ -445,7 +555,9 @@ export function FieldManagementPage() {
                     growMs: s.growMs,
                     harvestDeadline: s.harvestDeadline,
                     lastFertilizeAt: s.lastFertilizeAt,
+                    potColorLastActionAt: s.potColorLastActionAt,
                     crossAtPlant: s.crossAtPlant,
+                    potColorSteps: s.potColorSteps,
                   }
                 : null
             return {
@@ -455,8 +567,11 @@ export function FieldManagementPage() {
               growMs: null,
               harvestDeadline: null,
               lastFertilizeAt: null,
+              potColorLastActionAt: null,
               crossAtPlant: null,
               clearUndo: undo,
+              potColorSteps: [],
+              potActionUndo: null,
             }
           })
           return { ...f, slots }
@@ -482,7 +597,10 @@ export function FieldManagementPage() {
               ...slot,
               harvestDeadline: now + slot.growMs,
               lastFertilizeAt: null,
+              potColorLastActionAt: null,
               clearUndo: null,
+              potColorSteps: [],
+              potActionUndo: null,
             }
           })
           if (replantIds.size === 0) return f
@@ -517,11 +635,84 @@ export function FieldManagementPage() {
             growMs: u.growMs,
             harvestDeadline: u.harvestDeadline,
             lastFertilizeAt: u.lastFertilizeAt,
+            potColorLastActionAt: u.potColorLastActionAt,
             crossAtPlant: u.crossAtPlant,
             clearUndo: null,
+            potColorSteps: u.potColorSteps,
+            potActionUndo: null,
           }
         })
         return { ...f, slots }
+      }),
+    )
+  }, [])
+
+  const applyPotColorFertilizer = useCallback(
+    (fieldId: string, slotId: FieldSlotId, color: PotBaseColor) => {
+      const now = Date.now()
+      setFields((prev) =>
+        prev.map((f) => {
+          if (f.id !== fieldId) return f
+          let changed = false
+          const slots = f.slots.map((s) => {
+            if (s.id !== slotId || s.seedId == null) return s
+            const undoActive = isPotActionUndoActive(s, now)
+            const cooldownActive = isPotActionCoolingDown(s, now)
+            if (undoActive) return s
+            if (cooldownActive) return s
+            const next = dedupePotColorSteps([...s.potColorSteps, color]).slice(0, 3)
+            changed = true
+            return {
+              ...s,
+              potColorLastActionAt: now,
+              potColorSteps: next,
+              potActionUndo: {
+                time: now,
+                action: color as PotBaseColor,
+                before: {
+                  harvestDeadline: s.harvestDeadline,
+                  lastFertilizeAt: s.lastFertilizeAt,
+                  potColorLastActionAt: s.potColorLastActionAt,
+                  potColorSteps: s.potColorSteps,
+                },
+              },
+            }
+          })
+          if (!changed) return f
+          return {
+            ...f,
+            slots,
+            lastFertilizeTime: latestFertilizeAtFromSlots(slots),
+          }
+        }),
+      )
+    },
+    [],
+  )
+
+  const undoPotSlotAction = useCallback((fieldId: string, slotId: FieldSlotId) => {
+    const now = Date.now()
+    setFields((prev) =>
+      prev.map((f) => {
+        if (f.id !== fieldId) return f
+        const slots = f.slots.map((s) => {
+          if (s.id !== slotId || !isPotActionUndoActive(s, now) || !s.potActionUndo) {
+            return s
+          }
+          return {
+            ...s,
+            harvestDeadline: s.potActionUndo.before.harvestDeadline,
+            lastFertilizeAt: s.potActionUndo.before.lastFertilizeAt,
+            potColorLastActionAt: s.potActionUndo.before.potColorLastActionAt,
+            potColorSteps: s.potActionUndo.before.potColorSteps,
+            potActionUndo: null,
+          }
+        })
+        return {
+          ...f,
+          slots,
+          lastFertilizeTime: latestFertilizeAtFromSlots(slots),
+        }
       }),
     )
   }, [])
@@ -1136,10 +1327,16 @@ export function FieldManagementPage() {
                       )}
                     </div>
                   </div>
+                  {(() => {
+                    const displayLastFertilizeTime =
+                      field.plotNumber === 'pot'
+                        ? latestFertilizeAtFromSlots(field.slots)
+                        : field.lastFertilizeTime
+                    return (
                   <p className="field-last-fertilize">
                     上次施肥：
-                    {field.lastFertilizeTime != null
-                      ? new Date(field.lastFertilizeTime).toLocaleString(
+                    {displayLastFertilizeTime != null
+                      ? new Date(displayLastFertilizeTime).toLocaleString(
                           undefined,
                           {
                             dateStyle: 'medium',
@@ -1148,50 +1345,48 @@ export function FieldManagementPage() {
                         )
                       : '尚未施肥'}
                   </p>
+                    )
+                  })()}
 
                   <div className="field-grid-wrap">
-                    <div
-                      className="field-grid"
-                      aria-label={`${formatFieldHeading(field)} 九宮格`}
-                    >
-                      {[0, 1, 2].flatMap((row) =>
-                        [0, 1, 2].map((col) => {
-                          if (row === 1 && col === 1) {
-                            return (
-                              <div
-                                key={`${field.id}-c`}
-                                className="field-cell field-cell--center"
-                                title="不可種植"
-                              >
-                                ✕
-                              </div>
-                            )
-                          }
-                          const sid = FIELD_SLOTS.find(
-                            (s) => s.row === row && s.col === col,
-                          )!.id
+                    {field.plotNumber === 'pot' ? (
+                      <div
+                        className="field-grid field-grid--pot"
+                        aria-label={`${formatFieldHeading(field)} 盆栽格`}
+                      >
+                        {POT_SLOT_IDS.map((sid, idx) => {
                           const slot = field.slots.find((s) => s.id === sid)!
                           const canHarvest = slotReadyToHarvest(slot, nowTick)
-                          const crossHintsUi = visibleCrossHints(slot.crossAtPlant)
+                          const seedRec =
+                            slot.seedId != null
+                              ? seedsById?.[String(slot.seedId)] ?? null
+                              : null
+                          const isPotExclusive = isFlowerpotExclusiveSeed(seedRec)
                           const cropLabel = plotSlotCropLabel(slot, seedsById)
                           const seedItemName = plotSlotSeedItemLabel(slot, seedsById)
+                          const dyeFormula = dedupePotColorSteps(slot.potColorSteps)
+                            .map((c) => POT_COLOR_LABEL[c])
+                            .join('+')
+                          const dyeLines = computePotResultLines(
+                            slot,
+                            seedRec,
+                            seedRec ? flowerpotBySeedId?.[String(seedRec.seedId)] : undefined,
+                          )
+                          const potUndoActive = isPotActionUndoActive(slot, nowTick)
+                          const potUndoAction = potUndoActive
+                            ? slot.potActionUndo?.action ?? null
+                            : null
+                          const potCooldownActive = isPotActionCoolingDown(
+                            slot,
+                            nowTick,
+                          )
                           return (
-                            <div
-                              key={`${field.id}-${sid}`}
-                              className={
-                                crossHintsUi.length > 0
-                                  ? 'field-cell field-cell--has-cross-hint'
-                                  : 'field-cell'
-                              }
-                            >
+                            <div key={`${field.id}-pot-${sid}`} className="field-cell">
                               <div className="field-cell-main">
                                 <div className="field-cell-head">
                                   <span className="field-cell-label">
                                     <span className="field-cell-label-key">
-                                      {
-                                        FIELD_SLOTS.find((x) => x.id === sid)!
-                                          .label
-                                      }
+                                      {idx + 1}
                                     </span>
                                   </span>
                                   {slot.seedId != null && !canHarvest ? (
@@ -1201,9 +1396,7 @@ export function FieldManagementPage() {
                                       className="field-cell-clear"
                                       aria-label="清除此格作物"
                                       title="清除此格作物"
-                                      onClick={() =>
-                                        clearSlot(field.id, sid, 'trash')
-                                      }
+                                      onClick={() => clearSlot(field.id, sid, 'trash')}
                                     >
                                       <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -1223,17 +1416,14 @@ export function FieldManagementPage() {
                                       </svg>
                                     </button>
                                   ) : null}
-                                  {slot.seedId == null &&
-                                  slot.clearUndo != null ? (
+                                  {slot.seedId == null && slot.clearUndo != null ? (
                                     <button
                                       type="button"
                                       draggable={false}
                                       className="field-cell-restore"
                                       aria-label="還原清除前的作物"
                                       title="還原清除前的作物"
-                                      onClick={() =>
-                                        restoreClearedSlot(field.id, sid)
-                                      }
+                                      onClick={() => restoreClearedSlot(field.id, sid)}
                                     >
                                       <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -1277,23 +1467,84 @@ export function FieldManagementPage() {
                                       ) : null}
                                     </div>
                                   ) : (
-                                    <span className="field-cell-seed-empty">
-                                      未設定
-                                    </span>
+                                    <span className="field-cell-seed-empty">未設定</span>
                                   )}
                                 </div>
-                                {slot.seedId != null &&
-                                crossHintsUi[0] != null ? (
-                                  <FieldCellCrossOutcomesInline
-                                    hint={crossHintsUi[0]}
-                                  />
+                                {slot.seedId != null && isPotExclusive ? (
+                                  <div className="field-pot-dye-status">
+                                    <div className="field-pot-dye-formula">
+                                      {dyeFormula || '尚未使用油粕'}
+                                    </div>
+                                    <div className="field-pot-dye-lines">
+                                      {(dyeLines.length > 0 ? dyeLines : ['—']).map((line, i) => (
+                                        <div key={`${i}-${line}`} className="field-pot-dye-line">
+                                          {line}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
                                 ) : null}
-                                {slot.seedId != null && !canHarvest ? (
+                                {slot.seedId != null && isPotExclusive ? (
+                                  <div className="field-pot-bottom">
+                                    <div className="field-pot-dye-actions" data-field-no-drag>
+                                      {(['red', 'blue', 'yellow'] as const).map((colorKey) => (
+                                        <button
+                                          key={colorKey}
+                                          type="button"
+                                          draggable={false}
+                                          className={`field-pot-color-btn field-pot-color-btn--${colorKey}${
+                                            potUndoAction === colorKey
+                                              ? ' field-pot-color-btn--undo'
+                                              : ''
+                                          }`}
+                                          title={
+                                            potUndoAction === colorKey
+                                              ? `取消本次${POT_COLOR_LABEL[colorKey]}色油粕`
+                                              : `使用${POT_COLOR_LABEL[colorKey]}色油粕`
+                                          }
+                                          onClick={() => {
+                                            if (potUndoAction === colorKey) {
+                                              undoPotSlotAction(field.id, sid)
+                                              return
+                                            }
+                                            applyPotColorFertilizer(field.id, sid, colorKey)
+                                          }}
+                                          disabled={
+                                            potUndoAction === colorKey
+                                              ? false
+                                              : potUndoActive || potCooldownActive
+                                          }
+                                        >
+                                          {potUndoAction === colorKey ? (
+                                            <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              viewBox="0 0 24 24"
+                                              fill="none"
+                                              stroke="currentColor"
+                                              strokeWidth="2"
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              aria-hidden
+                                            >
+                                              <path d="M3 7v6h6" />
+                                              <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+                                            </svg>
+                                          ) : (
+                                            POT_COLOR_LABEL[colorKey]
+                                          )}
+                                        </button>
+                                      ))}
+                                    </div>
+                                    {!canHarvest ? (
+                                      <div className="field-cell-time field-cell-time--pot">
+                                        {formatRemaining(slot.harvestDeadline, nowTick)}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                ) : null}
+                                {slot.seedId != null && !isPotExclusive && !canHarvest ? (
                                   <div className="field-cell-time">
-                                    {formatRemaining(
-                                      slot.harvestDeadline,
-                                      nowTick,
-                                    )}
+                                    {formatRemaining(slot.harvestDeadline, nowTick)}
                                   </div>
                                 ) : null}
                               </div>
@@ -1304,9 +1555,7 @@ export function FieldManagementPage() {
                                   className="field-cell-btn field-cell-btn--harvest"
                                   aria-label="收成並清空此格"
                                   title="收成並清空此格"
-                                  onClick={() =>
-                                    clearSlot(field.id, sid, 'harvest')
-                                  }
+                                  onClick={() => clearSlot(field.id, sid, 'harvest')}
                                 >
                                   收成
                                 </button>
@@ -1327,14 +1576,181 @@ export function FieldManagementPage() {
                                   設定作物
                                 </button>
                               ) : null}
-                              {crossHintsUi[0] != null ? (
-                                <FieldCellCrossTooltip hint={crossHintsUi[0]} />
-                              ) : null}
                             </div>
                           )
-                        }),
-                      )}
-                    </div>
+                        })}
+                      </div>
+                    ) : (
+                      <div
+                        className="field-grid"
+                        aria-label={`${formatFieldHeading(field)} 九宮格`}
+                      >
+                        {[0, 1, 2].flatMap((row) =>
+                          [0, 1, 2].map((col) => {
+                            if (row === 1 && col === 1) {
+                              return (
+                                <div
+                                  key={`${field.id}-c`}
+                                  className="field-cell field-cell--center"
+                                  title="不可種植"
+                                >
+                                  ✕
+                                </div>
+                              )
+                            }
+                            const sid = FIELD_SLOTS.find(
+                              (s) => s.row === row && s.col === col,
+                            )!.id
+                            const slot = field.slots.find((s) => s.id === sid)!
+                            const canHarvest = slotReadyToHarvest(slot, nowTick)
+                            const crossHintsUi = visibleCrossHints(slot.crossAtPlant)
+                            const cropLabel = plotSlotCropLabel(slot, seedsById)
+                            const seedItemName = plotSlotSeedItemLabel(slot, seedsById)
+                            return (
+                              <div
+                                key={`${field.id}-${sid}`}
+                                className={
+                                  crossHintsUi.length > 0
+                                    ? 'field-cell field-cell--has-cross-hint'
+                                    : 'field-cell'
+                                }
+                              >
+                                <div className="field-cell-main">
+                                  <div className="field-cell-head">
+                                    <span className="field-cell-label">
+                                      <span className="field-cell-label-key">
+                                        {FIELD_SLOTS.find((x) => x.id === sid)!.label}
+                                      </span>
+                                    </span>
+                                    {slot.seedId != null && !canHarvest ? (
+                                      <button
+                                        type="button"
+                                        draggable={false}
+                                        className="field-cell-clear"
+                                        aria-label="清除此格作物"
+                                        title="清除此格作物"
+                                        onClick={() => clearSlot(field.id, sid, 'trash')}
+                                      >
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          aria-hidden
+                                        >
+                                          <path d="M3 6h18" />
+                                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                          <line x1="10" x2="10" y1="11" y2="17" />
+                                          <line x1="14" x2="14" y1="11" y2="17" />
+                                        </svg>
+                                      </button>
+                                    ) : null}
+                                    {slot.seedId == null && slot.clearUndo != null ? (
+                                      <button
+                                        type="button"
+                                        draggable={false}
+                                        className="field-cell-restore"
+                                        aria-label="還原清除前的作物"
+                                        title="還原清除前的作物"
+                                        onClick={() => restoreClearedSlot(field.id, sid)}
+                                      >
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          aria-hidden
+                                        >
+                                          <path d="M3 7v6h6" />
+                                          <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+                                        </svg>
+                                      </button>
+                                    ) : null}
+                                  </div>
+                                  <div className="field-cell-seed">
+                                    {slot.seedId != null ? (
+                                      <div className="field-cell-seed-row">
+                                        <Link
+                                          to={`/seed/${slot.seedId}`}
+                                          draggable={false}
+                                          className="field-cell-seed-link"
+                                        >
+                                          {cropLabel}
+                                        </Link>
+                                        {seedItemName ? (
+                                          <CopyCropNameButton
+                                            name={seedItemName}
+                                            className="field-cell-seed-copy-btn"
+                                            ariaLabel={`複製種子名稱：${seedItemName}`}
+                                            title="複製種子名稱"
+                                            onCopied={(text) =>
+                                              setCopyToast({
+                                                key: Date.now(),
+                                                message: `已複製種子名稱：${text}`,
+                                              })
+                                            }
+                                          />
+                                        ) : null}
+                                      </div>
+                                    ) : (
+                                      <span className="field-cell-seed-empty">
+                                        未設定
+                                      </span>
+                                    )}
+                                  </div>
+                                  {slot.seedId != null && crossHintsUi[0] != null ? (
+                                    <FieldCellCrossOutcomesInline hint={crossHintsUi[0]} />
+                                  ) : null}
+                                  {slot.seedId != null && !canHarvest ? (
+                                    <div className="field-cell-time">
+                                      {formatRemaining(slot.harvestDeadline, nowTick)}
+                                    </div>
+                                  ) : null}
+                                </div>
+                                {slot.seedId != null && canHarvest ? (
+                                  <button
+                                    type="button"
+                                    draggable={false}
+                                    className="field-cell-btn field-cell-btn--harvest"
+                                    aria-label="收成並清空此格"
+                                    title="收成並清空此格"
+                                    onClick={() => clearSlot(field.id, sid, 'harvest')}
+                                  >
+                                    收成
+                                  </button>
+                                ) : null}
+                                {slot.seedId == null ? (
+                                  <button
+                                    type="button"
+                                    draggable={false}
+                                    className="field-cell-btn"
+                                    onClick={() => {
+                                      setPickerQuery('')
+                                      setPickerTarget({
+                                        fieldId: field.id,
+                                        slotId: sid,
+                                      })
+                                    }}
+                                  >
+                                    設定作物
+                                  </button>
+                                ) : null}
+                                {crossHintsUi[0] != null ? (
+                                  <FieldCellCrossTooltip hint={crossHintsUi[0]} />
+                                ) : null}
+                              </div>
+                            )
+                          }),
+                        )}
+                      </div>
+                    )}
                   </div>
                 </section>
               ) : fieldLayoutEditMode ? (
@@ -1399,7 +1815,7 @@ export function FieldManagementPage() {
               <fieldset className="field-add-field-group">
                 <legend className="field-add-field-legend">田編號</legend>
                 <div className="field-add-field-options">
-                  {([1, 2, 3] as const).map((n) => (
+                  {([1, 2, 3, 'pot'] as const).map((n) => (
                     <label key={n} className="field-add-field-radio">
                       <input
                         type="radio"
@@ -1407,7 +1823,7 @@ export function FieldManagementPage() {
                         checked={draftPlotNumber === n}
                         onChange={() => setDraftPlotNumber(n)}
                       />
-                      {n} 號
+                      {n === 'pot' ? '盆栽' : `${n} 號`}
                     </label>
                   ))}
                 </div>

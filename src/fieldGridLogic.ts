@@ -115,8 +115,11 @@ export function slotCanReceiveFertilize(slot: PlotSlot, now: number): boolean {
   if (slot.seedId == null) return false
   if (slot.harvestDeadline == null) return false
   if (now >= slot.harvestDeadline) return false
-  const last = slot.lastFertilizeAt
-  if (last != null && now - last < FERTILIZE_COOLDOWN_MS) return false
+  const last = Math.max(
+    slot.lastFertilizeAt ?? Number.NEGATIVE_INFINITY,
+    slot.potColorLastActionAt ?? Number.NEGATIVE_INFINITY,
+  )
+  if (Number.isFinite(last) && now - last < FERTILIZE_COOLDOWN_MS) return false
   return true
 }
 
@@ -144,8 +147,11 @@ export function getNextFertilizeEligibleAt(
     if (slot.seedId == null) continue
     if (slot.harvestDeadline == null) continue
     if (now >= slot.harvestDeadline) continue
-    const last = slot.lastFertilizeAt
-    if (last != null && now - last < FERTILIZE_COOLDOWN_MS) {
+    const last = Math.max(
+      slot.lastFertilizeAt ?? Number.NEGATIVE_INFINITY,
+      slot.potColorLastActionAt ?? Number.NEGATIVE_INFINITY,
+    )
+    if (Number.isFinite(last) && now - last < FERTILIZE_COOLDOWN_MS) {
       const t = last + FERTILIZE_COOLDOWN_MS
       if (best == null || t < best) best = t
     }

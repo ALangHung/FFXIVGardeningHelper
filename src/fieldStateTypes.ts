@@ -19,7 +19,23 @@ export type PlotSlotClearUndo = {
   growMs: number | null
   harvestDeadline: number | null
   lastFertilizeAt: number | null
+  potColorLastActionAt: number | null
   crossAtPlant: CrossHintAtPlant | null
+  potColorSteps: PotBaseColor[]
+}
+
+export type PotBaseColor = 'red' | 'blue' | 'yellow'
+export type PotActionKey = PotBaseColor
+
+export type PotActionUndo = {
+  time: number
+  action: PotActionKey
+  before: {
+    harvestDeadline: number | null
+    lastFertilizeAt: number | null
+    potColorLastActionAt: number | null
+    potColorSteps: PotBaseColor[]
+  }
 }
 
 export type PlotSlot = {
@@ -30,8 +46,14 @@ export type PlotSlot = {
   harvestDeadline: number | null
   /** 該格被施肥影響的時間戳（毫秒）；用於 1 小時冷卻 */
   lastFertilizeAt: number | null
+  /** 該格最近一次顏色油粕操作時間（毫秒）；供盆栽顏色按鈕 CD 使用。 */
+  potColorLastActionAt: number | null
   crossAtPlant: CrossHintAtPlant | null
   clearUndo: PlotSlotClearUndo | null
+  /** 盆栽染色操作：紀錄該輪曾使用的紅/藍/黃油粕順序。 */
+  potColorSteps: PotBaseColor[]
+  /** 盆栽按鈕列：最近一次操作可於 1 分鐘內撤銷。 */
+  potActionUndo: PotActionUndo | null
 }
 
 export type FieldFertilizeEntry = {
@@ -49,8 +71,8 @@ export type GardenField = {
   id: string
   /** 位置名稱，最多 5 字；空白時標題顯示「未命名」 */
   locationLabel: string
-  /** 田編號 1–3 */
-  plotNumber: 1 | 2 | 3
+  /** 田編號（1–3）或盆栽 */
+  plotNumber: FieldPlotNumber
   /** 總覽棋盤格位（橫排欄數依視窗寬度計算、由左而右由上而下） */
   gridIndex: number
   slots: PlotSlot[]
@@ -59,6 +81,8 @@ export type GardenField = {
   /** 僅保留一筆：最近一次施肥的可撤銷快照；取消後為 null；超過 FERTILIZE_UNDO_WINDOW_MS 亦不可撤銷 */
   fertilizeUndo: FieldFertilizeEntry | null
 }
+
+export type FieldPlotNumber = 1 | 2 | 3 | 'pot'
 
 export const FIELD_LOCATION_MAX_CHARS = 5
 
@@ -72,6 +96,7 @@ export function normalizeFieldLocation(raw: string): string {
 export function formatFieldHeading(field: GardenField): string {
   const loc = normalizeFieldLocation(field.locationLabel)
   const place = loc.length > 0 ? loc : '未命名'
+  if (field.plotNumber === 'pot') return `${place}・盆栽`
   return `${place}・${field.plotNumber} 號田`
 }
 
