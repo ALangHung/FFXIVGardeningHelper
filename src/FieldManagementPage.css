@@ -9,9 +9,9 @@
    * 每塊「田」卡片外觀寬度（含內距的欄寬基準）。調整田地卡片寬度請改此變數。
    * 橫排可放幾塊田由容器寬度與 --field-board-gap-x 自動計算（見 FieldManagementPage 之 ResizeObserver）。
    */
-  --field-block-width: 23.73rem;
-  --field-board-gap-x: 1.15rem;
-  --field-board-gap-y: 1rem;
+  --field-block-width: 24.16rem;
+  --field-board-gap-x: 0.5rem;
+  --field-board-gap-y: 0.5rem;
   --field-cell-row-height: 8rem;
   --field-grid-gap: 0.45rem;
   --field-grid-min-height: calc(
@@ -176,7 +176,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 0.85rem 1.1rem 1.05rem;
+  padding: 0.85rem 0.73rem 0.73rem;
   margin-bottom: 0;
   min-width: 0;
   box-shadow: 0 4px 28px rgba(2, 6, 23, 0.55);
@@ -597,6 +597,14 @@
   min-height: 0;
 }
 
+.field-cell-seed-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
 .field-cell-seed-link {
   display: block;
   min-width: 0;
@@ -612,6 +620,21 @@
 .field-cell-seed-link:hover {
   color: var(--gold);
   text-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+}
+
+.field-cell-seed-row .copy-crop-name-btn.field-cell-seed-copy-btn {
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 4px;
+  width: 1.3em;
+  height: 1.3em;
+  min-width: 1.3em;
+  box-sizing: border-box;
+}
+
+.field-cell-seed-row .copy-crop-name-icon {
+  width: 0.86em;
+  height: 0.86em;
 }
 
 .field-cell-seed-empty {

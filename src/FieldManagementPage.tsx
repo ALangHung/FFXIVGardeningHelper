@@ -9,6 +9,7 @@ import {
 } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import type { SeedSummary } from './seedSummaryTypes'
 import type { SeedRecord } from './seedDetailTypes'
 import { getSeedById, loadSeedsById, loadSeedsSummaryMerged } from './seedDataApi'
@@ -83,6 +84,17 @@ function plotSlotCropLabel(
   const fromRec = seedsById?.[String(slot.seedId)]?.name?.trim()
   if (fromRec) return fromRec
   return slot.seedName?.trim() ?? `種子 #${slot.seedId}`
+}
+
+/** 格內複製按鈕：優先複製種子包道具名（seedItemName）。 */
+function plotSlotSeedItemLabel(
+  slot: PlotSlot,
+  seedsById: Record<string, SeedRecord> | null,
+): string | null {
+  if (slot.seedId == null) return null
+  const seedItem = seedsById?.[String(slot.seedId)]?.seedItemName?.trim()
+  if (seedItem) return seedItem
+  return null
 }
 
 function fieldBlockDragShouldCancel(target: EventTarget | null): boolean {
@@ -190,6 +202,10 @@ export function FieldManagementPage() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [nowTick, setNowTick] = useState(() => Date.now())
+  const [copyToast, setCopyToast] = useState<{
+    key: number
+    message: string
+  } | null>(null)
 
   const [newFieldOpen, setNewFieldOpen] = useState(false)
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null)
@@ -813,6 +829,12 @@ export function FieldManagementPage() {
         </p>
       ) : null}
 
+      <CopyCropNameToast
+        toastKey={copyToast?.key ?? null}
+        message={copyToast?.message}
+        onDismiss={() => setCopyToast(null)}
+      />
+
       {loading && <p className="field-muted">載入中…</p>}
       {loadError ? (
         <p className="field-muted" style={{ color: '#fca5a5' }} role="alert">
@@ -1151,6 +1173,8 @@ export function FieldManagementPage() {
                           const slot = field.slots.find((s) => s.id === sid)!
                           const canHarvest = slotReadyToHarvest(slot, nowTick)
                           const crossHintsUi = visibleCrossHints(slot.crossAtPlant)
+                          const cropLabel = plotSlotCropLabel(slot, seedsById)
+                          const seedItemName = plotSlotSeedItemLabel(slot, seedsById)
                           return (
                             <div
                               key={`${field.id}-${sid}`}
@@ -1229,13 +1253,29 @@ export function FieldManagementPage() {
                                 </div>
                                 <div className="field-cell-seed">
                                   {slot.seedId != null ? (
-                                    <Link
-                                      to={`/seed/${slot.seedId}`}
-                                      draggable={false}
-                                      className="field-cell-seed-link"
-                                    >
-                                      {plotSlotCropLabel(slot, seedsById)}
-                                    </Link>
+                                    <div className="field-cell-seed-row">
+                                      <Link
+                                        to={`/seed/${slot.seedId}`}
+                                        draggable={false}
+                                        className="field-cell-seed-link"
+                                      >
+                                        {cropLabel}
+                                      </Link>
+                                      {seedItemName ? (
+                                        <CopyCropNameButton
+                                          name={seedItemName}
+                                          className="field-cell-seed-copy-btn"
+                                          ariaLabel={`複製種子名稱：${seedItemName}`}
+                                          title="複製種子名稱"
+                                          onCopied={(text) =>
+                                            setCopyToast({
+                                              key: Date.now(),
+                                              message: `已複製種子名稱：${text}`,
+                                            })
+                                          }
+                                        />
+                                      ) : null}
+                                    </div>
                                   ) : (
                                     <span className="field-cell-seed-empty">
                                       未設定
