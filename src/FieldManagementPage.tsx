@@ -95,6 +95,12 @@ const POT_COLOR_LABEL: Record<PotBaseColor, string> = {
   yellow: '黃',
 }
 
+const POT_COLOR_TOOLTIP_LABEL: Record<PotBaseColor, string> = {
+  red: '緋紅',
+  blue: '青藍',
+  yellow: '金黃',
+}
+
 function isFlowerpotExclusiveSeed(seed: SeedRecord | null | undefined): boolean {
   return seed?.seedType === 'Flowerpot'
 }
@@ -1499,8 +1505,8 @@ export function FieldManagementPage() {
                                           }`}
                                           title={
                                             potUndoAction === colorKey
-                                              ? `取消本次${POT_COLOR_LABEL[colorKey]}色油粕`
-                                              : `使用${POT_COLOR_LABEL[colorKey]}色油粕`
+                                              ? `取消本次${POT_COLOR_TOOLTIP_LABEL[colorKey]}色油粕`
+                                              : `使用${POT_COLOR_TOOLTIP_LABEL[colorKey]}色油粕`
                                           }
                                           onClick={() => {
                                             if (potUndoAction === colorKey) {
