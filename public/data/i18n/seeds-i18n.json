@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-03-27T08:48:46.695Z",
+    "generatedAt": "2026-04-01T05:12:15.523Z",
     "teamcraftSource": "C:\\ReferenceProject\\ffxiv-teamcraft\\libs\\data\\src\\lib\\json",
     "gardeningEnSource": "C:\\ReferenceProject\\FFXIVGardeningHelper\\public\\data\\seeds-gardening-en.json",
     "defaultLocale": "zh-Hant",
@@ -12,7 +12,9 @@
     ],
     "fields": {
       "seedItem": "種子道具（可種植之物品）各語系顯示名",
+      "seedItemId": "種子道具 Teamcraft item id",
       "crop": "作物／收成道具各語系顯示名；與種子包為同一 Teamcraft id 時與 seedItem 相同。seeds-by-id.harvestLocation 含「僅限盆栽」時視為僅盆栽，crop 為 null（僅 seedItem）。若應有獨立收成卻無法 resolveCropEn，建置會拋錯（見 expectsSeparateHarvestItem）。",
+      "cropItemId": "作物／收成道具 Teamcraft item id；盆栽專用為 null",
       "nameSearchText": "列表／詳情搜尋：seedItem 與（若有）crop 四語系合併（去重）"
     }
   },
@@ -24,12 +26,14 @@
         "ja": "ラノシアオレンジの種",
         "zh-Hans": "拉诺西亚香橙种子"
       },
+      "seedItemId": 7725,
       "crop": {
         "zh-Hant": "拉諾西亞香橙",
         "en": "La Noscean Orange",
         "ja": "ラノシアオレンジ",
         "zh-Hans": "拉诺西亚香橙"
       },
+      "cropItemId": 4809,
       "nameSearchText": "拉諾西亞香橙種子 拉諾西亞香橙 La Noscean Orange Seeds La Noscean Orange ラノシアオレンジの種 ラノシアオレンジ 拉诺西亚香橙种子 拉诺西亚香橙"
     },
     "2": {
@@ -39,12 +43,14 @@
         "ja": "ローランドグレープの種",
         "zh-Hans": "低地葡萄种子"
       },
+      "seedItemId": 7726,
       "crop": {
         "zh-Hant": "低地葡萄",
         "en": "Lowland Grapes",
         "ja": "ローランドグレープ",
         "zh-Hans": "低地葡萄"
       },
+      "cropItemId": 4808,
       "nameSearchText": "低地葡萄種子 低地葡萄 Lowland Grape Seeds Lowland Grapes ローランドグレープの種 ローランドグレープ 低地葡萄种子"
     },
     "3": {
@@ -54,12 +60,14 @@
         "ja": "パプリカの種",
         "zh-Hans": "红辣椒种子"
       },
+      "seedItemId": 7715,
       "crop": {
         "zh-Hant": "紅彩椒",
         "en": "Paprika",
         "ja": "パプリカ",
         "zh-Hans": "红辣椒"
       },
+      "cropItemId": 4785,
       "nameSearchText": "紅彩椒種子 紅彩椒 Paprika Seeds Paprika パプリカの種 パプリカ 红辣椒种子 红辣椒"
     },
     "4": {
@@ -69,12 +77,14 @@
         "ja": "ラベンダーの種",
         "zh-Hans": "薰衣草种子"
       },
+      "seedItemId": 7736,
       "crop": {
         "zh-Hant": "薰衣草",
         "en": "Lavender",
         "ja": "ラベンダー",
         "zh-Hans": "薰衣草"
       },
+      "cropItemId": 5539,
       "nameSearchText": "薰衣草種子 薰衣草 Lavender Seeds Lavender ラベンダーの種 ラベンダー 薰衣草种子"
     },
     "5": {
@@ -84,12 +94,14 @@
         "ja": "ラノシアレタスの種",
         "zh-Hans": "拉诺西亚莴苣种子"
       },
+      "seedItemId": 7718,
       "crop": {
         "zh-Hant": "拉諾西亞萵苣",
         "en": "La Noscean Lettuce",
         "ja": "ラノシアレタス",
         "zh-Hans": "拉诺西亚莴苣"
       },
+      "cropItemId": 4782,
       "nameSearchText": "拉諾西亞萵苣種子 拉諾西亞萵苣 La Noscean Lettuce Seeds La Noscean Lettuce ラノシアレタスの種 ラノシアレタス 拉诺西亚莴苣种子 拉诺西亚莴苣"
     },
     "6": {
@@ -99,12 +111,14 @@
         "ja": "クルザスカロットの種",
         "zh-Hans": "库尔札斯胡萝卜种子"
       },
+      "seedItemId": 7717,
       "crop": {
         "zh-Hant": "庫爾札斯胡蘿蔔",
         "en": "Coerthan Carrot",
         "ja": "クルザスカロット",
         "zh-Hans": "库尔札斯胡萝卜"
       },
+      "cropItemId": 4778,
       "nameSearchText": "庫爾札斯胡蘿蔔種子 庫爾札斯胡蘿蔔 Coerthan Carrot Seeds Coerthan Carrot クルザスカロットの種 クルザスカロット 库尔札斯胡萝卜种子 库尔札斯胡萝卜"
     },
     "7": {
@@ -114,12 +128,14 @@
         "ja": "オリーヴの種",
         "zh-Hans": "橄榄种子"
       },
+      "seedItemId": 7719,
       "crop": {
         "zh-Hant": "橄欖",
         "en": "Cinderfoot Olive",
         "ja": "オリーヴ",
         "zh-Hans": "橄榄"
       },
+      "cropItemId": 4804,
       "nameSearchText": "橄欖種子 橄欖 Olive Seeds Cinderfoot Olive オリーヴの種 オリーヴ 橄榄种子 橄榄"
     },
     "8": {
@@ -129,12 +145,14 @@
         "ja": "ブラックペッパーの種",
         "zh-Hans": "黑胡椒种子"
       },
+      "seedItemId": 7737,
       "crop": {
         "zh-Hant": "黑胡椒",
         "en": "Black Pepper",
         "ja": "ブラックペッパー",
         "zh-Hans": "黑胡椒"
       },
+      "cropItemId": 4830,
       "nameSearchText": "黑胡椒種子 黑胡椒 Black Pepper Seeds Black Pepper ブラックペッパーの種 ブラックペッパー 黑胡椒种子"
     },
     "9": {
@@ -144,12 +162,14 @@
         "ja": "フェアリーアップルの種",
         "zh-Hans": "仙女苹果种子"
       },
+      "seedItemId": 7727,
       "crop": {
         "zh-Hant": "仙女蘋果",
         "en": "Faerie Apple",
         "ja": "フェアリーアップル",
         "zh-Hans": "仙女苹果"
       },
+      "cropItemId": 4810,
       "nameSearchText": "仙女蘋果種子 仙女蘋果 Faerie Apple Seeds Faerie Apple フェアリーアップルの種 フェアリーアップル 仙女苹果种子 仙女苹果"
     },
     "10": {
@@ -159,12 +179,14 @@
         "ja": "サンレモンの種",
         "zh-Hans": "太阳柠檬种子"
       },
+      "seedItemId": 7728,
       "crop": {
         "zh-Hant": "太陽檸檬",
         "en": "Sun Lemon",
         "ja": "サンレモン",
         "zh-Hans": "太阳柠檬"
       },
+      "cropItemId": 4811,
       "nameSearchText": "太陽檸檬種子 太陽檸檬 Sun Lemon Seeds Sun Lemon サンレモンの種 サンレモン 太阳柠檬种子 太阳柠檬"
     },
     "11": {
@@ -174,12 +196,14 @@
         "ja": "ギサールの種",
         "zh-Hans": "基萨尔种子"
       },
+      "seedItemId": 8572,
       "crop": {
         "zh-Hant": "基沙爾野菜",
         "en": "Gysahl Greens",
         "ja": "ギサールの野菜",
         "zh-Hans": "基萨尔野菜"
       },
+      "cropItemId": 4868,
       "nameSearchText": "基沙爾種子 基沙爾野菜 Gysahl Greens Seeds Gysahl Greens ギサールの種 ギサールの野菜 基萨尔种子 基萨尔野菜"
     },
     "12": {
@@ -189,12 +213,14 @@
         "ja": "ピクシープラムの種",
         "zh-Hans": "仙子梅种子"
       },
+      "seedItemId": 7729,
       "crop": {
         "zh-Hant": "仙子梅",
         "en": "Pixie Plums",
         "ja": "ピクシープラム",
         "zh-Hans": "仙子梅"
       },
+      "cropItemId": 4812,
       "nameSearchText": "仙子梅種子 仙子梅 Pixie Plum Seeds Pixie Plums ピクシープラムの種 ピクシープラム 仙子梅种子"
     },
     "13": {
@@ -204,12 +230,14 @@
         "ja": "アラミゴマスタードの種",
         "zh-Hans": "阿拉米格芥子种子"
       },
+      "seedItemId": 7738,
       "crop": {
         "zh-Hant": "阿拉米格芥子",
         "en": "Ala Mhigan Mustard",
         "ja": "アラミゴマスタード",
         "zh-Hans": "阿拉米格芥子"
       },
+      "cropItemId": 4835,
       "nameSearchText": "阿拉米格芥子種子 阿拉米格芥子 Ala Mhigan Mustard Seeds Ala Mhigan Mustard アラミゴマスタードの種 アラミゴマスタード 阿拉米格芥子种子"
     },
     "14": {
@@ -219,12 +247,14 @@
         "ja": "カモミールの種",
         "zh-Hans": "甘菊种子"
       },
+      "seedItemId": 7740,
       "crop": {
         "zh-Hant": "甘菊",
         "en": "Chamomile",
         "ja": "カモミール",
         "zh-Hans": "甘菊"
       },
+      "cropItemId": 5542,
       "nameSearchText": "甘菊種子 甘菊 Chamomile Seeds Chamomile カモミールの種 カモミール 甘菊种子"
     },
     "15": {
@@ -234,12 +264,14 @@
         "ja": "ミリオンコーンの種",
         "zh-Hans": "多实玉米种子"
       },
+      "seedItemId": 7721,
       "crop": {
         "zh-Hant": "多實玉米",
         "en": "Millioncorn",
         "ja": "ミリオンコーン",
         "zh-Hans": "多实玉米"
       },
+      "cropItemId": 4821,
       "nameSearchText": "多實玉米種子 多實玉米 Millioncorn Seeds Millioncorn ミリオンコーンの種 ミリオンコーン 多实玉米种子 多实玉米"
     },
     "16": {
@@ -249,12 +281,14 @@
         "ja": "エッグプラントの種",
         "zh-Hans": "巫茄种子"
       },
+      "seedItemId": 7722,
       "crop": {
         "zh-Hant": "巫茄",
         "en": "Wizard Eggplant",
         "ja": "エッグプラント",
         "zh-Hans": "巫茄"
       },
+      "cropItemId": 4788,
       "nameSearchText": "巫茄種子 巫茄 Wizard Eggplant Seeds Wizard Eggplant エッグプラントの種 エッグプラント 巫茄种子"
     },
     "17": {
@@ -264,12 +298,14 @@
         "ja": "ミッドランドキャベツの種",
         "zh-Hans": "中原甘蓝种子"
       },
+      "seedItemId": 7723,
       "crop": {
         "zh-Hant": "中原甘藍",
         "en": "Midland Cabbage",
         "ja": "ミッドランドキャベツ",
         "zh-Hans": "中原甘蓝"
       },
+      "cropItemId": 4789,
       "nameSearchText": "中原甘藍種子 中原甘藍 Midland Cabbage Seeds Midland Cabbage ミッドランドキャベツの種 ミッドランドキャベツ 中原甘蓝种子 中原甘蓝"
     },
     "18": {
@@ -279,12 +315,14 @@
         "ja": "亜麻の種",
         "zh-Hans": "亚麻种子"
       },
+      "seedItemId": 7741,
       "crop": {
         "zh-Hant": "亞麻",
         "en": "Flax",
         "ja": "亜麻",
         "zh-Hans": "亚麻"
       },
+      "cropItemId": 5346,
       "nameSearchText": "亞麻種子 亞麻 Linseed Flax 亜麻の種 亜麻 亚麻种子 亚麻"
     },
     "19": {
@@ -294,12 +332,14 @@
         "ja": "ミッドランドバジルの種",
         "zh-Hans": "中原罗勒草种子"
       },
+      "seedItemId": 7742,
       "crop": {
         "zh-Hant": "中原羅勒草",
         "en": "Midland Basil",
         "ja": "ミッドランドバジル",
         "zh-Hans": "中原罗勒草"
       },
+      "cropItemId": 4837,
       "nameSearchText": "中原羅勒草種子 中原羅勒草 Midland Basil Seeds Midland Basil ミッドランドバジルの種 ミッドランドバジル 中原罗勒草种子 中原罗勒草"
     },
     "20": {
@@ -309,12 +349,14 @@
         "ja": "マンドレイクの種",
         "zh-Hans": "风茄种子"
       },
+      "seedItemId": 7743,
       "crop": {
         "zh-Hant": "風茄",
         "en": "Mandrake",
         "ja": "マンドレイク",
         "zh-Hans": "风茄"
       },
+      "cropItemId": 5543,
       "nameSearchText": "風茄種子 風茄 Mandrake Seeds Mandrake マンドレイクの種 マンドレイク 风茄种子 风茄"
     },
     "21": {
@@ -324,12 +366,14 @@
         "ja": "ブラッドカーラントの種",
         "zh-Hans": "血红奇异果种子"
       },
+      "seedItemId": 7730,
       "crop": {
         "zh-Hant": "血紅奇異果",
         "en": "Blood Currants",
         "ja": "ブラッドカーラント",
         "zh-Hans": "血红奇异果"
       },
+      "cropItemId": 4814,
       "nameSearchText": "血紅奇異果種子 血紅奇異果 Blood Currant Seeds Blood Currants ブラッドカーラントの種 ブラッドカーラント 血红奇异果种子 血红奇异果"
     },
     "22": {
@@ -339,12 +383,14 @@
         "ja": "アーモンドの種",
         "zh-Hans": "扁桃种子"
       },
+      "seedItemId": 7744,
       "crop": {
         "zh-Hant": "扁桃",
         "en": "Almonds",
         "ja": "アーモンド",
         "zh-Hans": "扁桃"
       },
+      "cropItemId": 4842,
       "nameSearchText": "扁桃種子 扁桃 Almond Seeds Almonds アーモンドの種 アーモンド 扁桃种子"
     },
     "23": {
@@ -354,12 +400,14 @@
         "ja": "シャインアップルの種",
         "zh-Hans": "晶亮苹果种子"
       },
+      "seedItemId": 7731,
       "crop": {
         "zh-Hant": "晶亮蘋果",
         "en": "Mirror Apple",
         "ja": "シャインアップル",
         "zh-Hans": "晶亮苹果"
       },
+      "cropItemId": 6146,
       "nameSearchText": "晶亮蘋果種子 晶亮蘋果 Mirror Apple Seeds Mirror Apple シャインアップルの種 シャインアップル 晶亮苹果种子 晶亮苹果"
     },
     "24": {
@@ -369,12 +417,14 @@
         "ja": "ロランベリーの種",
         "zh-Hans": "罗兰莓种子"
       },
+      "seedItemId": 7732,
       "crop": {
         "zh-Hant": "羅蘭莓",
         "en": "Rolanberry",
         "ja": "ロランベリー",
         "zh-Hans": "罗兰莓"
       },
+      "cropItemId": 4815,
       "nameSearchText": "羅蘭莓種子 羅蘭莓 Rolanberry Seeds Rolanberry ロランベリーの種 ロランベリー 罗兰莓种子 罗兰莓"
     },
     "25": {
@@ -384,12 +434,14 @@
         "ja": "ハニーレモンの種",
         "zh-Hans": "蜜柠檬种子"
       },
+      "seedItemId": 7733,
       "crop": {
         "zh-Hant": "蜜檸檬",
         "en": "Honey Lemon",
         "ja": "ハニーレモン",
         "zh-Hans": "蜜柠檬"
       },
+      "cropItemId": 6147,
       "nameSearchText": "蜜檸檬種子 蜜檸檬 Honey Lemon Seeds Honey Lemon ハニーレモンの種 ハニーレモン 蜜柠檬种子 蜜柠檬"
     },
     "26": {
@@ -399,12 +451,14 @@
         "ja": "ゼーメルトマトの種",
         "zh-Hans": "泽梅尔番茄种子"
       },
+      "seedItemId": 7724,
       "crop": {
         "zh-Hant": "澤梅爾番茄",
         "en": "Dzemael Tomato",
         "ja": "ゼーメルトマト",
         "zh-Hans": "泽梅尔番茄"
       },
+      "cropItemId": 6148,
       "nameSearchText": "澤梅爾番茄種子 澤梅爾番茄 Dzemael Tomato Seeds Dzemael Tomato ゼーメルトマトの種 ゼーメルトマト 泽梅尔番茄种子 泽梅尔番茄"
     },
     "27": {
@@ -414,12 +468,14 @@
         "ja": "パイナップルの種",
         "zh-Hans": "多刺菠萝种子"
       },
+      "seedItemId": 7734,
       "crop": {
         "zh-Hant": "多刺鳳梨",
         "en": "Prickly Pineapple",
         "ja": "パイナップル",
         "zh-Hans": "多刺菠萝"
       },
+      "cropItemId": 4816,
       "nameSearchText": "多刺鳳梨種子 多刺鳳梨 Prickly Pineapple Seeds Prickly Pineapple パイナップルの種 パイナップル 多刺菠萝种子 多刺菠萝"
     },
     "28": {
@@ -429,12 +485,14 @@
         "ja": "アプリコットの種",
         "zh-Hans": "黄杏种子"
       },
+      "seedItemId": 7751,
       "crop": {
         "zh-Hant": "黃杏",
         "en": "Apricot",
         "ja": "アプリコット",
         "zh-Hans": "黄杏"
       },
+      "cropItemId": 7592,
       "nameSearchText": "黃杏種子 黃杏 Apricot Kernels Apricot アプリコットの種 アプリコット 黄杏种子 黄杏"
     },
     "29": {
@@ -444,12 +502,14 @@
         "ja": "ロイヤルククルの種",
         "zh-Hans": "皇家可可豆种子"
       },
+      "seedItemId": 7750,
       "crop": {
         "zh-Hant": "皇家可可豆",
         "en": "Royal Kukuru Bean",
         "ja": "ロイヤルククルビーン",
         "zh-Hans": "皇家可可豆"
       },
+      "cropItemId": 7604,
       "nameSearchText": "皇家可可豆種子 皇家可可豆 Royal Kukuru Seeds Royal Kukuru Bean ロイヤルククルの種 ロイヤルククルビーン 皇家可可豆种子"
     },
     "30": {
@@ -459,12 +519,14 @@
         "ja": "ティノルカ茶樹の種",
         "zh-Hans": "提诺尔卡茶树种子"
       },
+      "seedItemId": 7753,
       "crop": {
         "zh-Hant": "提諾爾卡茶葉",
         "en": "Shroud Tea Leaves",
         "ja": "ティノルカ茶葉",
         "zh-Hans": "提诺尔卡茶叶"
       },
+      "cropItemId": 7591,
       "nameSearchText": "提諾爾卡茶樹種子 提諾爾卡茶葉 Shroud Tea Seeds Shroud Tea Leaves ティノルカ茶樹の種 ティノルカ茶葉 提诺尔卡茶树种子 提诺尔卡茶叶"
     },
     "31": {
@@ -474,12 +536,14 @@
         "ja": "クリーエの種",
         "zh-Hans": "库里尔萝卜种子"
       },
+      "seedItemId": 8169,
       "crop": {
         "zh-Hant": "克里耶蘿蔔",
         "en": "Curiel Root",
         "ja": "クリーエの野菜",
         "zh-Hans": "库里尔萝卜"
       },
+      "cropItemId": 7894,
       "nameSearchText": "克里耶蘿蔔種子 克里耶蘿蔔 Curiel Root Seeds Curiel Root クリーエの種 クリーエの野菜 库里尔萝卜种子 库里尔萝卜"
     },
     "32": {
@@ -489,12 +553,14 @@
         "ja": "ミメットの種",
         "zh-Hans": "米梅特葫芦种子"
       },
+      "seedItemId": 8171,
       "crop": {
         "zh-Hant": "米梅特葫蘆",
         "en": "Mimett Gourd",
         "ja": "ミメットの野菜",
         "zh-Hans": "米梅特葫芦"
       },
+      "cropItemId": 7897,
       "nameSearchText": "米梅特葫蘆種子 米梅特葫蘆 Mimett Gourd Seeds Mimett Gourd ミメットの種 ミメットの野菜 米梅特葫芦种子 米梅特葫芦"
     },
     "33": {
@@ -504,12 +570,14 @@
         "ja": "パサーナの種",
         "zh-Hans": "帕萨纳红茄种子"
       },
+      "seedItemId": 8173,
       "crop": {
         "zh-Hant": "帕薩納紅茄",
         "en": "Pahsana Fruit",
         "ja": "パサーナの野菜",
         "zh-Hans": "帕萨纳红茄"
       },
+      "cropItemId": 7900,
       "nameSearchText": "帕薩納紅茄種子 帕薩納紅茄 Pahsana Fruit Seeds Pahsana Fruit パサーナの種 パサーナの野菜 帕萨纳红茄种子 帕萨纳红茄"
     },
     "34": {
@@ -519,12 +587,14 @@
         "ja": "アーゼマローズの種",
         "zh-Hans": "阿泽玛玫瑰种子"
       },
+      "seedItemId": 7746,
       "crop": {
         "zh-Hant": "阿澤瑪玫瑰",
         "en": "Azeyma Rose",
         "ja": "アーゼマローズ",
         "zh-Hans": "阿泽玛玫瑰"
       },
+      "cropItemId": 7769,
       "nameSearchText": "阿澤瑪玫瑰種子 阿澤瑪玫瑰 Azeyma Rose Seeds Azeyma Rose アーゼマローズの種 アーゼマローズ 阿泽玛玫瑰种子 阿泽玛玫瑰"
     },
     "35": {
@@ -534,12 +604,14 @@
         "ja": "スターアニスの種",
         "zh-Hans": "星八角种子"
       },
+      "seedItemId": 7748,
       "crop": {
         "zh-Hant": "星八角",
         "en": "Star Anise",
         "ja": "スターアニス",
         "zh-Hans": "星八角"
       },
+      "cropItemId": 7602,
       "nameSearchText": "星八角種子 星八角 Star Anise Seeds Star Anise スターアニスの種 スターアニス 星八角种子"
     },
     "36": {
@@ -549,12 +621,14 @@
         "ja": "ラノシアリーキの種",
         "zh-Hans": "拉诺西亚韭葱种子"
       },
+      "seedItemId": 7752,
       "crop": {
         "zh-Hant": "拉諾西亞韭蔥",
         "en": "La Noscean Leek",
         "ja": "ラノシアリーキ",
         "zh-Hans": "拉诺西亚韭葱"
       },
+      "cropItemId": 7593,
       "nameSearchText": "拉諾西亞韭蔥種子 拉諾西亞韭蔥 La Noscean Leek Seeds La Noscean Leek ラノシアリーキの種 ラノシアリーキ 拉诺西亚韭葱种子 拉诺西亚韭葱"
     },
     "37": {
@@ -564,12 +638,14 @@
         "ja": "パールローゼルの種",
         "zh-Hans": "珍珠葵种子"
       },
+      "seedItemId": 8167,
       "crop": {
         "zh-Hant": "珍珠葵",
         "en": "Pearl Roselle",
         "ja": "パールローゼル",
         "zh-Hans": "珍珠葵"
       },
+      "cropItemId": 8023,
       "nameSearchText": "珍珠葵種子 珍珠葵 Pearl Roselle Seeds Pearl Roselle パールローゼルの種 パールローゼル 珍珠葵种子"
     },
     "38": {
@@ -579,12 +655,14 @@
         "ja": "シルキスの種",
         "zh-Hans": "希尔奇斯菜蓟种子"
       },
+      "seedItemId": 8170,
       "crop": {
         "zh-Hant": "西其斯菜薊",
         "en": "Sylkis Bud",
         "ja": "シルキスの野菜",
         "zh-Hans": "希尔奇斯菜蓟"
       },
+      "cropItemId": 7895,
       "nameSearchText": "西其斯菜薊種子 西其斯菜薊 Sylkis Bud Seeds Sylkis Bud シルキスの種 シルキスの野菜 希尔奇斯菜蓟种子 希尔奇斯菜蓟"
     },
     "39": {
@@ -594,12 +672,14 @@
         "ja": "タンタルの種",
         "zh-Hans": "坦塔尔矮瓜种子"
       },
+      "seedItemId": 8172,
       "crop": {
         "zh-Hant": "坦塔爾矮瓜",
         "en": "Tantalplant",
         "ja": "タンタルの野菜",
         "zh-Hans": "坦塔尔矮瓜"
       },
+      "cropItemId": 7898,
       "nameSearchText": "坦塔爾矮瓜種子 坦塔爾矮瓜 Tantalplant Seeds Tantalplant タンタルの種 タンタルの野菜 坦塔尔矮瓜种子 坦塔尔矮瓜"
     },
     "40": {
@@ -609,12 +689,14 @@
         "ja": "ハルオーネガーベラの種",
         "zh-Hans": "哈罗妮丁菊种子"
       },
+      "seedItemId": 7745,
       "crop": {
         "zh-Hant": "哈羅妮丁菊",
         "en": "Halone Gerbera",
         "ja": "ハルオーネガーベラ",
         "zh-Hans": "哈罗妮丁菊"
       },
+      "cropItemId": 7768,
       "nameSearchText": "哈羅妮丁菊種子 哈羅妮丁菊 Halone Gerbera Seeds Halone Gerbera ハルオーネガーベラの種 ハルオーネガーベラ 哈罗妮丁菊种子 哈罗妮丁菊"
     },
     "41": {
@@ -624,12 +706,14 @@
         "ja": "ニメーヤリリーの種",
         "zh-Hans": "妮美雅百合种子"
       },
+      "seedItemId": 7747,
       "crop": {
         "zh-Hant": "妮美雅百合",
         "en": "Nymeia Lily",
         "ja": "ニメーヤリリー",
         "zh-Hans": "妮美雅百合"
       },
+      "cropItemId": 7770,
       "nameSearchText": "妮美雅百合種子 妮美雅百合 Nymeia Lily Seeds Nymeia Lily ニメーヤリリーの種 ニメーヤリリー 妮美雅百合种子"
     },
     "42": {
@@ -639,12 +723,14 @@
         "ja": "黄麻の種",
         "zh-Hans": "黄麻种子"
       },
+      "seedItemId": 7755,
       "crop": {
         "zh-Hant": "黃麻",
         "en": "Jute",
         "ja": "黄麻",
         "zh-Hans": "黄麻"
       },
+      "cropItemId": 7774,
       "nameSearchText": "黃麻種子 黃麻 Jute Seeds Jute 黄麻の種 黄麻 黄麻种子"
     },
     "43": {
@@ -654,12 +740,14 @@
         "ja": "ホウキグサの種",
         "zh-Hans": "扫帚草种子"
       },
+      "seedItemId": 7757,
       "crop": {
         "zh-Hant": "掃帚草",
         "en": "Broombush",
         "ja": "ホウキグサ",
         "zh-Hans": "扫帚草"
       },
+      "cropItemId": 7776,
       "nameSearchText": "掃帚草種子 掃帚草 Broombush Seeds Broombush ホウキグサの種 ホウキグサ 扫帚草种子 扫帚草"
     },
     "44": {
@@ -669,12 +757,14 @@
         "ja": "ガーリックスターの種",
         "zh-Hans": "蒜头明星种子"
       },
+      "seedItemId": 8186,
       "crop": {
         "zh-Hant": "蒜頭明星",
         "en": "Garlic Jester",
         "ja": "ガーリックスター",
         "zh-Hans": "蒜头明星"
       },
+      "cropItemId": 8194,
       "nameSearchText": "蒜頭明星種子 蒜頭明星 Garlic Jester Seeds Garlic Jester ガーリックスターの種 ガーリックスター 蒜头明星种子 蒜头明星"
     },
     "45": {
@@ -684,12 +774,14 @@
         "ja": "マンドラクイーンの種",
         "zh-Hans": "蔓德拉王后种子"
       },
+      "seedItemId": 8188,
       "crop": {
         "zh-Hant": "曼德拉王后",
         "en": "Mandragora Queen",
         "ja": "マンドラクイーン",
         "zh-Hans": "蔓德拉王后"
       },
+      "cropItemId": 8196,
       "nameSearchText": "曼德拉王后種子 曼德拉王后 Mandragora Queen Seeds Mandragora Queen マンドラクイーンの種 マンドラクイーン 蔓德拉王后种子 蔓德拉王后"
     },
     "46": {
@@ -699,12 +791,14 @@
         "ja": "サベネアの種",
         "zh-Hans": "萨维奈圆葱种子"
       },
+      "seedItemId": 8183,
       "crop": {
         "zh-Hant": "薩維奈圓蔥",
         "en": "Thavnairian Onion",
         "ja": "サベネアの野菜",
         "zh-Hans": "萨维奈圆葱"
       },
+      "cropItemId": 8166,
       "nameSearchText": "薩維奈圓蔥種子 薩維奈圓蔥 Thavnairian Onion Seeds Thavnairian Onion サベネアの種 サベネアの野菜 萨维奈圆葱种子 萨维奈圆葱"
     },
     "47": {
@@ -714,12 +808,14 @@
         "ja": "エッグナイトの種",
         "zh-Hans": "茄子骑士种子"
       },
+      "seedItemId": 8185,
       "crop": {
         "zh-Hant": "茄子騎士",
         "en": "Eggplant Knight",
         "ja": "エッグナイト",
         "zh-Hans": "茄子骑士"
       },
+      "cropItemId": 8193,
       "nameSearchText": "茄子騎士種子 茄子騎士 Eggplant Knight Seeds Eggplant Knight エッグナイトの種 エッグナイト 茄子骑士种子 茄子骑士"
     },
     "48": {
@@ -729,12 +825,14 @@
         "ja": "アンブレラフィグの種",
         "zh-Hans": "伞叶无花果种子"
       },
+      "seedItemId": 7754,
       "crop": {
         "zh-Hant": "傘葉無花果",
         "en": "Umbrella Fig",
         "ja": "アンブレラフィグ",
         "zh-Hans": "伞叶无花果"
       },
+      "cropItemId": 7773,
       "nameSearchText": "傘葉無花果種子 傘葉無花果 Umbrella Fig Seeds Umbrella Fig アンブレラフィグの種 アンブレラフィグ 伞叶无花果种子 伞叶无花果"
     },
     "49": {
@@ -744,12 +842,14 @@
         "ja": "グレイズナッツの種",
         "zh-Hans": "釉质坚果种子"
       },
+      "seedItemId": 7756,
       "crop": {
         "zh-Hant": "釉質堅果",
         "en": "Glazenut",
         "ja": "グレイズナッツ",
         "zh-Hans": "釉质坚果"
       },
+      "cropItemId": 7775,
       "nameSearchText": "釉質堅果種子 釉質堅果 Glazenut Seeds Glazenut グレイズナッツの種 グレイズナッツ 釉质坚果种子 釉质坚果"
     },
     "50": {
@@ -759,12 +859,14 @@
         "ja": "キングトマトの種",
         "zh-Hans": "番茄国王种子"
       },
+      "seedItemId": 8187,
       "crop": {
         "zh-Hant": "番茄國王",
         "en": "Tomato King",
         "ja": "キングトマト",
         "zh-Hans": "番茄国王"
       },
+      "cropItemId": 8195,
       "nameSearchText": "番茄國王種子 番茄國王 Tomato King Seeds Tomato King キングトマトの種 キングトマト 番茄国王种子 番茄国王"
     },
     "51": {
@@ -774,12 +876,14 @@
         "ja": "カラッカの種",
         "zh-Hans": "克拉卡萝卜种子"
       },
+      "seedItemId": 8182,
       "crop": {
         "zh-Hant": "克拉卡蘿蔔",
         "en": "Krakka Root",
         "ja": "カラッカの野菜",
         "zh-Hans": "克拉卡萝卜"
       },
+      "cropItemId": 8165,
       "nameSearchText": "克拉卡蘿蔔種子 克拉卡蘿蔔 Krakka Root Seeds Krakka Root カラッカの種 カラッカの野菜 克拉卡萝卜种子 克拉卡萝卜"
     },
     "52": {
@@ -789,12 +893,14 @@
         "ja": "オニオンプリンスの種",
         "zh-Hans": "洋葱王子种子"
       },
+      "seedItemId": 8184,
       "crop": {
         "zh-Hant": "洋蔥王子",
         "en": "Onion Prince",
         "ja": "オニオンプリンス",
         "zh-Hans": "洋葱王子"
       },
+      "cropItemId": 8192,
       "nameSearchText": "洋蔥王子種子 洋蔥王子 Onion Prince Seeds Onion Prince オニオンプリンスの種 オニオンプリンス 洋葱王子种子 洋葱王子"
     },
     "53": {
@@ -804,12 +910,14 @@
         "ja": "ポポトの種芋",
         "zh-Hans": "新薯芽块"
       },
+      "seedItemId": 7720,
       "crop": {
         "zh-Hant": "新薯",
         "en": "Popoto",
         "ja": "ポポト",
         "zh-Hans": "新薯"
       },
+      "cropItemId": 4787,
       "nameSearchText": "新薯芽塊 新薯 Popoto Set Popoto ポポトの種芋 ポポト 新薯芽块"
     },
     "54": {
@@ -819,12 +927,14 @@
         "ja": "ダラガブポポトの種芋",
         "zh-Hans": "卫月新薯芽块"
       },
+      "seedItemId": 7749,
       "crop": {
         "zh-Hant": "衛月新薯",
         "en": "Dalamud Popoto",
         "ja": "ダラガブポポト",
         "zh-Hans": "卫月新薯"
       },
+      "cropItemId": 7603,
       "nameSearchText": "衛月新薯芽塊 衛月新薯 Dalamud Popoto Set Dalamud Popoto ダラガブポポトの種芋 ダラガブポポト 卫月新薯芽块 卫月新薯"
     },
     "55": {
@@ -834,12 +944,14 @@
         "ja": "ガーリックの種球根",
         "zh-Hans": "大蒜球根"
       },
+      "seedItemId": 7735,
       "crop": {
         "zh-Hant": "大蒜",
         "en": "Garlean Garlic",
         "ja": "ガーリック",
         "zh-Hans": "大蒜"
       },
+      "cropItemId": 4829,
       "nameSearchText": "大蒜球根 大蒜 Garlic Cloves Garlean Garlic ガーリックの種球根 ガーリック"
     },
     "56": {
@@ -849,12 +961,14 @@
         "ja": "パールジンジャーの種生姜",
         "zh-Hans": "生姜根"
       },
+      "seedItemId": 7739,
       "crop": {
         "zh-Hant": "生薑",
         "en": "Pearl Ginger",
         "ja": "パールジンジャー",
         "zh-Hans": "生姜"
       },
+      "cropItemId": 4836,
       "nameSearchText": "生薑根 生薑 Pearl Ginger Root Pearl Ginger パールジンジャーの種生姜 パールジンジャー 生姜根 生姜"
     },
     "57": {
@@ -864,12 +978,14 @@
         "ja": "ワイルドオニオンの種球根",
         "zh-Hans": "野洋葱球根"
       },
+      "seedItemId": 7716,
       "crop": {
         "zh-Hant": "野洋蔥",
         "en": "Wild Onion",
         "ja": "ワイルドオニオン",
         "zh-Hans": "野洋葱"
       },
+      "cropItemId": 4777,
       "nameSearchText": "野洋蔥球根 野洋蔥 Wild Onion Set Wild Onion ワイルドオニオンの種球根 ワイルドオニオン 野洋葱球根 野洋葱"
     },
     "58": {
@@ -879,12 +995,14 @@
         "ja": "ゼルファトルの種",
         "zh-Hans": "塞尔法特尔沙果种子"
       },
+      "seedItemId": 8174,
       "crop": {
         "zh-Hant": "塞爾法特爾沙果",
         "en": "Xelphatol Apple",
         "ja": "ゼルファトルの果実",
         "zh-Hans": "塞尔法特尔沙果"
       },
+      "cropItemId": 8157,
       "nameSearchText": "塞爾法特爾沙果種子 塞爾法特爾沙果 Xelphatol Apple Seeds Xelphatol Apple ゼルファトルの種 ゼルファトルの果実 塞尔法特尔沙果种子 塞尔法特尔沙果"
     },
     "59": {
@@ -894,12 +1012,14 @@
         "ja": "ドマの種",
         "zh-Hans": "多玛青梅种子"
       },
+      "seedItemId": 8175,
       "crop": {
         "zh-Hant": "多瑪青梅",
         "en": "Doman Plum",
         "ja": "ドマの果実",
         "zh-Hans": "多玛青梅"
       },
+      "cropItemId": 8158,
       "nameSearchText": "多瑪青梅種子 多瑪青梅 Doman Plum Pits Doman Plum ドマの種 ドマの果実 多玛青梅种子 多玛青梅"
     },
     "60": {
@@ -909,12 +1029,14 @@
         "ja": "マムークの種",
         "zh-Hans": "辉鳞油梨种子"
       },
+      "seedItemId": 8176,
       "crop": {
         "zh-Hant": "輝鱗油梨",
         "en": "Mamook Pear",
         "ja": "マムークの果実",
         "zh-Hans": "辉鳞油梨"
       },
+      "cropItemId": 8159,
       "nameSearchText": "輝鱗油梨種子 輝鱗油梨 Mamook Pear Seeds Mamook Pear マムークの種 マムークの果実 辉鳞油梨种子 辉鳞油梨"
     },
     "61": {
@@ -924,12 +1046,14 @@
         "ja": "バルの種",
         "zh-Hans": "瓦尔醋栗种子"
       },
+      "seedItemId": 8177,
       "crop": {
         "zh-Hant": "瓦爾醋栗",
         "en": "Valfruit",
         "ja": "バルの果実",
         "zh-Hans": "瓦尔醋栗"
       },
+      "cropItemId": 8160,
       "nameSearchText": "瓦爾醋栗種子 瓦爾醋栗 Valfruit Seeds Valfruit バルの種 バルの果実 瓦尔醋栗种子 瓦尔醋栗"
     },
     "62": {
@@ -939,12 +1063,14 @@
         "ja": "オ・ゴモロの種",
         "zh-Hans": "奥·哥摩罗浆果种子"
       },
+      "seedItemId": 8178,
       "crop": {
         "zh-Hant": "歐·葛莫羅漿果",
         "en": "O'Ghomoro Berries",
         "ja": "オ・ゴモロの果実",
         "zh-Hans": "奥·哥摩罗浆果"
       },
+      "cropItemId": 8161,
       "nameSearchText": "歐·葛莫羅漿果種子 歐·葛莫羅漿果 O'Ghomoro Berry Seeds O'Ghomoro Berries オ・ゴモロの種 オ・ゴモロの果実 奥·哥摩罗浆果种子 奥·哥摩罗浆果"
     },
     "63": {
@@ -954,12 +1080,14 @@
         "ja": "シェルダレーの種",
         "zh-Hans": "谢尔达莱凤梨种子"
       },
+      "seedItemId": 8179,
       "crop": {
         "zh-Hant": "謝爾達萊鳳梨",
         "en": "Cieldalaes Pineapple",
         "ja": "シェルダレーの果実",
         "zh-Hans": "谢尔达莱凤梨"
       },
+      "cropItemId": 8162,
       "nameSearchText": "謝爾達萊鳳梨種子 謝爾達萊鳳梨 Cieldalaes Pineapple Seeds Cieldalaes Pineapple シェルダレーの種 シェルダレーの果実 谢尔达莱凤梨种子 谢尔达莱凤梨"
     },
     "64": {
@@ -969,12 +1097,14 @@
         "ja": "ラザハンの種",
         "zh-Hans": "拉札罕柠檬种子"
       },
+      "seedItemId": 8180,
       "crop": {
         "zh-Hant": "拉札漢檸檬",
         "en": "Han Lemon",
         "ja": "ラザハンの果実",
         "zh-Hans": "拉札罕柠檬"
       },
+      "cropItemId": 8163,
       "nameSearchText": "拉札漢檸檬種子 拉札漢檸檬 Han Lemon Seeds Han Lemon ラザハンの種 ラザハンの果実 拉札罕柠檬种子 拉札罕柠檬"
     },
     "65": {
@@ -984,12 +1114,14 @@
         "ja": "ブラッドペッパーの種",
         "zh-Hans": "血椒种子"
       },
+      "seedItemId": 13755,
       "crop": {
         "zh-Hant": "血椒",
         "en": "Blood Pepper",
         "ja": "ブラッドペッパー",
         "zh-Hans": "血椒"
       },
+      "cropItemId": 13754,
       "nameSearchText": "血椒種子 血椒 Blood Pepper Seeds Blood Pepper ブラッドペッパーの種 ブラッドペッパー 血椒种子"
     },
     "66": {
@@ -999,12 +1131,14 @@
         "ja": "オールドワールドフィグの種",
         "zh-Hans": "旧世界无花果种子"
       },
+      "seedItemId": 13765,
       "crop": {
         "zh-Hant": "舊世界無花果",
         "en": "Old World Fig",
         "ja": "オールドワールドフィグ",
         "zh-Hans": "旧世界无花果"
       },
+      "cropItemId": 12896,
       "nameSearchText": "舊世界無花果種子 舊世界無花果 Old World Fig Seeds Old World Fig オールドワールドフィグの種 オールドワールドフィグ 旧世界无花果种子 旧世界无花果"
     },
     "67": {
@@ -1014,12 +1148,14 @@
         "ja": "チャイブの種",
         "zh-Hans": "库尔札斯青葱种子"
       },
+      "seedItemId": 13766,
       "crop": {
         "zh-Hant": "庫爾札斯青蔥",
         "en": "Chives",
         "ja": "チャイブ",
         "zh-Hans": "库尔札斯青葱"
       },
+      "cropItemId": 12884,
       "nameSearchText": "庫爾札斯青蔥種子 庫爾札斯青蔥 Chive Seeds Chives チャイブの種 チャイブ 库尔札斯青葱种子 库尔札斯青葱"
     },
     "68": {
@@ -1029,12 +1165,14 @@
         "ja": "プチキャベツの種",
         "zh-Hans": "小包心菜种子"
       },
+      "seedItemId": 13767,
       "crop": {
         "zh-Hant": "小包心菜",
         "en": "Pearl Sprouts",
         "ja": "プチキャベツ",
         "zh-Hans": "小包心菜"
       },
+      "cropItemId": 12877,
       "nameSearchText": "小包心菜種子 小包心菜 Pearl Sprout Seeds Pearl Sprouts プチキャベツの種 プチキャベツ 小包心菜种子"
     },
     "69": {
@@ -1044,12 +1182,14 @@
         "ja": "クルザス茶樹の種",
         "zh-Hans": "库尔札斯茶树种子"
       },
+      "seedItemId": 13768,
       "crop": {
         "zh-Hant": "庫爾札斯茶葉",
         "en": "Coerthan Tea Leaves",
         "ja": "クルザス茶葉",
         "zh-Hans": "库尔札斯茶叶"
       },
+      "cropItemId": 12882,
       "nameSearchText": "庫爾札斯茶樹種子 庫爾札斯茶葉 Coerthan Tea Seeds Coerthan Tea Leaves クルザス茶樹の種 クルザス茶葉 库尔札斯茶树种子 库尔札斯茶叶"
     },
     "70": {
@@ -1059,12 +1199,14 @@
         "ja": "アルジクラベンダーの種",
         "zh-Hans": "阿尔基克薰衣草种子"
       },
+      "seedItemId": 15855,
       "crop": {
         "zh-Hant": "阿爾基克薰衣草",
         "en": "Althyk Lavender",
         "ja": "アルジクラベンダー",
         "zh-Hans": "阿尔基克薰衣草"
       },
+      "cropItemId": 15857,
       "nameSearchText": "阿爾基克薰衣草種子 阿爾基克薰衣草 Althyk Lavender Seeds Althyk Lavender アルジクラベンダーの種 アルジクラベンダー 阿尔基克薰衣草种子 阿尔基克薰衣草"
     },
     "71": {
@@ -1074,12 +1216,14 @@
         "ja": "ヴォイドマンドレイクの種",
         "zh-Hans": "虚无界风茄种子"
       },
+      "seedItemId": 15856,
       "crop": {
         "zh-Hant": "虛無界風茄",
         "en": "Voidrake",
         "ja": "ヴォイドマンドレイク",
         "zh-Hans": "虚无界风茄"
       },
+      "cropItemId": 15858,
       "nameSearchText": "虛無界風茄種子 虛無界風茄 Voidrake Seeds Voidrake ヴォイドマンドレイクの種 ヴォイドマンドレイク 虚无界风茄种子 虚无界风茄"
     },
     "72": {
@@ -1089,7 +1233,9 @@
         "ja": "オールドローズの種",
         "zh-Hans": "古典玫瑰种子"
       },
+      "seedItemId": 14007,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "古典玫瑰種子 Oldrose Seeds オールドローズの種 古典玫瑰种子"
     },
     "73": {
@@ -1099,12 +1245,14 @@
         "ja": "火晶草の種",
         "zh-Hans": "火晶草种子"
       },
+      "seedItemId": 15865,
       "crop": {
         "zh-Hant": "火之碎晶",
         "en": "Fire Shard",
         "ja": "ファイアシャード",
         "zh-Hans": "火之碎晶"
       },
+      "cropItemId": 2,
       "nameSearchText": "火晶草種子 火之碎晶 Firelight Seeds Fire Shard 火晶草の種 ファイアシャード 火晶草种子"
     },
     "74": {
@@ -1114,12 +1262,14 @@
         "ja": "氷晶草の種",
         "zh-Hans": "冰晶草种子"
       },
+      "seedItemId": 15866,
       "crop": {
         "zh-Hant": "冰之碎晶",
         "en": "Ice Shard",
         "ja": "アイスシャード",
         "zh-Hans": "冰之碎晶"
       },
+      "cropItemId": 3,
       "nameSearchText": "冰晶草種子 冰之碎晶 Icelight Seeds Ice Shard 氷晶草の種 アイスシャード 冰晶草种子"
     },
     "75": {
@@ -1129,12 +1279,14 @@
         "ja": "風晶草の種",
         "zh-Hans": "风晶草种子"
       },
+      "seedItemId": 15867,
       "crop": {
         "zh-Hant": "風之碎晶",
         "en": "Wind Shard",
         "ja": "ウィンドシャード",
         "zh-Hans": "风之碎晶"
       },
+      "cropItemId": 4,
       "nameSearchText": "風晶草種子 風之碎晶 Windlight Seeds Wind Shard 風晶草の種 ウィンドシャード 风晶草种子 风之碎晶"
     },
     "76": {
@@ -1144,12 +1296,14 @@
         "ja": "土晶草の種",
         "zh-Hans": "土晶草种子"
       },
+      "seedItemId": 15868,
       "crop": {
         "zh-Hant": "土之碎晶",
         "en": "Earth Shard",
         "ja": "アースシャード",
         "zh-Hans": "土之碎晶"
       },
+      "cropItemId": 5,
       "nameSearchText": "土晶草種子 土之碎晶 Earthlight Seeds Earth Shard 土晶草の種 アースシャード 土晶草种子"
     },
     "77": {
@@ -1159,12 +1313,14 @@
         "ja": "雷晶草の種",
         "zh-Hans": "雷晶草种子"
       },
+      "seedItemId": 15869,
       "crop": {
         "zh-Hant": "雷之碎晶",
         "en": "Lightning Shard",
         "ja": "ライトニングシャード",
         "zh-Hans": "雷之碎晶"
       },
+      "cropItemId": 6,
       "nameSearchText": "雷晶草種子 雷之碎晶 Levinlight Seeds Lightning Shard 雷晶草の種 ライトニングシャード 雷晶草种子"
     },
     "78": {
@@ -1174,12 +1330,14 @@
         "ja": "水晶草の種",
         "zh-Hans": "水晶草种子"
       },
+      "seedItemId": 15870,
       "crop": {
         "zh-Hant": "水之碎晶",
         "en": "Water Shard",
         "ja": "ウォーターシャード",
         "zh-Hans": "水之碎晶"
       },
+      "cropItemId": 7,
       "nameSearchText": "水晶草種子 水之碎晶 Waterlight Seeds Water Shard 水晶草の種 ウォーターシャード 水晶草种子"
     },
     "79": {
@@ -1189,7 +1347,9 @@
         "ja": "パンジーの種",
         "zh-Hans": "三色堇种子"
       },
+      "seedItemId": 16016,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "三色堇種子 Viola Seeds パンジーの種 三色堇种子"
     },
     "80": {
@@ -1199,12 +1359,14 @@
         "ja": "クラウドエーコンの種",
         "zh-Hans": "云海橡果种子"
       },
+      "seedItemId": 17547,
       "crop": {
         "zh-Hant": "雲海橡果",
         "en": "Cloud Acorn",
         "ja": "クラウドエーコン",
         "zh-Hans": "云海橡果"
       },
+      "cropItemId": 17548,
       "nameSearchText": "雲海橡果種子 雲海橡果 Cloud Acorn Sapling Cloud Acorn クラウドエーコンの種 クラウドエーコン 云海橡果种子 云海橡果"
     },
     "81": {
@@ -1214,7 +1376,9 @@
         "ja": "シュラウドチェリーの苗",
         "zh-Hans": "樱花树幼苗"
       },
+      "seedItemId": 17546,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "櫻花樹幼苗 Shroud Cherry Sapling シュラウドチェリーの苗 樱花树幼苗"
     },
     "82": {
@@ -1224,7 +1388,9 @@
         "ja": "マーガレットの種",
         "zh-Hans": "雏菊种子"
       },
+      "seedItemId": 17996,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "雛菊種子 Daisy Seeds マーガレットの種 雏菊种子"
     },
     "83": {
@@ -1234,7 +1400,9 @@
         "ja": "ブライトリリーの種",
         "zh-Hans": "光明百合种子"
       },
+      "seedItemId": 20795,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "光明百合種子 Brightlily Seeds ブライトリリーの種 光明百合种子"
     },
     "84": {
@@ -1244,12 +1412,14 @@
         "ja": "ウキグモソウの種",
         "zh-Hans": "白云花种子"
       },
+      "seedItemId": 20792,
       "crop": {
         "zh-Hant": "白雲花",
         "en": "Cloudsbreath",
         "ja": "ウキグモソウ",
         "zh-Hans": "白云花"
       },
+      "cropItemId": 20791,
       "nameSearchText": "白雲花種子 白雲花 Cloudsbreath Seeds Cloudsbreath ウキグモソウの種 ウキグモソウ 白云花种子 白云花"
     },
     "85": {
@@ -1259,12 +1429,14 @@
         "ja": "マナゼンマイの胞子",
         "zh-Hans": "魔蕨菜孢子"
       },
+      "seedItemId": 20794,
       "crop": {
         "zh-Hant": "魔蕨菜",
         "en": "Royal Fern",
         "ja": "マナゼンマイ",
         "zh-Hans": "魔蕨菜"
       },
+      "cropItemId": 20793,
       "nameSearchText": "魔蕨菜孢子 魔蕨菜 Royal Fern Sori Royal Fern マナゼンマイの胞子 マナゼンマイ"
     },
     "86": {
@@ -1274,7 +1446,9 @@
         "ja": "チューリップの球根",
         "zh-Hans": "郁金香球根"
       },
+      "seedItemId": 21875,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "鬱金香球根 Tulip Bulbs チューリップの球根 郁金香球根"
     },
     "87": {
@@ -1284,7 +1458,9 @@
         "ja": "ダリアの球根",
         "zh-Hans": "大丽花的球根"
       },
+      "seedItemId": 22589,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "大麗花的球根 Dahlia Bulbs ダリアの球根 大丽花的球根"
     },
     "88": {
@@ -1294,7 +1470,9 @@
         "ja": "カラーの球根",
         "zh-Hans": "马蹄莲球茎"
       },
+      "seedItemId": 24165,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "馬蹄蓮球莖 Arum Bulbs カラーの球根 马蹄莲球茎"
     },
     "89": {
@@ -1304,7 +1482,9 @@
         "ja": "リリーオブバレーの苗",
         "zh-Hans": "铃兰的幼苗"
       },
+      "seedItemId": 24541,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "鈴蘭的幼苗 Lily of the Valley Pips リリーオブバレーの苗 铃兰的幼苗"
     },
     "90": {
@@ -1314,7 +1494,9 @@
         "ja": "ハイドレインジャの種",
         "zh-Hans": "绣球花的种子"
       },
+      "seedItemId": 27320,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "繡球花的種子 Hydrangea Seeds ハイドレインジャの種 绣球花的种子"
     },
     "91": {
@@ -1324,7 +1506,9 @@
         "ja": "カンパニュラの種",
         "zh-Hans": "风铃草种子"
       },
+      "seedItemId": 28175,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "風鈴草種子 Campanula Seeds カンパニュラの種 风铃草种子"
     },
     "92": {
@@ -1334,7 +1518,9 @@
         "ja": "ヒヤシンスの種",
         "zh-Hans": "风信子种子"
       },
+      "seedItemId": 28947,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "風信子種子 Hyacinth Bulbs ヒヤシンスの種 风信子种子"
     },
     "93": {
@@ -1344,12 +1530,14 @@
         "ja": "アラガンメロンの種",
         "zh-Hans": "亚拉戈西瓜种子"
       },
+      "seedItemId": 30364,
       "crop": {
         "zh-Hant": "亞拉戈西瓜",
         "en": "Allagan Melon",
         "ja": "アラガンメロン",
         "zh-Hans": "亚拉戈西瓜"
       },
+      "cropItemId": 30873,
       "nameSearchText": "亞拉戈西瓜種子 亞拉戈西瓜 Allagan Melon Seeds Allagan Melon アラガンメロンの種 アラガンメロン 亚拉戈西瓜种子 亚拉戈西瓜"
     },
     "94": {
@@ -1359,7 +1547,9 @@
         "ja": "コスモスの種",
         "zh-Hans": "秋英种子"
       },
+      "seedItemId": 30365,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "大波斯菊種子 Cosmos Seeds コスモスの種 秋英种子"
     },
     "95": {
@@ -1369,7 +1559,9 @@
         "ja": "カーネーションの種",
         "zh-Hans": "康乃馨种子"
       },
+      "seedItemId": 32812,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "康乃馨種子 Carnation Seeds カーネーションの種 康乃馨种子"
     },
     "96": {
@@ -1379,7 +1571,9 @@
         "ja": "胡蝶蘭の苗",
         "zh-Hans": "蝴蝶兰幼苗"
       },
+      "seedItemId": 33306,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "蝴蝶蘭幼苗 Moth Orchid Seeds 胡蝶蘭の苗 蝴蝶兰幼苗"
     },
     "97": {
@@ -1389,7 +1583,9 @@
         "ja": "トリテレイアの種",
         "zh-Hans": "紫灯花的种子"
       },
+      "seedItemId": 35744,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "紫燈花的種子 Triteleia Seeds トリテレイアの種 紫灯花的种子"
     },
     "98": {
@@ -1399,7 +1595,9 @@
         "ja": "ビエルゴヴァイオレットの種",
         "zh-Hans": "比尔格紫罗兰的种子"
       },
+      "seedItemId": 37302,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "比爾格紫羅蘭的種子 Byregotia Seeds ビエルゴヴァイオレットの種 比尔格紫罗兰的种子"
     },
     "99": {
@@ -1409,7 +1607,9 @@
         "ja": "スイートピーの種",
         "zh-Hans": "香豌豆花的种子"
       },
+      "seedItemId": 38659,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "香豌豆花的種子 Sweet Pea Seeds スイートピーの種 香豌豆花的种子"
     },
     "100": {
@@ -1419,7 +1619,9 @@
         "ja": "モーニンググローリーの種",
         "zh-Hans": "牵牛花的种子"
       },
+      "seedItemId": 39460,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "牽牛花的種子 Morning Glory Seeds モーニンググローリーの種 牵牛花的种子"
     },
     "101": {
@@ -1429,7 +1631,9 @@
         "ja": "クリサンセマムの種",
         "zh-Hans": "菊花种子"
       },
+      "seedItemId": 40686,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "菊花種子 Chrysanthemum Seeds クリサンセマムの種 菊花种子"
     },
     "102": {
@@ -1439,7 +1643,9 @@
         "ja": "ルピナスの種",
         "zh-Hans": "鲁冰花种子"
       },
+      "seedItemId": 41160,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "魯冰花種子 Lupin Seeds ルピナスの種 鲁冰花种子"
     },
     "103": {
@@ -1449,7 +1655,9 @@
         "ja": "サンフラワーシード",
         "zh-Hans": "葵花籽"
       },
+      "seedItemId": 4817,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "葵花籽 Sunflower Seeds サンフラワーシード"
     },
     "104": {
@@ -1459,7 +1667,9 @@
         "ja": "カトレアの種",
         "zh-Hans": "卡特兰种子"
       },
+      "seedItemId": 44832,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "Cattleya Seeds カトレアの種 卡特兰种子"
     },
     "105": {
@@ -1469,7 +1679,9 @@
         "ja": "ペーパーフラワーの種",
         "zh-Hans": "叶子花的种子"
       },
+      "seedItemId": 47950,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "Paperflower Seeds ペーパーフラワーの種 叶子花的种子"
     },
     "106": {
@@ -1479,7 +1691,9 @@
         "ja": "チャンパーの種",
         "zh-Hans": "大季花的种子"
       },
+      "seedItemId": 46803,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "Champa Seeds チャンパーの種 大季花的种子"
     },
     "107": {
@@ -1489,7 +1703,9 @@
         "ja": "ティーフラワーの種",
         "zh-Hans": ""
       },
+      "seedItemId": 49773,
       "crop": null,
+      "cropItemId": null,
       "nameSearchText": "Tea Flower Seeds ティーフラワーの種"
     }
   }

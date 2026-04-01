@@ -1490,7 +1490,7 @@ export function FieldManagementPage() {
                                     </div>
                                   </div>
                                 ) : null}
-                                {slot.seedId != null && isPotExclusive ? (
+                                {slot.seedId != null && isPotExclusive && !canHarvest ? (
                                   <div className="field-pot-bottom">
                                     <div className="field-pot-dye-actions" data-field-no-drag>
                                       {(['red', 'blue', 'yellow'] as const).map((colorKey) => (
@@ -1541,11 +1541,9 @@ export function FieldManagementPage() {
                                         </button>
                                       ))}
                                     </div>
-                                    {!canHarvest ? (
-                                      <div className="field-cell-time field-cell-time--pot">
-                                        {formatRemaining(slot.harvestDeadline, nowTick)}
-                                      </div>
-                                    ) : null}
+                                    <div className="field-cell-time field-cell-time--pot">
+                                      {formatRemaining(slot.harvestDeadline, nowTick)}
+                                    </div>
                                   </div>
                                 ) : null}
                                 {slot.seedId != null && !isPotExclusive && !canHarvest ? (

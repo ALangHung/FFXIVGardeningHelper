@@ -67,5 +67,9 @@ export function mergeSeedSummaryRow(
     name,
     seedItemName,
     nameSearchText,
+    seedItemId: e?.seedItemId ?? null,
+    cropItemId: e?.cropItemId ?? null,
+    seedMinPrice: null,
+    cropMinPrice: null,
   }
 }

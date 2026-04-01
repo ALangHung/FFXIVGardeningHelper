@@ -2,7 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { SeedSummary } from './seedSummaryTypes'
 import type { SeedRecord } from './seedDetailTypes'
-import { loadSeedsById, loadSeedsSummaryMerged } from './seedDataApi'
+import {
+  loadSeedsById,
+  loadSeedsSummaryMerged,
+  loadUniversalisMinPricesByItemId,
+} from './seedDataApi'
 import type {
   IntercrossOutcome,
   OtherParentCandidate,
@@ -22,10 +26,18 @@ import {
   type OtherParentSortKey,
   type OutcomeSortKey,
 } from './sessionUiState'
+import { hasMarketAccess } from './marketAccess'
+import { PriceSpinner } from './PriceSpinner'
 import './CrossCalculatorPage.css'
+
+const MARKET_ITEM_BASE = 'https://beherw.github.io/FFXIV_Market/item'
 
 function normalize(s: string) {
   return s.trim().toLowerCase()
+}
+
+function marketItemUrl(itemId: number): string {
+  return `${MARKET_ITEM_BASE}/${itemId}`
 }
 
 function seedsSortedByName(seeds: SeedSummary[]): SeedSummary[] {
@@ -255,11 +267,38 @@ function compareOutcomes(
   b: IntercrossOutcome,
   key: OutcomeSortKey,
   dir: 1 | -1,
+  priceBySeedId: Record<number, { seedMinPrice: number | null; cropMinPrice: number | null; cropItemId: number | null }>,
 ): number {
   const m = dir
+  const normalizePrice = (v: number | null): number | null => {
+    if (v == null || !Number.isFinite(v) || v <= 0) return null
+    return v
+  }
+  const compareNullableNumber = (av: number | null, bv: number | null): number => {
+    if (av == null && bv == null) return 0
+    if (av == null) return 1
+    if (bv == null) return -1
+    return m * (av - bv)
+  }
   switch (key) {
     case 'outcome':
       return m * a.outcomeName.localeCompare(b.outcomeName, 'zh-Hant')
+    case 'seedMinPrice':
+      return compareNullableNumber(
+        normalizePrice(priceBySeedId[a.outcomeSeedId]?.seedMinPrice ?? null),
+        normalizePrice(priceBySeedId[b.outcomeSeedId]?.seedMinPrice ?? null),
+      )
+    case 'cropMinPrice': {
+      const aPrice =
+        priceBySeedId[a.outcomeSeedId]?.cropItemId == null
+          ? null
+          : normalizePrice(priceBySeedId[a.outcomeSeedId]?.cropMinPrice ?? null)
+      const bPrice =
+        priceBySeedId[b.outcomeSeedId]?.cropItemId == null
+          ? null
+          : normalizePrice(priceBySeedId[b.outcomeSeedId]?.cropMinPrice ?? null)
+      return compareNullableNumber(aPrice, bPrice)
+    }
     case 'loop': {
       const av = a.isLoop ? 1 : 0
       const bv = b.isLoop ? 1 : 0
@@ -284,11 +323,40 @@ function compareOtherParents(
   b: OtherParentCandidate,
   key: OtherParentSortKey,
   dir: 1 | -1,
+  priceBySeedId: Record<number, { seedMinPrice: number | null; cropMinPrice: number | null; cropItemId: number | null }>,
 ): number {
   const m = dir
+  const normalizePrice = (v: number | null): number | null => {
+    if (v == null || !Number.isFinite(v) || v <= 0) return null
+    return v
+  }
+  const compareNullableNumber = (av: number | null, bv: number | null): number => {
+    if (av == null && bv == null) return 0
+    if (av == null) return 1
+    if (bv == null) return -1
+    return m * (av - bv)
+  }
   switch (key) {
     case 'other':
       return m * a.otherParentName.localeCompare(b.otherParentName, 'zh-Hant')
+    case 'growDays':
+      return compareNullableNumber(a.otherParentGrowDays, b.otherParentGrowDays)
+    case 'seedMinPrice':
+      return compareNullableNumber(
+        normalizePrice(priceBySeedId[a.otherParentSeedId]?.seedMinPrice ?? null),
+        normalizePrice(priceBySeedId[b.otherParentSeedId]?.seedMinPrice ?? null),
+      )
+    case 'cropMinPrice': {
+      const aPrice =
+        priceBySeedId[a.otherParentSeedId]?.cropItemId == null
+          ? null
+          : normalizePrice(priceBySeedId[a.otherParentSeedId]?.cropMinPrice ?? null)
+      const bPrice =
+        priceBySeedId[b.otherParentSeedId]?.cropItemId == null
+          ? null
+          : normalizePrice(priceBySeedId[b.otherParentSeedId]?.cropMinPrice ?? null)
+      return compareNullableNumber(aPrice, bPrice)
+    }
     case 'loop': {
       const av = a.isLoop ? 1 : 0
       const bv = b.isLoop ? 1 : 0
@@ -387,9 +455,33 @@ export function CrossCalculatorPage() {
     key: number
     message: string
   } | null>(null)
+  const [marketEnabled, setMarketEnabled] = useState(false)
+  const [priceBySeedId, setPriceBySeedId] = useState<
+    Record<
+      number,
+      {
+        seedItemId: number | null
+        seedMinPrice: number | null
+        cropMinPrice: number | null
+        cropItemId: number | null
+      }
+    >
+  >({})
+  const [priceLoading, setPriceLoading] = useState(false)
 
   const prevParentPairKeyRef = useRef<string | null>(null)
   const prevSpPairKeyRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const enabled = await hasMarketAccess()
+      if (!cancelled) setMarketEnabled(enabled)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -416,6 +508,76 @@ export function CrossCalculatorPage() {
       cancelled = true
     }
   }, [])
+
+  useEffect(() => {
+    if (!marketEnabled) {
+      setPriceBySeedId({})
+      setPriceLoading(false)
+      return
+    }
+    if (seeds.length === 0) {
+      setPriceLoading(false)
+      return
+    }
+    let cancelled = false
+    setPriceLoading(true)
+    ;(async () => {
+      try {
+        const itemIds: number[] = []
+        for (const s of seeds) {
+          if (s.seedItemId != null) itemIds.push(s.seedItemId)
+          if (s.cropItemId != null) itemIds.push(s.cropItemId)
+        }
+        const uniqIds = [...new Set(itemIds)]
+        const prices = await loadUniversalisMinPricesByItemId(uniqIds)
+        if (cancelled) return
+        const next: Record<
+          number,
+          {
+            seedItemId: number | null
+            seedMinPrice: number | null
+            cropMinPrice: number | null
+            cropItemId: number | null
+          }
+        > = {}
+        for (const s of seeds) {
+          next[s.seedId] = {
+            seedItemId: s.seedItemId ?? null,
+            seedMinPrice: s.seedItemId == null ? null : prices[s.seedItemId] ?? null,
+            cropMinPrice: s.cropItemId == null ? null : prices[s.cropItemId] ?? null,
+            cropItemId: s.cropItemId ?? null,
+          }
+        }
+        setPriceBySeedId(next)
+      } catch {
+        if (!cancelled) setPriceBySeedId({})
+      } finally {
+        if (!cancelled) setPriceLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [seeds, marketEnabled])
+
+  useEffect(() => {
+    if (marketEnabled) return
+    if (outcomeSortKey === 'seedMinPrice' || outcomeSortKey === 'cropMinPrice') {
+      setOutcomeSortKey('efficiency')
+      setOutcomeSortDir(-1)
+    }
+  }, [marketEnabled, outcomeSortKey])
+
+  useEffect(() => {
+    if (marketEnabled) return
+    if (
+      otherParentSortKey === 'seedMinPrice' ||
+      otherParentSortKey === 'cropMinPrice'
+    ) {
+      setOtherParentSortKey('efficiency')
+      setOtherParentSortDir(-1)
+    }
+  }, [marketEnabled, otherParentSortKey])
 
   useEffect(() => {
     const key = `${parentAId ?? ''}:${parentBId ?? ''}`
@@ -486,10 +648,10 @@ export function CrossCalculatorPage() {
     if (outcomes.length === 0) return outcomes
     const rows = [...outcomes]
     rows.sort((a, b) =>
-      compareOutcomes(a, b, outcomeSortKey, outcomeSortDir),
+      compareOutcomes(a, b, outcomeSortKey, outcomeSortDir, priceBySeedId),
     )
     return rows
-  }, [outcomes, outcomeSortKey, outcomeSortDir])
+  }, [outcomes, outcomeSortKey, outcomeSortDir, priceBySeedId])
 
   function toggleOutcomeSort(key: OutcomeSortKey) {
     if (outcomeSortKey === key) setOutcomeSortDir((d) => (d === 1 ? -1 : 1))
@@ -588,10 +750,34 @@ export function CrossCalculatorPage() {
     if (otherParents.length === 0) return otherParents
     const rows = [...otherParents]
     rows.sort((a, b) =>
-      compareOtherParents(a, b, otherParentSortKey, otherParentSortDir),
+      compareOtherParents(a, b, otherParentSortKey, otherParentSortDir, priceBySeedId),
     )
     return rows
-  }, [otherParents, otherParentSortKey, otherParentSortDir])
+  }, [otherParents, otherParentSortKey, otherParentSortDir, priceBySeedId])
+
+  function marketPriceText(seedId: number, kind: 'seed' | 'crop') {
+    if (priceLoading) return <PriceSpinner />
+    const p = priceBySeedId[seedId]
+    if (!p) return '—'
+    if (kind === 'crop' && p.cropItemId == null) return '不支援盆栽作物'
+    const itemId = kind === 'seed' ? p.seedItemId : p.cropItemId
+    const raw = kind === 'seed' ? p.seedMinPrice : p.cropMinPrice
+    const text =
+      raw == null || !Number.isFinite(raw) || raw <= 0
+        ? '交易版上沒資料'
+        : `${Math.round(raw).toLocaleString('zh-Hant')} G`
+    if (itemId == null) return text
+    return (
+      <a
+        href={marketItemUrl(itemId)}
+        target="_blank"
+        rel="noreferrer"
+        className="cross-calc-market-link"
+      >
+        {text}
+      </a>
+    )
+  }
 
   const searchParentsStatusLine = useMemo(() => {
     if (spKnownId == null || spResultId == null)
@@ -724,6 +910,16 @@ export function CrossCalculatorPage() {
                       <thead>
                         <tr>
                           <th scope="col">{outcomeSortTh('outcome', '可能結果')}</th>
+                          {marketEnabled ? (
+                            <th scope="col">
+                              {outcomeSortTh('seedMinPrice', '種子最低價')}
+                            </th>
+                          ) : null}
+                          {marketEnabled ? (
+                            <th scope="col">
+                              {outcomeSortTh('cropMinPrice', '作物最低價')}
+                            </th>
+                          ) : null}
                           <th scope="col">{outcomeSortTh('loop', '迴圈')}</th>
                           <th scope="col">
                             {outcomeSortTh('efficiency', '效率')}
@@ -763,6 +959,16 @@ export function CrossCalculatorPage() {
                                   />
                                 </div>
                               </td>
+                              {marketEnabled ? (
+                                <td>
+                                  {marketPriceText(row.outcomeSeedId, 'seed')}
+                                </td>
+                              ) : null}
+                              {marketEnabled ? (
+                                <td>
+                                  {marketPriceText(row.outcomeSeedId, 'crop')}
+                                </td>
+                              ) : null}
                               <td>
                                 <span
                                   className={
@@ -864,7 +1070,19 @@ export function CrossCalculatorPage() {
                           <th scope="col">
                             {otherParentSortTh('other', '另一種親本')}
                           </th>
-                          <th scope="col">收成天數</th>
+                          <th scope="col">
+                            {otherParentSortTh('growDays', '收成天數')}
+                          </th>
+                          {marketEnabled ? (
+                            <th scope="col">
+                              {otherParentSortTh('seedMinPrice', '種子最低價')}
+                            </th>
+                          ) : null}
+                          {marketEnabled ? (
+                            <th scope="col">
+                              {otherParentSortTh('cropMinPrice', '作物最低價')}
+                            </th>
+                          ) : null}
                           <th scope="col">
                             {otherParentSortTh('loop', '迴圈')}
                           </th>
@@ -907,11 +1125,20 @@ export function CrossCalculatorPage() {
                                 </div>
                               </td>
                               <td>
-                                {formatDurationEn(
-                                  seedSummaryById.get(row.otherParentSeedId)
-                                    ?.growTime ?? null,
-                                )}
+                                {row.otherParentGrowDays != null
+                                  ? `${row.otherParentGrowDays}天`
+                                  : '—'}
                               </td>
+                              {marketEnabled ? (
+                                <td>
+                                  {marketPriceText(row.otherParentSeedId, 'seed')}
+                                </td>
+                              ) : null}
+                              {marketEnabled ? (
+                                <td>
+                                  {marketPriceText(row.otherParentSeedId, 'crop')}
+                                </td>
+                              ) : null}
                               <td>
                                 <span
                                   className={

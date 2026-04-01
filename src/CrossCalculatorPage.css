@@ -330,6 +330,15 @@
   text-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
 }
 
+.cross-calc-market-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cross-calc-market-link:hover {
+  color: var(--gold);
+}
+
 .cross-calc-muted {
   margin: 0;
   color: var(--text-muted);

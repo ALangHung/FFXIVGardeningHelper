@@ -22,6 +22,14 @@ export type SeedSummary = SeedSummaryJson & {
    * 供名稱篩選：seedItem 與 crop 四語系合併（去重）。
    */
   nameSearchText: string
+  /** Teamcraft 種子道具 item id */
+  seedItemId: number | null
+  /** Teamcraft 作物／收成道具 item id；盆栽專用為 null */
+  cropItemId: number | null
+  /** 由 Universalis 取得的種子道具最低售價（NQ/HQ 合併） */
+  seedMinPrice: number | null
+  /** 由 Universalis 取得的作物最低售價（NQ/HQ 合併）；盆栽專用維持 null */
+  cropMinPrice: number | null
 }
 
 export type SeedsSummaryPayloadJson = {

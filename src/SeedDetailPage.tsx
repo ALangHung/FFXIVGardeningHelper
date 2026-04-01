@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
-import { getSeedById, loadSeedNameSearchById } from './seedDataApi'
+import {
+  getSeedById,
+  loadSeedNameSearchById,
+  loadSeedsI18n,
+  loadUniversalisMinPricesByItemId,
+} from './seedDataApi'
 import type {
   ConfirmedCross,
   CrossParent,
   SeedRecord,
 } from './seedDetailTypes'
+import type { SeedI18nEntry } from './seedI18nTypes'
 import {
   type FlowerpotColorKey,
   cropNameZhFromEntry,
@@ -18,9 +24,17 @@ import { formatDurationEn, seedTypeLabelZh } from './seedFormat'
 import './SeedDetailPage.css'
 import { publicUrl } from './publicUrl'
 import { SearchClearButton } from './SearchClearButton'
+import { hasMarketAccess } from './marketAccess'
+import { PriceSpinner } from './PriceSpinner'
+
+const MARKET_ITEM_BASE = 'https://beherw.github.io/FFXIV_Market/item'
 
 function iconSrc(seedId: number) {
   return publicUrl(`images/seed-icon/${seedId}.png`)
+}
+
+function marketItemUrl(itemId: number): string {
+  return `${MARKET_ITEM_BASE}/${itemId}`
 }
 
 /** 資料裡無採集點時常為 null、空字串或 "--" */
@@ -328,7 +342,19 @@ function SeedLink({
   )
 }
 
-type CrossSortKey = 'parentA' | 'parentB' | 'alternate' | 'efficiency'
+type CrossSortKey =
+  | 'parentA'
+  | 'aGrowDays'
+  | 'aSeedPrice'
+  | 'aCropPrice'
+  | 'parentB'
+  | 'bGrowDays'
+  | 'bSeedPrice'
+  | 'bCropPrice'
+  | 'alternate'
+  | 'altSeedPrice'
+  | 'altCropPrice'
+  | 'efficiency'
 
 function normalizeQ(s: string) {
   return s.trim().toLowerCase()
@@ -396,13 +422,58 @@ type PreparedCrossRow = {
   displayB: CrossParent
 }
 
+type CrossSeedPrice = {
+  seedItemId: number | null
+  seedMinPrice: number | null
+  cropMinPrice: number | null
+  cropItemId: number | null
+}
+
+function formatMarketPrice(price: number | null): string {
+  if (price == null || !Number.isFinite(price) || price <= 0) {
+    return '交易版上沒資料'
+  }
+  return `${Math.round(price).toLocaleString('zh-Hant')} G`
+}
+
+function normalizeSortableMarketPrice(v: number | null): number | null {
+  if (v == null || !Number.isFinite(v) || v <= 0) return null
+  return v
+}
+
+function compareNullableNumber(
+  av: number | null,
+  bv: number | null,
+  dir: 1 | -1,
+): number {
+  if (av == null && bv == null) return 0
+  if (av == null) return 1
+  if (bv == null) return -1
+  return dir * (av - bv)
+}
+
 function comparePreparedCross(
   a: PreparedCrossRow,
   b: PreparedCrossRow,
   key: CrossSortKey,
   dir: 1 | -1,
+  priceBySeedId: Record<number, CrossSeedPrice>,
 ): number {
   const m = dir
+  const seedValue = (seedId: number | null): number | null => {
+    if (seedId == null) return null
+    return normalizeSortableMarketPrice(priceBySeedId[seedId]?.seedMinPrice ?? null)
+  }
+  const cropValue = (seedId: number | null): number | null => {
+    if (seedId == null) return null
+    const p = priceBySeedId[seedId]
+    if (!p || p.cropItemId == null) return null
+    return normalizeSortableMarketPrice(p.cropMinPrice)
+  }
+  const growDaysValue = (growDays: number | null | undefined): number | null => {
+    if (growDays == null || !Number.isFinite(growDays)) return null
+    return growDays
+  }
   switch (key) {
     case 'parentA':
       return (
@@ -419,6 +490,38 @@ function comparePreparedCross(
           String(b.displayB.name ?? ''),
           'zh-Hant',
         )
+      )
+    case 'aGrowDays':
+      return compareNullableNumber(
+        growDaysValue(a.displayA.growDays),
+        growDaysValue(b.displayA.growDays),
+        m,
+      )
+    case 'bGrowDays':
+      return compareNullableNumber(
+        growDaysValue(a.displayB.growDays),
+        growDaysValue(b.displayB.growDays),
+        m,
+      )
+    case 'aSeedPrice':
+      return compareNullableNumber(seedValue(a.displayA.seedId), seedValue(b.displayA.seedId), m)
+    case 'aCropPrice':
+      return compareNullableNumber(cropValue(a.displayA.seedId), cropValue(b.displayA.seedId), m)
+    case 'bSeedPrice':
+      return compareNullableNumber(seedValue(a.displayB.seedId), seedValue(b.displayB.seedId), m)
+    case 'bCropPrice':
+      return compareNullableNumber(cropValue(a.displayB.seedId), cropValue(b.displayB.seedId), m)
+    case 'altSeedPrice':
+      return compareNullableNumber(
+        seedValue(a.row.alternate.seedId),
+        seedValue(b.row.alternate.seedId),
+        m,
+      )
+    case 'altCropPrice':
+      return compareNullableNumber(
+        cropValue(a.row.alternate.seedId),
+        cropValue(b.row.alternate.seedId),
+        m,
       )
     default:
       return compareCross(a.row, b.row, key, dir)
@@ -474,10 +577,12 @@ function compareCross(
 function ConfirmedCrossesTable({
   seedId,
   crosses,
+  marketEnabled,
   onSeedItemCopied,
 }: {
   seedId: number
   crosses: ConfirmedCross[]
+  marketEnabled: boolean
   onSeedItemCopied: (copiedText: string) => void
 }) {
   const [query, setQuery] = useState('')
@@ -489,12 +594,21 @@ function ConfirmedCrossesTable({
   )
   const [sortKey, setSortKey] = useState<CrossSortKey>('efficiency')
   const [sortDir, setSortDir] = useState<1 | -1>(-1)
+  const [showCropPrice, setShowCropPrice] = useState(false)
+  const [showSeedPrice, setShowSeedPrice] = useState(false)
+  const [priceBySeedId, setPriceBySeedId] = useState<Record<number, CrossSeedPrice>>(
+    {},
+  )
+  const [priceLoading, setPriceLoading] = useState(false)
 
   useEffect(() => {
     setQuery('')
     setLoopFilter('all')
     setSortKey('efficiency')
     setSortDir(-1)
+    setShowCropPrice(false)
+    setShowSeedPrice(false)
+    setPriceBySeedId({})
   }, [seedId])
 
   useEffect(() => {
@@ -511,6 +625,76 @@ function ConfirmedCrossesTable({
       cancelled = true
     }
   }, [])
+
+  const crossSeedIds = useMemo(() => {
+    const ids = new Set<number>()
+    for (const row of crosses) {
+      if (row.parentA.seedId != null) ids.add(row.parentA.seedId)
+      if (row.parentB.seedId != null) ids.add(row.parentB.seedId)
+      if (row.alternate.seedId != null) ids.add(row.alternate.seedId)
+    }
+    return [...ids]
+  }, [crosses])
+
+  useEffect(() => {
+    if (!marketEnabled) {
+      setPriceLoading(false)
+      return
+    }
+    if (!showCropPrice && !showSeedPrice) {
+      setPriceLoading(false)
+      return
+    }
+    if (crossSeedIds.length === 0) {
+      setPriceLoading(false)
+      return
+    }
+    let cancelled = false
+    setPriceLoading(true)
+    ;(async () => {
+      try {
+        const i18n = await loadSeedsI18n()
+        const bySeed = i18n.bySeedId ?? {}
+        const itemIds: number[] = []
+        for (const sid of crossSeedIds) {
+          const e = bySeed[String(sid)] as SeedI18nEntry | undefined
+          if (e?.seedItemId != null) itemIds.push(e.seedItemId)
+          if (e?.cropItemId != null) itemIds.push(e.cropItemId)
+        }
+        const uniqItemIds = [...new Set(itemIds)]
+        const minPrices = await loadUniversalisMinPricesByItemId(uniqItemIds)
+        if (cancelled) return
+
+        const next: Record<number, CrossSeedPrice> = {}
+        for (const sid of crossSeedIds) {
+          const e = bySeed[String(sid)] as SeedI18nEntry | undefined
+          const seedItemId = e?.seedItemId ?? null
+          const cropItemId = e?.cropItemId ?? null
+          next[sid] = {
+            seedItemId,
+            seedMinPrice: seedItemId == null ? null : minPrices[seedItemId] ?? null,
+            cropMinPrice: cropItemId == null ? null : minPrices[cropItemId] ?? null,
+            cropItemId,
+          }
+        }
+        setPriceBySeedId(next)
+      } catch {
+        if (!cancelled) setPriceBySeedId({})
+      } finally {
+        if (!cancelled) setPriceLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [crossSeedIds, showCropPrice, showSeedPrice, marketEnabled])
+
+  useEffect(() => {
+    if (!marketEnabled) {
+      setShowCropPrice(false)
+      setShowSeedPrice(false)
+    }
+  }, [marketEnabled])
 
   const filtered = useMemo(() => {
     return crosses.filter((row) => {
@@ -534,9 +718,11 @@ function ConfirmedCrossesTable({
 
   const sorted = useMemo(() => {
     const rows = [...prepared]
-    rows.sort((a, b) => comparePreparedCross(a, b, sortKey, sortDir))
+    rows.sort((a, b) =>
+      comparePreparedCross(a, b, sortKey, sortDir, priceBySeedId),
+    )
     return rows
-  }, [prepared, sortKey, sortDir])
+  }, [prepared, sortKey, sortDir, priceBySeedId])
 
   function toggleSort(key: CrossSortKey) {
     if (sortKey === key) setSortDir((d) => (d === 1 ? -1 : 1))
@@ -561,6 +747,42 @@ function ConfirmedCrossesTable({
           </span>
         ) : null}
       </button>
+    )
+  }
+
+  function seedPriceContent(seedId: number | null) {
+    if (seedId == null) return '—'
+    if (priceLoading) return <PriceSpinner />
+    const price = priceBySeedId[seedId]
+    if (!price) return '—'
+    if (price.seedItemId == null) return formatMarketPrice(price.seedMinPrice)
+    return (
+      <a
+        href={marketItemUrl(price.seedItemId)}
+        target="_blank"
+        rel="noreferrer"
+        className="seed-detail-market-link"
+      >
+        {formatMarketPrice(price.seedMinPrice)}
+      </a>
+    )
+  }
+
+  function cropPriceContent(seedId: number | null) {
+    if (seedId == null) return '—'
+    if (priceLoading) return <PriceSpinner />
+    const price = priceBySeedId[seedId]
+    if (!price) return '—'
+    if (price.cropItemId == null) return '不支援盆栽作物'
+    return (
+      <a
+        href={marketItemUrl(price.cropItemId)}
+        target="_blank"
+        rel="noreferrer"
+        className="seed-detail-market-link"
+      >
+        {formatMarketPrice(price.cropMinPrice)}
+      </a>
     )
   }
 
@@ -597,6 +819,24 @@ function ConfirmedCrossesTable({
             <option value="nonloop">非迴圈</option>
           </select>
         </label>
+        {marketEnabled ? (
+          <div className="seed-detail-cross-toggle-group">
+            <button
+              type="button"
+              className={`seed-detail-cross-toggle-btn${showCropPrice ? ' is-on' : ''}`}
+              onClick={() => setShowCropPrice((v) => !v)}
+            >
+              顯示作物價格
+            </button>
+            <button
+              type="button"
+              className={`seed-detail-cross-toggle-btn${showSeedPrice ? ' is-on' : ''}`}
+              onClick={() => setShowSeedPrice((v) => !v)}
+            >
+              顯示種子價格
+            </button>
+          </div>
+        ) : null}
         <p className="seed-detail-cross-meta">
           顯示 <strong>{sorted.length}</strong> / {crosses.length} 筆
         </p>
@@ -607,8 +847,16 @@ function ConfirmedCrossesTable({
           <thead>
             <tr>
               <th>{sortLabel('parentA', '親本 A')}</th>
+              <th>{sortLabel('aGrowDays', '收成天數')}</th>
+              {showSeedPrice ? <th>{sortLabel('aSeedPrice', '種子最低價')}</th> : null}
+              {showCropPrice ? <th>{sortLabel('aCropPrice', '作物最低價')}</th> : null}
               <th>{sortLabel('parentB', '親本 B')}</th>
+              <th>{sortLabel('bGrowDays', '收成天數')}</th>
+              {showSeedPrice ? <th>{sortLabel('bSeedPrice', '種子最低價')}</th> : null}
+              {showCropPrice ? <th>{sortLabel('bCropPrice', '作物最低價')}</th> : null}
               <th>{sortLabel('alternate', '其他可能獲取的種子')}</th>
+              {showSeedPrice ? <th>{sortLabel('altSeedPrice', '種子最低價')}</th> : null}
+              {showCropPrice ? <th>{sortLabel('altCropPrice', '作物最低價')}</th> : null}
               <th>{sortLabel('efficiency', '效率')}</th>
             </tr>
           </thead>
@@ -620,7 +868,6 @@ function ConfirmedCrossesTable({
                     <SeedLink
                       seedId={item.displayA.seedId}
                       name={item.displayA.name}
-                      growDays={item.displayA.growDays}
                     />
                     {item.displayA.seedId != null &&
                     item.displayA.seedItemName ? (
@@ -634,12 +881,24 @@ function ConfirmedCrossesTable({
                     ) : null}
                   </div>
                 </td>
+                <td className="seed-detail-cross-price-cell">
+                  {item.displayA.growDays != null ? `${item.displayA.growDays}天` : '—'}
+                </td>
+                {showSeedPrice ? (
+                  <td className="seed-detail-cross-price-cell">
+                    {seedPriceContent(item.displayA.seedId)}
+                  </td>
+                ) : null}
+                {showCropPrice ? (
+                  <td className="seed-detail-cross-price-cell">
+                    {cropPriceContent(item.displayA.seedId)}
+                  </td>
+                ) : null}
                 <td>
                   <div className="seed-detail-cross-name-row">
                     <SeedLink
                       seedId={item.displayB.seedId}
                       name={item.displayB.name}
-                      growDays={item.displayB.growDays}
                     />
                     {item.displayB.seedId != null &&
                     item.displayB.seedItemName ? (
@@ -653,6 +912,19 @@ function ConfirmedCrossesTable({
                     ) : null}
                   </div>
                 </td>
+                <td className="seed-detail-cross-price-cell">
+                  {item.displayB.growDays != null ? `${item.displayB.growDays}天` : '—'}
+                </td>
+                {showSeedPrice ? (
+                  <td className="seed-detail-cross-price-cell">
+                    {seedPriceContent(item.displayB.seedId)}
+                  </td>
+                ) : null}
+                {showCropPrice ? (
+                  <td className="seed-detail-cross-price-cell">
+                    {cropPriceContent(item.displayB.seedId)}
+                  </td>
+                ) : null}
                 <td>
                   <div className="seed-detail-cross-name-row">
                     <SeedLink
@@ -671,6 +943,16 @@ function ConfirmedCrossesTable({
                     ) : null}
                   </div>
                 </td>
+                {showSeedPrice ? (
+                  <td className="seed-detail-cross-price-cell">
+                    {seedPriceContent(item.row.alternate.seedId)}
+                  </td>
+                ) : null}
+                {showCropPrice ? (
+                  <td className="seed-detail-cross-price-cell">
+                    {cropPriceContent(item.row.alternate.seedId)}
+                  </td>
+                ) : null}
                 <td>
                   <span
                     className={`seed-detail-eff seed-detail-eff--${item.row.efficiencyRating ?? 'none'}`}
@@ -694,12 +976,24 @@ export function SeedDetailPage() {
   const { seedId: rawId } = useParams()
   const [seed, setSeed] = useState<SeedRecord | null | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
+  const [marketEnabled, setMarketEnabled] = useState(false)
   const [copyToast, setCopyToast] = useState<{
     key: number
     message: string
   } | null>(null)
 
   const idNum = rawId ? Number.parseInt(rawId, 10) : Number.NaN
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const enabled = await hasMarketAccess()
+      if (!cancelled) setMarketEnabled(enabled)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -888,6 +1182,7 @@ export function SeedDetailPage() {
           <ConfirmedCrossesTable
             seedId={s.seedId}
             crosses={s.confirmedCrosses}
+            marketEnabled={marketEnabled}
             onSeedItemCopied={(text) =>
               setCopyToast({
                 key: Date.now(),

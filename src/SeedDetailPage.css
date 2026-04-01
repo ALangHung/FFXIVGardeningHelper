@@ -435,11 +435,57 @@ button.seed-detail-back {
   color: #d1d5db;
 }
 
+.seed-detail-cross-toggle-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.seed-detail-cross-toggle-btn {
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  padding: 0.28rem 0.52rem;
+  border-radius: 999px;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  background: rgba(18, 12, 29, 0.75);
+  color: #d1d5db;
+  cursor: pointer;
+}
+
+.seed-detail-cross-toggle-btn:hover {
+  border-color: rgba(251, 191, 36, 0.45);
+  color: var(--gold);
+}
+
+.seed-detail-cross-toggle-btn.is-on {
+  border-color: rgba(251, 191, 36, 0.65);
+  color: #fde68a;
+  background: rgba(251, 191, 36, 0.12);
+}
+
 .seed-detail-cross-name-row {
   display: inline-flex;
   align-items: center;
   gap: 0.12rem;
   line-height: 1.45;
+}
+
+.seed-detail-cross-prices {
+  margin-top: 0.18rem;
+  display: grid;
+  gap: 0.08rem;
+}
+
+.seed-detail-cross-price-line {
+  font-size: 0.75rem;
+  color: #d1d5db;
+  line-height: 1.35;
+}
+
+.seed-detail-cross-price-label {
+  color: var(--muted);
 }
 
 .seed-detail-cross-name-row .copy-crop-name-btn.seed-detail-cross-copy-btn {
@@ -455,6 +501,20 @@ button.seed-detail-back {
 .seed-detail-cross-name-row .copy-crop-name-icon {
   width: 0.88em;
   height: 0.88em;
+}
+
+.seed-detail-cross-price-cell {
+  white-space: nowrap;
+  color: #d1d5db;
+}
+
+.seed-detail-market-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.seed-detail-market-link:hover {
+  color: var(--gold);
 }
 
 .seed-detail-th-btn {

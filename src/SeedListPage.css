@@ -82,15 +82,19 @@
 }
 
 .seed-col-name {
-  width: 36%;
+  width: 31%;
 }
 
 .seed-col-grow {
-  width: 18%;
+  width: 14%;
 }
 
 .seed-col-loc {
-  width: 46%;
+  width: 27%;
+}
+
+.seed-col-price {
+  width: 14%;
 }
 
 .seed-table-head-row th {
@@ -266,7 +270,8 @@
 }
 
 .seed-td-grow,
-.seed-td-loc {
+.seed-td-loc,
+.seed-td-price {
   color: #d1d5db;
 }
 
@@ -278,6 +283,19 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.seed-td-price {
+  white-space: nowrap;
+}
+
+.seed-price-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.seed-price-link:hover {
+  color: var(--gold);
 }
 
 .seed-name-cell {

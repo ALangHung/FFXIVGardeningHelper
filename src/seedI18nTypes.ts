@@ -12,8 +12,12 @@ export type SeedLocaleBundle = {
 export type SeedI18nEntry = {
   /** 舊版 `seeds-i18n.json` 可能缺此欄，執行期 fallback 為 `crop` */
   seedItem?: SeedLocaleBundle
+  /** Teamcraft 種子道具 item id */
+  seedItemId?: number | null
   /** 無獨立收成（cropYield 為 0／空）時為 null；舊版 JSON 可能仍為物件 */
   crop: SeedLocaleBundle | null
+  /** Teamcraft 作物／收成道具 item id；盆栽專用為 null */
+  cropItemId?: number | null
   nameSearchText: string
 }
 

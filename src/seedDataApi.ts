@@ -17,6 +17,9 @@ import {
 import type { SeedSummary, SeedsSummaryPayloadJson } from './seedSummaryTypes'
 import { publicUrl } from './publicUrl'
 
+export const UNIVERSALIS_TW_DC = '陸行鳥'
+const UNIVERSALIS_BATCH_SIZE = 50
+
 let cache: Record<string, SeedRecord> | null = null
 let loading: Promise<Record<string, SeedRecord>> | null = null
 
@@ -131,6 +134,58 @@ export async function loadSeedsSummaryMerged(): Promise<SeedSummary[]> {
   const data = (await sumRes.json()) as SeedsSummaryPayloadJson
   const byI18n = i18nPayload.bySeedId ?? {}
   return (data.seeds ?? []).map((row) => mergeSeedSummaryRow(row, byI18n))
+}
+
+function chunkNumbers(input: number[], size: number): number[][] {
+  const out: number[][] = []
+  for (let i = 0; i < input.length; i += size) {
+    out.push(input.slice(i, i + size))
+  }
+  return out
+}
+
+type UniversalisItemPayload = {
+  minPrice?: number
+}
+
+type UniversalisBatchPayload = {
+  items?: Record<string, UniversalisItemPayload>
+}
+
+/**
+ * 取得指定大區（預設 Elemental）各道具當前最低售價（minPrice）。
+ */
+export async function loadUniversalisMinPricesByItemId(
+  itemIds: number[],
+  dcName: string = UNIVERSALIS_TW_DC,
+): Promise<Record<number, number | null>> {
+  const uniq = [...new Set(itemIds.filter((x) => Number.isFinite(x) && x > 0))]
+  if (uniq.length === 0) return {}
+
+  const chunks = chunkNumbers(uniq, UNIVERSALIS_BATCH_SIZE)
+  const out: Record<number, number | null> = {}
+
+  await Promise.all(
+    chunks.map(async (ids) => {
+      const joined = ids.join(',')
+      const url = `https://universalis.app/api/v2/${encodeURIComponent(dcName)}/${joined}?listings=0&entries=0`
+      const res = await fetch(url)
+      if (!res.ok) {
+        throw new Error(`無法載入市場價格 (${res.status})`)
+      }
+      const payload = (await res.json()) as UniversalisBatchPayload
+      const items = payload?.items ?? {}
+      for (const id of ids) {
+        const minPrice = items[String(id)]?.minPrice
+        out[id] = typeof minPrice === 'number' && Number.isFinite(minPrice) ? minPrice : null
+      }
+    }),
+  )
+
+  for (const id of uniq) {
+    if (!(id in out)) out[id] = null
+  }
+  return out
 }
 
 export async function loadSeedsI18n(): Promise<SeedsI18nPayload> {

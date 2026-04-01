@@ -23,7 +23,12 @@ import {
 const SEED_LIST_KEY = 'ffxivgh.seedList.v1'
 const CROSS_CALC_KEY = 'ffxivgh.crossCalc.v1'
 
-export type SeedListSortKey = 'name' | 'growTime' | 'harvestLocation'
+export type SeedListSortKey =
+  | 'name'
+  | 'growTime'
+  | 'harvestLocation'
+  | 'seedMinPrice'
+  | 'cropMinPrice'
 
 export type SeedListUiState = {
   nameQuery: string
@@ -34,8 +39,19 @@ export type SeedListUiState = {
 }
 
 export type CrossCalcMode = 'computeOutcomes' | 'searchParents'
-export type OutcomeSortKey = 'outcome' | 'loop' | 'efficiency'
-export type OtherParentSortKey = 'other' | 'loop' | 'efficiency'
+export type OutcomeSortKey =
+  | 'outcome'
+  | 'seedMinPrice'
+  | 'cropMinPrice'
+  | 'loop'
+  | 'efficiency'
+export type OtherParentSortKey =
+  | 'other'
+  | 'growDays'
+  | 'seedMinPrice'
+  | 'cropMinPrice'
+  | 'loop'
+  | 'efficiency'
 
 export type CrossCalcUiState = {
   mode: CrossCalcMode
@@ -63,7 +79,13 @@ function safeJsonParse(raw: string | null): unknown {
 }
 
 function isSortKey(x: unknown): x is SeedListSortKey {
-  return x === 'name' || x === 'growTime' || x === 'harvestLocation'
+  return (
+    x === 'name' ||
+    x === 'growTime' ||
+    x === 'harvestLocation' ||
+    x === 'seedMinPrice' ||
+    x === 'cropMinPrice'
+  )
 }
 
 function isDir(x: unknown): x is 1 | -1 {
@@ -75,11 +97,24 @@ function isCrossMode(x: unknown): x is CrossCalcMode {
 }
 
 function isOutcomeSortKey(x: unknown): x is OutcomeSortKey {
-  return x === 'outcome' || x === 'loop' || x === 'efficiency'
+  return (
+    x === 'outcome' ||
+    x === 'seedMinPrice' ||
+    x === 'cropMinPrice' ||
+    x === 'loop' ||
+    x === 'efficiency'
+  )
 }
 
 function isOtherParentSortKey(x: unknown): x is OtherParentSortKey {
-  return x === 'other' || x === 'loop' || x === 'efficiency'
+  return (
+    x === 'other' ||
+    x === 'growDays' ||
+    x === 'seedMinPrice' ||
+    x === 'cropMinPrice' ||
+    x === 'loop' ||
+    x === 'efficiency'
+  )
 }
 
 function readNullableSeedId(x: unknown): number | null {

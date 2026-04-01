@@ -1,7 +1,11 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import type { SeedSummary } from './seedSummaryTypes'
-import { loadSeedsSummaryMerged } from './seedDataApi'
+import {
+  loadSeedsSummaryMerged,
+  loadUniversalisMinPricesByItemId,
+} from './seedDataApi'
+import { hasMarketAccess } from './marketAccess'
 import { publicUrl } from './publicUrl'
 import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import { SearchClearButton } from './SearchClearButton'
@@ -11,9 +15,11 @@ import {
   type SeedListSortKey,
 } from './sessionUiState'
 import { durationToSortHours, formatDurationEn } from './seedFormat'
+import { PriceSpinner } from './PriceSpinner'
 import './SeedListPage.css'
 
 type SortKey = SeedListSortKey
+const MARKET_ITEM_BASE = 'https://beherw.github.io/FFXIV_Market/item'
 
 function normalize(s: string): string {
   return s.trim().toLowerCase()
@@ -21,6 +27,10 @@ function normalize(s: string): string {
 
 function growTimeToHours(label: string): number {
   return durationToSortHours(label)
+}
+
+function marketItemUrl(itemId: number): string {
+  return `${MARKET_ITEM_BASE}/${itemId}`
 }
 
 function sortedGrowOptions(seeds: SeedSummary[]): string[] {
@@ -38,6 +48,19 @@ function compareRows(
   dir: 1 | -1,
 ): number {
   const m = dir
+  const normalizeMarketPrice = (v: number | null): number | null => {
+    if (v == null || !Number.isFinite(v) || v <= 0) return null
+    return v
+  }
+  const compareNullableNumber = (
+    av: number | null,
+    bv: number | null,
+  ): number => {
+    if (av == null && bv == null) return 0
+    if (av == null) return 1
+    if (bv == null) return -1
+    return m * (av - bv)
+  }
   switch (key) {
     case 'name':
       return m * a.name.localeCompare(b.name, 'zh-Hant')
@@ -51,6 +74,16 @@ function compareRows(
       const sb = b.harvestLocation ?? ''
       return m * sa.localeCompare(sb)
     }
+    case 'seedMinPrice':
+      return compareNullableNumber(
+        normalizeMarketPrice(a.seedMinPrice),
+        normalizeMarketPrice(b.seedMinPrice),
+      )
+    case 'cropMinPrice':
+      return compareNullableNumber(
+        normalizeMarketPrice(a.cropMinPrice),
+        normalizeMarketPrice(b.cropMinPrice),
+      )
     default:
       return 0
   }
@@ -83,6 +116,19 @@ export function SeedListPage() {
     key: number
     message: string
   } | null>(null)
+  const [priceLoading, setPriceLoading] = useState(false)
+  const [marketEnabled, setMarketEnabled] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      const enabled = await hasMarketAccess()
+      if (!cancelled) setMarketEnabled(enabled)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     saveSeedListUiState({
@@ -113,6 +159,55 @@ export function SeedListPage() {
   }, [])
 
   const growOptions = useMemo(() => sortedGrowOptions(seeds), [seeds])
+  const allPriceItemIds = useMemo(() => {
+    const ids: number[] = []
+    for (const s of seeds) {
+      if (s.seedItemId != null) ids.push(s.seedItemId)
+      if (s.cropItemId != null) ids.push(s.cropItemId)
+    }
+    return [...new Set(ids)]
+  }, [seeds])
+  const allPriceItemIdsKey = useMemo(() => allPriceItemIds.join(','), [allPriceItemIds])
+
+  useEffect(() => {
+    if (!marketEnabled) return
+    if (!allPriceItemIdsKey) return
+    const ids = allPriceItemIdsKey
+      .split(',')
+      .map((x) => Number(x))
+      .filter((x) => Number.isFinite(x) && x > 0)
+    if (ids.length === 0) return
+    let cancelled = false
+    ;(async () => {
+      setPriceLoading(true)
+      try {
+        const prices = await loadUniversalisMinPricesByItemId(ids)
+        if (cancelled) return
+        setSeeds((prev) =>
+          prev.map((s) => ({
+            ...s,
+            seedMinPrice: s.seedItemId == null ? null : prices[s.seedItemId] ?? null,
+            cropMinPrice: s.cropItemId == null ? null : prices[s.cropItemId] ?? null,
+          })),
+        )
+      } catch {
+        // 價格失敗不阻斷列表
+      } finally {
+        if (!cancelled) setPriceLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [allPriceItemIdsKey, marketEnabled])
+
+  useEffect(() => {
+    if (marketEnabled) return
+    if (sortKey === 'seedMinPrice' || sortKey === 'cropMinPrice') {
+      setSortKey('name')
+      setSortDir(1)
+    }
+  }, [marketEnabled, sortKey])
 
   const filtered = useMemo(() => {
     const nq = normalize(nameQuery)
@@ -171,6 +266,8 @@ export function SeedListPage() {
                 <col className="seed-col-name" />
                 <col className="seed-col-grow" />
                 <col className="seed-col-loc" />
+                {marketEnabled ? <col className="seed-col-price" /> : null}
+                {marketEnabled ? <col className="seed-col-price" /> : null}
               </colgroup>
               <thead>
                 <tr className="seed-table-head-row">
@@ -180,7 +277,7 @@ export function SeedListPage() {
                       className="seed-th-btn"
                       onClick={() => toggleSort('name')}
                     >
-                      作物／收成
+                      種子
                       <SortGlyph active={sortKey === 'name'} dir={sortDir} />
                     </button>
                   </th>
@@ -207,6 +304,30 @@ export function SeedListPage() {
                       />
                     </button>
                   </th>
+                  {marketEnabled ? (
+                    <th scope="col" className="seed-th">
+                      <button
+                        type="button"
+                        className="seed-th-btn"
+                        onClick={() => toggleSort('seedMinPrice')}
+                      >
+                        種子市場最低價
+                        <SortGlyph active={sortKey === 'seedMinPrice'} dir={sortDir} />
+                      </button>
+                    </th>
+                  ) : null}
+                  {marketEnabled ? (
+                    <th scope="col" className="seed-th">
+                      <button
+                        type="button"
+                        className="seed-th-btn"
+                        onClick={() => toggleSort('cropMinPrice')}
+                      >
+                        作物市場最低價
+                        <SortGlyph active={sortKey === 'cropMinPrice'} dir={sortDir} />
+                      </button>
+                    </th>
+                  ) : null}
                 </tr>
                 <tr className="seed-table-filter-row">
                   <td>
@@ -262,6 +383,8 @@ export function SeedListPage() {
                       ) : null}
                     </label>
                   </td>
+                  {marketEnabled ? <td /> : null}
+                  {marketEnabled ? <td /> : null}
                 </tr>
               </thead>
               <tbody>
@@ -303,6 +426,42 @@ export function SeedListPage() {
                     >
                       {s.harvestLocation ?? '—'}
                     </td>
+                    {marketEnabled ? (
+                      <td className="seed-td seed-td-price">
+                        {priceLoading ? (
+                          <PriceSpinner />
+                        ) : s.seedItemId != null ? (
+                          <a
+                            href={marketItemUrl(s.seedItemId)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="seed-price-link"
+                          >
+                            {formatGil(s.seedMinPrice)}
+                          </a>
+                        ) : (
+                          formatGil(s.seedMinPrice)
+                        )}
+                      </td>
+                    ) : null}
+                    {marketEnabled ? (
+                      <td className="seed-td seed-td-price">
+                        {priceLoading ? (
+                          <PriceSpinner />
+                        ) : s.cropItemId == null ? (
+                          '不支援盆栽作物'
+                        ) : (
+                          <a
+                            href={marketItemUrl(s.cropItemId)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="seed-price-link"
+                          >
+                            {formatGil(s.cropMinPrice)}
+                          </a>
+                        )}
+                      </td>
+                    ) : null}
                   </tr>
                 ))}
               </tbody>
@@ -316,6 +475,11 @@ export function SeedListPage() {
       )}
     </div>
   )
+}
+
+function formatGil(price: number | null): string {
+  if (price == null || price <= 0) return '交易版上沒資料'
+  return `${Math.round(price).toLocaleString('zh-Hant')} G`
 }
 
 function SortGlyph({
