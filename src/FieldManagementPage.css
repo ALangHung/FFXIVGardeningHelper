@@ -169,7 +169,6 @@
 }
 
 .field-block {
-  cursor: grab;
   box-sizing: border-box;
   width: 100%;
   flex: 0 0 auto;
@@ -186,12 +185,9 @@
   overflow: visible;
 }
 
-.field-block:active {
-  cursor: grabbing;
-}
-
 .field-block--dragging {
   opacity: 0.88;
+  cursor: grabbing;
 }
 
 .field-block button,
@@ -585,6 +581,15 @@
   font-weight: 700;
   font-size: 1.1rem;
   cursor: default;
+}
+
+/* 中央格預設為箭頭；編輯版面拖曳時與卡片其餘區域一致（繼承 grab / grabbing） */
+.field-block--layout-drag .field-cell--center {
+  cursor: inherit;
+}
+
+.field-block--dragging .field-cell--center {
+  cursor: inherit;
 }
 
 .field-cell-head {
