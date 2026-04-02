@@ -254,6 +254,10 @@
   background: rgba(34, 26, 50, 0.35);
 }
 
+.seed-tr--clickable {
+  cursor: pointer;
+}
+
 .seed-tr:hover td {
   background: var(--surface-hover) !important;
 }

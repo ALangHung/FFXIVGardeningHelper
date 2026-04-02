@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import type { SeedSummary } from './seedSummaryTypes'
 import {
   loadSeedsSummaryMerged,
@@ -90,6 +90,7 @@ function compareRows(
 }
 
 export function SeedListPage() {
+  const navigate = useNavigate()
   const [persistedList] = useState(() => loadSeedListUiState())
 
   const [loading, setLoading] = useState(true)
@@ -389,7 +390,11 @@ export function SeedListPage() {
               </thead>
               <tbody>
                 {sortedRows.map((s) => (
-                  <tr key={s.seedId} className="seed-tr">
+                  <tr
+                    key={s.seedId}
+                    className="seed-tr seed-tr--clickable"
+                    onClick={() => navigate(`/seed/${s.seedId}`)}
+                  >
                     <td className="seed-td seed-td-name">
                       <span className="seed-name-cell">
                         <img
@@ -403,18 +408,24 @@ export function SeedListPage() {
                         <Link
                           to={`/seed/${s.seedId}`}
                           className="seed-name-link"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {s.name}
                         </Link>
-                        <CopyCropNameButton
-                          name={s.name}
-                          onCopied={(text) =>
-                            setCopyToast({
-                              key: Date.now(),
-                              message: `已複製：${text}`,
-                            })
-                          }
-                        />
+                        <span
+                          onClick={(e) => e.stopPropagation()}
+                          role="presentation"
+                        >
+                          <CopyCropNameButton
+                            name={s.name}
+                            onCopied={(text) =>
+                              setCopyToast({
+                                key: Date.now(),
+                                message: `已複製：${text}`,
+                              })
+                            }
+                          />
+                        </span>
                       </span>
                     </td>
                     <td className="seed-td seed-td-grow">
@@ -436,6 +447,7 @@ export function SeedListPage() {
                             target="_blank"
                             rel="noreferrer"
                             className="seed-price-link"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             {formatGil(s.seedMinPrice)}
                           </a>
@@ -456,6 +468,7 @@ export function SeedListPage() {
                             target="_blank"
                             rel="noreferrer"
                             className="seed-price-link"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             {formatGil(s.cropMinPrice)}
                           </a>

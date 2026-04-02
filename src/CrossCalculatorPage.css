@@ -1,5 +1,6 @@
 .cross-calc-page {
   --surface: #1a1428;
+  --surface-hover: #2a2140;
   --surface-2: #221a32;
   --border: rgba(167, 139, 250, 0.22);
   --border-focus: rgba(139, 92, 246, 0.65);
@@ -284,6 +285,14 @@
 
 .cross-calc-table td:first-child {
   min-width: 0;
+}
+
+.cross-calc-table tbody tr.cross-calc-result-tr {
+  cursor: pointer;
+}
+
+.cross-calc-table tbody tr.cross-calc-result-tr:hover td {
+  background: var(--surface-hover);
 }
 
 .cross-calc-table tbody tr:last-child td {

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import type { SeedSummary } from './seedSummaryTypes'
 import type { SeedRecord } from './seedDetailTypes'
 import {
@@ -398,6 +398,7 @@ function OutcomeSortGlyph({
 }
 
 export function CrossCalculatorPage() {
+  const navigate = useNavigate()
   const [persistedCross] = useState(() => loadCrossCalcUiState())
 
   const [seeds, setSeeds] = useState<SeedSummary[]>([])
@@ -773,6 +774,7 @@ export function CrossCalculatorPage() {
         target="_blank"
         rel="noreferrer"
         className="cross-calc-market-link"
+        onClick={(e) => e.stopPropagation()}
       >
         {text}
       </a>
@@ -929,7 +931,13 @@ export function CrossCalculatorPage() {
                       <tbody>
                         {sortedOutcomes.length === 0 ? null : (
                           sortedOutcomes.map((row) => (
-                            <tr key={row.outcomeSeedId}>
+                            <tr
+                              key={row.outcomeSeedId}
+                              className="cross-calc-result-tr"
+                              onClick={() =>
+                                navigate(`/seed/${row.outcomeSeedId}`)
+                              }
+                            >
                               <td>
                                 <div className="cross-calc-name-cell">
                                   <img
@@ -945,18 +953,24 @@ export function CrossCalculatorPage() {
                                   <Link
                                     to={`/seed/${row.outcomeSeedId}`}
                                     className="cross-calc-name-link"
+                                    onClick={(e) => e.stopPropagation()}
                                   >
                                     {row.outcomeName}
                                   </Link>
-                                  <CopyCropNameButton
-                                    name={row.outcomeName}
-                                    onCopied={(text) =>
-                                      setCopyToast({
-                                        key: Date.now(),
-                                        message: `已複製：${text}`,
-                                      })
-                                    }
-                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    role="presentation"
+                                  >
+                                    <CopyCropNameButton
+                                      name={row.outcomeName}
+                                      onCopied={(text) =>
+                                        setCopyToast({
+                                          key: Date.now(),
+                                          message: `已複製：${text}`,
+                                        })
+                                      }
+                                    />
+                                  </span>
                                 </div>
                               </td>
                               {marketEnabled ? (
@@ -1094,7 +1108,13 @@ export function CrossCalculatorPage() {
                       <tbody>
                         {sortedOtherParents.length === 0 ? null : (
                           sortedOtherParents.map((row) => (
-                            <tr key={row.otherParentSeedId}>
+                            <tr
+                              key={row.otherParentSeedId}
+                              className="cross-calc-result-tr"
+                              onClick={() =>
+                                navigate(`/seed/${row.otherParentSeedId}`)
+                              }
+                            >
                               <td>
                                 <div className="cross-calc-name-cell">
                                   <img
@@ -1110,18 +1130,24 @@ export function CrossCalculatorPage() {
                                   <Link
                                     to={`/seed/${row.otherParentSeedId}`}
                                     className="cross-calc-name-link"
+                                    onClick={(e) => e.stopPropagation()}
                                   >
                                     {row.otherParentName}
                                   </Link>
-                                  <CopyCropNameButton
-                                    name={row.otherParentName}
-                                    onCopied={(text) =>
-                                      setCopyToast({
-                                        key: Date.now(),
-                                        message: `已複製：${text}`,
-                                      })
-                                    }
-                                  />
+                                  <span
+                                    onClick={(e) => e.stopPropagation()}
+                                    role="presentation"
+                                  >
+                                    <CopyCropNameButton
+                                      name={row.otherParentName}
+                                      onCopied={(text) =>
+                                        setCopyToast({
+                                          key: Date.now(),
+                                          message: `已複製：${text}`,
+                                        })
+                                      }
+                                    />
+                                  </span>
                                 </div>
                               </td>
                               <td>
