@@ -13,6 +13,11 @@ import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import type { SeedSummary } from './seedSummaryTypes'
 import type { SeedRecord } from './seedDetailTypes'
 import { getSeedById, loadSeedsById, loadSeedsSummaryMerged } from './seedDataApi'
+import { SeedFavoriteHeartIcon } from './SeedFavoriteHeartIcon'
+import {
+  sortSeedsFavoritesFirstThenName,
+  useSeedFavoriteIds,
+} from './seedFavorites'
 import { publicUrl } from './publicUrl'
 import {
   loadFieldsLocal,
@@ -68,8 +73,12 @@ function normalize(s: string) {
   return s.trim().toLowerCase()
 }
 
-function filterSeeds(seeds: SeedSummary[], q: string): SeedSummary[] {
-  const sorted = [...seeds].sort((a, b) => a.name.localeCompare(b.name, 'zh-Hant'))
+function filterSeeds(
+  seeds: SeedSummary[],
+  q: string,
+  favoriteIds: ReadonlySet<number>,
+): SeedSummary[] {
+  const sorted = sortSeedsFavoritesFirstThenName(seeds, favoriteIds)
   const nq = normalize(q)
   if (!nq) return sorted
   return sorted.filter((s) =>
@@ -295,6 +304,7 @@ function FieldCellCrossTooltip({ hint }: { hint: CrossHintAtPlant }) {
 
 export function FieldManagementPage() {
   const [fields, setFields] = useState<GardenField[]>(() => loadFieldsLocal())
+  const favoriteSeedIds = useSeedFavoriteIds()
   const [seeds, setSeeds] = useState<SeedSummary[]>([])
   const [seedsById, setSeedsById] = useState<Record<string, SeedRecord> | null>(
     null,
@@ -911,8 +921,8 @@ export function FieldManagementPage() {
   )
 
   const pickerSeeds = useMemo(
-    () => filterSeeds(seeds, pickerQuery),
-    [seeds, pickerQuery],
+    () => filterSeeds(seeds, pickerQuery, favoriteSeedIds),
+    [seeds, pickerQuery, favoriteSeedIds],
   )
 
   useEffect(() => {
@@ -1985,7 +1995,19 @@ export function FieldManagementPage() {
                       height={28}
                       loading="lazy"
                     />
-                    <span>{s.name}</span>
+                    <span className="field-modal-item-name">{s.name}</span>
+                    {favoriteSeedIds.has(s.seedId) ? (
+                      <span
+                        className="field-modal-item-fav"
+                        title="最愛"
+                        aria-label="最愛"
+                      >
+                        <SeedFavoriteHeartIcon
+                          variant="solid"
+                          className="field-modal-item-fav-icon"
+                        />
+                      </span>
+                    ) : null}
                   </button>
                 </li>
               ))}

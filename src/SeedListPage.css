@@ -320,6 +320,20 @@
   height: 1.05rem;
 }
 
+.seed-favorite-hint {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  color: #fb7185;
+  filter: drop-shadow(0 0 6px rgba(251, 113, 133, 0.35));
+}
+
+.seed-favorite-hint-icon {
+  width: 1rem;
+  height: 1rem;
+  display: block;
+}
+
 .seed-row-icon {
   flex-shrink: 0;
   display: block;

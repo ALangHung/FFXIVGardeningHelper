@@ -33,6 +33,11 @@ import {
   seedDetailHref,
   type SeedDetailSection,
 } from './sessionUiState'
+import { SeedFavoriteHeartIcon } from './SeedFavoriteHeartIcon'
+import {
+  toggleSeedFavorite,
+  useSeedFavoriteIds,
+} from './seedFavorites'
 
 const MARKET_ITEM_BASE = 'https://beherw.github.io/FFXIV_Market/item'
 
@@ -310,6 +315,106 @@ function BlackForestSoilYieldHint({ text }: { text: string }) {
   )
 }
 
+function SeedDetailHeroPrice({
+  label,
+  kind,
+  loading,
+  data,
+}: {
+  label: string
+  kind: 'crop' | 'seed'
+  loading: boolean
+  data: {
+    seedItemId: number | null
+    cropItemId: number | null
+    seedMinPrice: number | null
+    cropMinPrice: number | null
+  } | null
+}) {
+  if (loading) {
+    return (
+      <span className="seed-detail-hero-price">
+        <span className="seed-detail-hero-price-label">{label}</span>
+        <PriceSpinner />
+      </span>
+    )
+  }
+  if (data == null) {
+    return (
+      <span className="seed-detail-hero-price">
+        <span className="seed-detail-hero-price-label">{label}</span>
+        <span className="seed-detail-hero-price-value">—</span>
+      </span>
+    )
+  }
+  if (kind === 'crop') {
+    if (data.cropItemId == null) {
+      return (
+        <span className="seed-detail-hero-price">
+          <span className="seed-detail-hero-price-label">{label}</span>
+          <span className="seed-detail-hero-price-value seed-detail-hero-price-value--muted">
+            不支援盆栽作物
+          </span>
+        </span>
+      )
+    }
+    const text = formatMarketPrice(data.cropMinPrice)
+    return (
+      <span className="seed-detail-hero-price">
+        <span className="seed-detail-hero-price-label">{label}</span>
+        <a
+          href={marketItemUrl(data.cropItemId)}
+          target="_blank"
+          rel="noreferrer"
+          className="seed-detail-market-link seed-detail-hero-price-value"
+        >
+          {text}
+        </a>
+      </span>
+    )
+  }
+  const text = formatMarketPrice(data.seedMinPrice)
+  const inner =
+    data.seedItemId != null ? (
+      <a
+        href={marketItemUrl(data.seedItemId)}
+        target="_blank"
+        rel="noreferrer"
+        className="seed-detail-market-link seed-detail-hero-price-value"
+      >
+        {text}
+      </a>
+    ) : (
+      <span className="seed-detail-hero-price-value">{text}</span>
+    )
+  return (
+    <span className="seed-detail-hero-price">
+      <span className="seed-detail-hero-price-label">{label}</span>
+      {inner}
+    </span>
+  )
+}
+
+function SeedDetailFavoriteButton({ seedId }: { seedId: number }) {
+  const favoriteIds = useSeedFavoriteIds()
+  const on = favoriteIds.has(seedId)
+  return (
+    <button
+      type="button"
+      className={`seed-detail-favorite-btn${on ? ' seed-detail-favorite-btn--on' : ''}`}
+      aria-pressed={on}
+      aria-label={on ? '從最愛名單移除' : '加入最愛名單'}
+      title={on ? '從最愛名單移除' : '加入最愛名單'}
+      onClick={() => toggleSeedFavorite(seedId)}
+    >
+      <SeedFavoriteHeartIcon
+        variant={on ? 'solid' : 'outline'}
+        className="seed-detail-favorite-icon-svg"
+      />
+    </button>
+  )
+}
+
 function SeedDetailBackNav({
   seedId,
   section,
@@ -456,6 +561,38 @@ function orientParentsForSearchQuery(
   return { displayA: row.parentA, displayB: row.parentB }
 }
 
+function parentSeedInFavorites(
+  seedId: number | null,
+  favoriteIds: ReadonlySet<number>,
+): boolean {
+  return seedId != null && favoriteIds.has(seedId)
+}
+
+/** 無搜尋時：若僅親本 B 為最愛，對調使最愛顯示於親本 A（僅 A 或兩者皆最愛則維持原序）。 */
+function orientParentsForFavorites(
+  row: ConfirmedCross,
+  favoriteIds: ReadonlySet<number>,
+): { displayA: CrossParent; displayB: CrossParent } {
+  const fa = parentSeedInFavorites(row.parentA.seedId, favoriteIds)
+  const fb = parentSeedInFavorites(row.parentB.seedId, favoriteIds)
+  if (fb && !fa) {
+    return { displayA: row.parentB, displayB: row.parentA }
+  }
+  return { displayA: row.parentA, displayB: row.parentB }
+}
+
+function orientParentsForDisplay(
+  row: ConfirmedCross,
+  q: string,
+  searchById: Record<string, string>,
+  favoriteIds: ReadonlySet<number>,
+): { displayA: CrossParent; displayB: CrossParent } {
+  if (q.trim()) {
+    return orientParentsForSearchQuery(row, q, searchById)
+  }
+  return orientParentsForFavorites(row, favoriteIds)
+}
+
 type PreparedCrossRow = {
   row: ConfirmedCross
   displayA: CrossParent
@@ -490,6 +627,45 @@ function compareNullableNumber(
   if (av == null) return 1
   if (bv == null) return -1
   return dir * (av - bv)
+}
+
+/** 列中親本 A／B 或「其他可能獲取的種子」任一為最愛則為 true（與畫面上顯示的親本方向一致） */
+function preparedCrossRowInvolvesFavorite(
+  item: PreparedCrossRow,
+  favoriteIds: ReadonlySet<number>,
+): boolean {
+  const ids = [
+    item.displayA.seedId,
+    item.displayB.seedId,
+    item.row.alternate.seedId,
+  ]
+  for (const id of ids) {
+    if (id != null && favoriteIds.has(id)) return true
+  }
+  return false
+}
+
+function SeedCrossFavoriteHeart({
+  seedId,
+  favoriteIds,
+}: {
+  seedId: number | null
+  favoriteIds: ReadonlySet<number>
+}) {
+  if (seedId == null || !favoriteIds.has(seedId)) return null
+  return (
+    <span
+      className="seed-detail-cross-favorite-hint"
+      title="已加入最愛名單"
+      role="img"
+      aria-label="已加入最愛名單"
+    >
+      <SeedFavoriteHeartIcon
+        variant="solid"
+        className="seed-detail-cross-favorite-hint-icon"
+      />
+    </span>
+  )
 }
 
 function comparePreparedCross(
@@ -627,6 +803,7 @@ function ConfirmedCrossesTable({
   onSeedItemCopied: (copiedText: string) => void
   section: SeedDetailSection
 }) {
+  const favoriteIds = useSeedFavoriteIds()
   const [query, setQuery] = useState('')
   const [nameSearchById, setNameSearchById] = useState<Record<string, string>>(
     {},
@@ -749,22 +926,26 @@ function ConfirmedCrossesTable({
 
   const prepared = useMemo(() => {
     return filtered.map((row) => {
-      const { displayA, displayB } = orientParentsForSearchQuery(
+      const { displayA, displayB } = orientParentsForDisplay(
         row,
         query,
         nameSearchById,
+        favoriteIds,
       )
       return { row, displayA, displayB }
     })
-  }, [filtered, query, nameSearchById])
+  }, [filtered, query, nameSearchById, favoriteIds])
 
   const sorted = useMemo(() => {
     const rows = [...prepared]
-    rows.sort((a, b) =>
-      comparePreparedCross(a, b, sortKey, sortDir, priceBySeedId),
-    )
+    rows.sort((a, b) => {
+      const fa = preparedCrossRowInvolvesFavorite(a, favoriteIds)
+      const fb = preparedCrossRowInvolvesFavorite(b, favoriteIds)
+      if (fa !== fb) return fa ? -1 : 1
+      return comparePreparedCross(a, b, sortKey, sortDir, priceBySeedId)
+    })
     return rows
-  }, [prepared, sortKey, sortDir, priceBySeedId])
+  }, [prepared, sortKey, sortDir, priceBySeedId, favoriteIds])
 
   function toggleSort(key: CrossSortKey) {
     if (sortKey === key) setSortDir((d) => (d === 1 ? -1 : 1))
@@ -922,6 +1103,10 @@ function ConfirmedCrossesTable({
                         onCopied={(text) => onSeedItemCopied(text)}
                       />
                     ) : null}
+                    <SeedCrossFavoriteHeart
+                      seedId={item.displayA.seedId}
+                      favoriteIds={favoriteIds}
+                    />
                   </div>
                 </td>
                 <td className="seed-detail-cross-price-cell">
@@ -954,6 +1139,10 @@ function ConfirmedCrossesTable({
                         onCopied={(text) => onSeedItemCopied(text)}
                       />
                     ) : null}
+                    <SeedCrossFavoriteHeart
+                      seedId={item.displayB.seedId}
+                      favoriteIds={favoriteIds}
+                    />
                   </div>
                 </td>
                 <td className="seed-detail-cross-price-cell">
@@ -986,6 +1175,10 @@ function ConfirmedCrossesTable({
                         onCopied={(text) => onSeedItemCopied(text)}
                       />
                     ) : null}
+                    <SeedCrossFavoriteHeart
+                      seedId={item.row.alternate.seedId}
+                      favoriteIds={favoriteIds}
+                    />
                   </div>
                 </td>
                 {showSeedPrice ? (
@@ -1023,6 +1216,13 @@ export function SeedDetailPage() {
   const [seed, setSeed] = useState<SeedRecord | null | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
   const [marketEnabled, setMarketEnabled] = useState(false)
+  const [heroMarket, setHeroMarket] = useState<{
+    seedItemId: number | null
+    cropItemId: number | null
+    seedMinPrice: number | null
+    cropMinPrice: number | null
+  } | null>(null)
+  const [heroMarketLoading, setHeroMarketLoading] = useState(false)
   const [copyToast, setCopyToast] = useState<{
     key: number
     message: string
@@ -1040,6 +1240,60 @@ export function SeedDetailPage() {
       cancelled = true
     }
   }, [])
+
+  useEffect(() => {
+    if (!marketEnabled) {
+      setHeroMarket(null)
+      setHeroMarketLoading(false)
+      return
+    }
+    if (seed == null) {
+      setHeroMarket(null)
+      setHeroMarketLoading(false)
+      return
+    }
+    let cancelled = false
+    setHeroMarket(null)
+    setHeroMarketLoading(true)
+    ;(async () => {
+      try {
+        const i18n = await loadSeedsI18n()
+        if (cancelled) return
+        const e = i18n.bySeedId[String(seed.seedId)] as SeedI18nEntry | undefined
+        const seedItemId = e?.seedItemId ?? null
+        const cropItemId = e?.cropItemId ?? null
+        const ids = [seedItemId, cropItemId].filter(
+          (x): x is number => x != null,
+        )
+        if (ids.length === 0) {
+          setHeroMarket({
+            seedItemId,
+            cropItemId,
+            seedMinPrice: null,
+            cropMinPrice: null,
+          })
+          return
+        }
+        const minPrices = await loadUniversalisMinPricesByItemId(ids)
+        if (cancelled) return
+        setHeroMarket({
+          seedItemId,
+          cropItemId,
+          seedMinPrice:
+            seedItemId == null ? null : minPrices[seedItemId] ?? null,
+          cropMinPrice:
+            cropItemId == null ? null : minPrices[cropItemId] ?? null,
+        })
+      } catch {
+        if (!cancelled) setHeroMarket(null)
+      } finally {
+        if (!cancelled) setHeroMarketLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [marketEnabled, seed])
 
   useEffect(() => {
     let cancelled = false
@@ -1106,6 +1360,7 @@ export function SeedDetailPage() {
     <div className="seed-detail-page">
       <nav className="seed-detail-nav">
         <SeedDetailBackNav seedId={s.seedId} section={section} />
+        <SeedDetailFavoriteButton seedId={s.seedId} />
       </nav>
 
       <header className="seed-detail-hero">
@@ -1128,6 +1383,16 @@ export function SeedDetailPage() {
                 })
               }
             />
+            {marketEnabled ? (
+              <div className="seed-detail-hero-price-row">
+                <SeedDetailHeroPrice
+                  label="作物最低價"
+                  kind="crop"
+                  loading={heroMarketLoading}
+                  data={heroMarket}
+                />
+              </div>
+            ) : null}
           </div>
           {showSeedSubline ? (
             <div className="seed-detail-seed-subrow">
@@ -1144,6 +1409,23 @@ export function SeedDetailPage() {
                     message: `已複製種子名稱：${text}`,
                   })
                 }
+              />
+              {marketEnabled ? (
+                <SeedDetailHeroPrice
+                  label="種子最低價"
+                  kind="seed"
+                  loading={heroMarketLoading}
+                  data={heroMarket}
+                />
+              ) : null}
+            </div>
+          ) : marketEnabled ? (
+            <div className="seed-detail-seed-subrow seed-detail-seed-subrow--hero-seed-price-only">
+              <SeedDetailHeroPrice
+                label="種子最低價"
+                kind="seed"
+                loading={heroMarketLoading}
+                data={heroMarket}
               />
             </div>
           ) : null}

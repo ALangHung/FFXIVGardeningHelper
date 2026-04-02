@@ -30,6 +30,11 @@ import {
 } from './sessionUiState'
 import { hasMarketAccess } from './marketAccess'
 import { PriceSpinner } from './PriceSpinner'
+import { SeedFavoriteHeartIcon } from './SeedFavoriteHeartIcon'
+import {
+  sortSeedsFavoritesFirstThenName,
+  useSeedFavoriteIds,
+} from './seedFavorites'
 import './CrossCalculatorPage.css'
 
 const MARKET_ITEM_BASE = 'https://beherw.github.io/FFXIV_Market/item'
@@ -42,13 +47,13 @@ function marketItemUrl(itemId: number): string {
   return `${MARKET_ITEM_BASE}/${itemId}`
 }
 
-function seedsSortedByName(seeds: SeedSummary[]): SeedSummary[] {
-  return [...seeds].sort((a, b) => a.name.localeCompare(b.name, 'zh-Hant'))
-}
-
-/** 空字串時列出全部種子（已排序）；有輸入時列出所有符合的種子。 */
-function filterSeeds(seeds: SeedSummary[], q: string): SeedSummary[] {
-  const sorted = seedsSortedByName(seeds)
+/** 空字串時列出全部種子（最愛優先、名稱排序）；有輸入時列出所有符合的種子。 */
+function filterSeeds(
+  seeds: SeedSummary[],
+  q: string,
+  favoriteIds: ReadonlySet<number>,
+): SeedSummary[] {
+  const sorted = sortSeedsFavoritesFirstThenName(seeds, favoriteIds)
   const nq = normalize(q)
   if (!nq) return sorted
   return sorted.filter((s) =>
@@ -89,6 +94,7 @@ function ParentPicker({
   onOpenChange,
   onQueryChange,
   onSelect,
+  favoriteIds,
 }: {
   label: string
   inputId: string
@@ -103,6 +109,7 @@ function ParentPicker({
   onOpenChange: (open: boolean) => void
   onQueryChange: (q: string) => void
   onSelect: (s: SeedSummary) => void
+  favoriteIds: ReadonlySet<number>
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [activeIndex, setActiveIndex] = useState(-1)
@@ -116,8 +123,9 @@ function ParentPicker({
     selectedId != null ? (summaryById.get(selectedId)?.name ?? '') : query
 
   const suggestions = useMemo(
-    () => filterSeeds(seeds, selectedId != null ? '' : query),
-    [seeds, query, selectedId],
+    () =>
+      filterSeeds(seeds, selectedId != null ? '' : query, favoriteIds),
+    [seeds, query, selectedId, favoriteIds],
   )
   const activeSuggestion =
     activeIndex >= 0 && activeIndex < suggestions.length
@@ -241,7 +249,19 @@ function ParentPicker({
                     className="cross-calc-suggest-icon"
                     loading="lazy"
                   />
-                  <span>{s.name}</span>
+                  <span className="cross-calc-suggest-name">{s.name}</span>
+                  {favoriteIds.has(s.seedId) ? (
+                    <span
+                      className="cross-calc-suggest-fav"
+                      title="最愛"
+                      aria-label="最愛"
+                    >
+                      <SeedFavoriteHeartIcon
+                        variant="solid"
+                        className="cross-calc-suggest-fav-icon"
+                      />
+                    </span>
+                  ) : null}
                 </button>
               </li>
             ))}
@@ -471,6 +491,7 @@ export function CrossCalculatorPage() {
     >
   >({})
   const [priceLoading, setPriceLoading] = useState(false)
+  const favoriteSeedIds = useSeedFavoriteIds()
 
   const prevParentPairKeyRef = useRef<string | null>(null)
   const prevSpPairKeyRef = useRef<string | null>(null)
@@ -854,6 +875,7 @@ export function CrossCalculatorPage() {
                   inputId="cross-parent-a"
                   listId="cross-suggest-a"
                   seeds={seeds}
+                  favoriteIds={favoriteSeedIds}
                   selectedId={parentAId}
                   query={queryA}
                   open={openA}
@@ -877,6 +899,7 @@ export function CrossCalculatorPage() {
                   inputId="cross-parent-b"
                   listId="cross-suggest-b"
                   seeds={seeds}
+                  favoriteIds={favoriteSeedIds}
                   selectedId={parentBId}
                   query={queryB}
                   open={openB}
@@ -1030,6 +1053,7 @@ export function CrossCalculatorPage() {
                   inputId="cross-sp-known"
                   listId="cross-sp-suggest-known"
                   seeds={seeds}
+                  favoriteIds={favoriteSeedIds}
                   selectedId={spKnownId}
                   query={spQueryKnown}
                   open={spOpenKnown}
@@ -1053,6 +1077,7 @@ export function CrossCalculatorPage() {
                   inputId="cross-sp-result"
                   listId="cross-sp-suggest-result"
                   seeds={seeds}
+                  favoriteIds={favoriteSeedIds}
                   selectedId={spResultId}
                   query={spQueryResult}
                   open={spOpenResult}

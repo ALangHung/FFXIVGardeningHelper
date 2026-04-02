@@ -211,6 +211,28 @@
   border-radius: 4px;
 }
 
+.cross-calc-suggest-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cross-calc-suggest-fav {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.25rem;
+  color: #fb7185;
+}
+
+.cross-calc-suggest-fav-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+  display: block;
+}
+
 .cross-calc-table-shell {
   width: 100%;
   background: var(--surface);

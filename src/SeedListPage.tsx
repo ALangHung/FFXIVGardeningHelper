@@ -18,6 +18,8 @@ import {
 } from './sessionUiState'
 import { durationToSortHours, formatDurationEn } from './seedFormat'
 import { PriceSpinner } from './PriceSpinner'
+import { SeedFavoriteHeartIcon } from './SeedFavoriteHeartIcon'
+import { useSeedFavoriteIds } from './seedFavorites'
 import './SeedListPage.css'
 
 type SortKey = SeedListSortKey
@@ -48,7 +50,11 @@ function compareRows(
   b: SeedSummary,
   key: SortKey,
   dir: 1 | -1,
+  favoriteIds: ReadonlySet<number>,
 ): number {
+  const fa = favoriteIds.has(a.seedId) ? 1 : 0
+  const fb = favoriteIds.has(b.seedId) ? 1 : 0
+  if (fa !== fb) return fb - fa
   const m = dir
   const normalizeMarketPrice = (v: number | null): number | null => {
     if (v == null || !Number.isFinite(v) || v <= 0) return null
@@ -121,6 +127,7 @@ export function SeedListPage() {
   } | null>(null)
   const [priceLoading, setPriceLoading] = useState(false)
   const [marketEnabled, setMarketEnabled] = useState(false)
+  const favoriteSeedIds = useSeedFavoriteIds()
 
   useEffect(() => {
     let cancelled = false
@@ -228,9 +235,11 @@ export function SeedListPage() {
 
   const sortedRows = useMemo(() => {
     const rows = [...filtered]
-    rows.sort((a, b) => compareRows(a, b, sortKey, sortDir))
+    rows.sort((a, b) =>
+      compareRows(a, b, sortKey, sortDir, favoriteSeedIds),
+    )
     return rows
-  }, [filtered, sortKey, sortDir])
+  }, [filtered, sortKey, sortDir, favoriteSeedIds])
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) setSortDir((d) => (d === 1 ? -1 : 1))
@@ -436,6 +445,18 @@ export function SeedListPage() {
                             }
                           />
                         </span>
+                        {favoriteSeedIds.has(s.seedId) ? (
+                          <span
+                            className="seed-favorite-hint"
+                            title="最愛"
+                            aria-label="最愛"
+                          >
+                            <SeedFavoriteHeartIcon
+                              variant="solid"
+                              className="seed-favorite-hint-icon"
+                            />
+                          </span>
+                        ) : null}
                       </span>
                     </td>
                     <td className="seed-td seed-td-grow">
