@@ -14,7 +14,13 @@ import type { SeedSummary } from './seedSummaryTypes'
 import type { SeedRecord } from './seedDetailTypes'
 import { getSeedById, loadSeedsById, loadSeedsSummaryMerged } from './seedDataApi'
 import { publicUrl } from './publicUrl'
-import { loadFieldsLocal, saveFieldsLocal } from './sessionUiState'
+import {
+  loadFieldsLocal,
+  resetSeedDetailPath,
+  saveFieldsLocal,
+  setSeedDetailActiveSection,
+  seedDetailHref,
+} from './sessionUiState'
 import {
   FIELD_SLOTS,
   computeCrossHintsAtPlant,
@@ -1451,9 +1457,19 @@ export function FieldManagementPage() {
                                   {slot.seedId != null ? (
                                     <div className="field-cell-seed-row">
                                       <Link
-                                        to={`/seed/${slot.seedId}`}
+                                        to={seedDetailHref(
+                                          'fields',
+                                          slot.seedId,
+                                        )}
                                         draggable={false}
                                         className="field-cell-seed-link"
+                                        onClick={() => {
+                                          setSeedDetailActiveSection('fields')
+                                          resetSeedDetailPath(
+                                            'fields',
+                                            slot.seedId!,
+                                          )
+                                        }}
                                       >
                                         {cropLabel}
                                       </Link>
@@ -1682,9 +1698,19 @@ export function FieldManagementPage() {
                                     {slot.seedId != null ? (
                                       <div className="field-cell-seed-row">
                                         <Link
-                                          to={`/seed/${slot.seedId}`}
+                                          to={seedDetailHref(
+                                            'fields',
+                                            slot.seedId,
+                                          )}
                                           draggable={false}
                                           className="field-cell-seed-link"
+                                          onClick={() => {
+                                            setSeedDetailActiveSection('fields')
+                                            resetSeedDetailPath(
+                                              'fields',
+                                              slot.seedId!,
+                                            )
+                                          }}
                                         >
                                           {cropLabel}
                                         </Link>

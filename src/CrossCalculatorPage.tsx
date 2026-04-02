@@ -21,7 +21,9 @@ import { SearchClearButton } from './SearchClearButton'
 import { formatDurationEn } from './seedFormat'
 import {
   loadCrossCalcUiState,
+  resetSeedDetailPath,
   saveCrossCalcUiState,
+  setSeedDetailActiveSection,
   type CrossCalcMode,
   type OtherParentSortKey,
   type OutcomeSortKey,
@@ -934,9 +936,11 @@ export function CrossCalculatorPage() {
                             <tr
                               key={row.outcomeSeedId}
                               className="cross-calc-result-tr"
-                              onClick={() =>
+                              onClick={() => {
+                                setSeedDetailActiveSection('cross')
+                                resetSeedDetailPath('cross', row.outcomeSeedId)
                                 navigate(`/seed/${row.outcomeSeedId}`)
-                              }
+                              }}
                             >
                               <td>
                                 <div className="cross-calc-name-cell">
@@ -953,7 +957,11 @@ export function CrossCalculatorPage() {
                                   <Link
                                     to={`/seed/${row.outcomeSeedId}`}
                                     className="cross-calc-name-link"
-                                    onClick={(e) => e.stopPropagation()}
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setSeedDetailActiveSection('cross')
+                                      resetSeedDetailPath('cross', row.outcomeSeedId)
+                                    }}
                                   >
                                     {row.outcomeName}
                                   </Link>
@@ -1111,9 +1119,11 @@ export function CrossCalculatorPage() {
                             <tr
                               key={row.otherParentSeedId}
                               className="cross-calc-result-tr"
-                              onClick={() =>
+                              onClick={() => {
+                                setSeedDetailActiveSection('cross')
+                                resetSeedDetailPath('cross', row.otherParentSeedId)
                                 navigate(`/seed/${row.otherParentSeedId}`)
-                              }
+                              }}
                             >
                               <td>
                                 <div className="cross-calc-name-cell">
@@ -1130,7 +1140,14 @@ export function CrossCalculatorPage() {
                                   <Link
                                     to={`/seed/${row.otherParentSeedId}`}
                                     className="cross-calc-name-link"
-                                    onClick={(e) => e.stopPropagation()}
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setSeedDetailActiveSection('cross')
+                                      resetSeedDetailPath(
+                                        'cross',
+                                        row.otherParentSeedId,
+                                      )
+                                    }}
                                   >
                                     {row.otherParentName}
                                   </Link>

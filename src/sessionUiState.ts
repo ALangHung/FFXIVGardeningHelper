@@ -1,6 +1,7 @@
 /**
  * 以 sessionStorage 保存列表／雜交計算器 UI，從種子詳情返回時可還原篩選與計算狀態。
  * （僅限同源、同一瀏覽器分頁工作階段。）
+ * 另記錄各分頁種子詳情瀏覽編號串（陣列）、目前詳情脈絡（seedDetailActiveSection）；網址統一 /seed/:id；返回鍵依編號串逆向；頂欄恢復詳情取串尾。
  * 田地管理資料則以 localStorage 持久化（關閉分頁／瀏覽器後仍保留，同源有效）。
  */
 
@@ -21,7 +22,15 @@ import {
 } from './fieldStateTypes'
 
 const SEED_LIST_KEY = 'ffxivgh.seedList.v1'
+/** 種子列表脈絡下種子詳情瀏覽順序（編號串） */
+const SEED_LIST_DETAIL_PATH_KEY = 'ffxivgh.seedListDetailPath.v1'
+const CROSS_DETAIL_PATH_KEY = 'ffxivgh.crossDetailPath.v1'
+const FIELDS_DETAIL_PATH_KEY = 'ffxivgh.fieldsDetailPath.v1'
+/** 目前種子詳情頁所屬分頁（網址統一為 /seed/:id，由此判斷脈絡） */
+const SEED_DETAIL_ACTIVE_SECTION_KEY = 'ffxivgh.seedDetailActiveSection.v1'
 const CROSS_CALC_KEY = 'ffxivgh.crossCalc.v1'
+
+export type SeedDetailSection = 'list' | 'cross' | 'fields'
 
 export type SeedListSortKey =
   | 'name'
@@ -148,6 +157,216 @@ export function saveSeedListUiState(s: SeedListUiState): void {
   } catch {
     /* 配額等 */
   }
+}
+
+function seedDetailPathStorageKey(section: SeedDetailSection): string {
+  switch (section) {
+    case 'list':
+      return SEED_LIST_DETAIL_PATH_KEY
+    case 'cross':
+      return CROSS_DETAIL_PATH_KEY
+    case 'fields':
+      return FIELDS_DETAIL_PATH_KEY
+  }
+}
+
+function parseSeedIdArray(raw: unknown): number[] {
+  if (!Array.isArray(raw)) return []
+  const out: number[] = []
+  for (const x of raw) {
+    const id = readNullableSeedId(x)
+    if (id != null) out.push(id)
+  }
+  return out
+}
+
+/** 讀取某分頁種子詳情瀏覽編號串 */
+export function getSeedDetailPath(section: SeedDetailSection): number[] {
+  if (typeof sessionStorage === 'undefined') return []
+  return parseSeedIdArray(
+    safeJsonParse(sessionStorage.getItem(seedDetailPathStorageKey(section))),
+  )
+}
+
+function saveSeedDetailPath(
+  section: SeedDetailSection,
+  path: number[],
+): void {
+  if (typeof sessionStorage === 'undefined') return
+  try {
+    sessionStorage.setItem(
+      seedDetailPathStorageKey(section),
+      JSON.stringify(path),
+    )
+  } catch {
+    /* 配額等 */
+  }
+}
+
+/** 從列表／雜交主頁／田地主頁進入詳情時重設該分頁編號串為單一編號 */
+export function resetSeedDetailPath(
+  section: SeedDetailSection,
+  seedId: number,
+): void {
+  if (!Number.isFinite(seedId) || seedId < 1) return
+  saveSeedDetailPath(section, [Math.floor(seedId)])
+}
+
+/** 詳情內切換種子：接續編號串（與尾端相同則不變） */
+export function pushSeedDetailPath(section: SeedDetailSection, seedId: number): void {
+  if (!Number.isFinite(seedId) || seedId < 1) return
+  const id = Math.floor(seedId)
+  const path = [...getSeedDetailPath(section)]
+  if (path[path.length - 1] === id) return
+  path.push(id)
+  saveSeedDetailPath(section, path)
+}
+
+export function clearSeedDetailPath(section: SeedDetailSection): void {
+  saveSeedDetailPath(section, [])
+}
+
+/**
+ * 返回鍵：自編號串 pop 當前種子；若還有上一顆則導向該 id，否則應回分頁主畫面。
+ */
+export function popSeedDetailPathForBack(
+  section: SeedDetailSection,
+  currentSeedId: number,
+): { kind: 'seed'; seedId: number } | { kind: 'main' } {
+  if (!Number.isFinite(currentSeedId) || currentSeedId < 1) {
+    return { kind: 'main' }
+  }
+  const cur = Math.floor(currentSeedId)
+  let path = [...getSeedDetailPath(section)]
+  if (path.length === 0) return { kind: 'main' }
+
+  const last = path[path.length - 1]
+  if (last !== cur) {
+    const idx = path.lastIndexOf(cur)
+    if (idx === -1) {
+      clearSeedDetailPath(section)
+      return { kind: 'main' }
+    }
+    path = path.slice(0, idx + 1)
+  }
+  path.pop()
+  saveSeedDetailPath(section, path)
+  if (path.length === 0) return { kind: 'main' }
+  return { kind: 'seed', seedId: path[path.length - 1]! }
+}
+
+/** 供頂欄恢復：列表脈絡最後停留種子 */
+export function getSeedListLastDetailFromList(): number | null {
+  const p = getSeedDetailPath('list')
+  return p.length > 0 ? p[p.length - 1]! : null
+}
+
+export function clearSeedListLastDetailFromList(): void {
+  clearSeedDetailPath('list')
+}
+
+export function getCrossLastSeedDetailFromCross(): number | null {
+  const p = getSeedDetailPath('cross')
+  return p.length > 0 ? p[p.length - 1]! : null
+}
+
+export function clearCrossLastSeedDetailFromCross(): void {
+  clearSeedDetailPath('cross')
+}
+
+export function getFieldsLastSeedDetailFromFields(): number | null {
+  const p = getSeedDetailPath('fields')
+  return p.length > 0 ? p[p.length - 1]! : null
+}
+
+export function clearFieldsLastSeedDetailFromFields(): void {
+  clearSeedDetailPath('fields')
+}
+
+function isSeedDetailSection(x: unknown): x is SeedDetailSection {
+  return x === 'list' || x === 'cross' || x === 'fields'
+}
+
+/** 種子詳情頁目前脈絡（列表／雜交／田地）；網址皆為 `/seed/:id` */
+export function getSeedDetailActiveSection(): SeedDetailSection {
+  if (typeof sessionStorage === 'undefined') return 'list'
+  const raw = sessionStorage.getItem(SEED_DETAIL_ACTIVE_SECTION_KEY)
+  if (raw == null) return 'list'
+  if (isSeedDetailSection(raw)) return raw
+  const j = safeJsonParse(raw)
+  if (isSeedDetailSection(j)) return j
+  return 'list'
+}
+
+export function setSeedDetailActiveSection(section: SeedDetailSection): void {
+  if (typeof sessionStorage === 'undefined') return
+  try {
+    sessionStorage.setItem(SEED_DETAIL_ACTIVE_SECTION_KEY, section)
+  } catch {
+    /* 配額等 */
+  }
+}
+
+/** 詳情內連往另一顆種子（網址統一） */
+export function seedDetailHref(_section: SeedDetailSection, seedId: number): string {
+  return `/seed/${seedId}`
+}
+
+/** 在詳情內切換至另一顆種子時，接續該分頁編號串 */
+export function recordSeedDetailForSection(
+  section: SeedDetailSection,
+  seedId: number,
+): void {
+  setSeedDetailActiveSection(section)
+  pushSeedDetailPath(section, seedId)
+}
+
+export function isCrossSectionPath(path: string): boolean {
+  return path === '/cross' || path.startsWith('/cross/')
+}
+
+export function isFieldsSectionPath(path: string): boolean {
+  return path === '/fields' || path.startsWith('/fields/')
+}
+
+/** 是否為種子詳情路徑 `/seed/:id`（脈絡另見 getSeedDetailActiveSection） */
+export function isListSectionSeedDetailPath(path: string): boolean {
+  return /^\/seed\/[^/]+$/.test(path)
+}
+
+/**
+ * 頂部「種子列表」連結目標：有列表詳情紀錄時，從雜交／田地（主頁或種子詳情）回到列表脈絡的 /seed/:id。
+ * 種子詳情網址統一為 /seed/:id，故需依路徑或 getSeedDetailActiveSection 判斷是否為「非列表脈絡的詳情」。
+ */
+export function seedListTabTarget(currentPath: string): string {
+  const x = getSeedListLastDetailFromList()
+  if (x == null) return '/seeds'
+  if (isCrossSectionPath(currentPath) || isFieldsSectionPath(currentPath)) {
+    return `/seed/${x}`
+  }
+  if (
+    isListSectionSeedDetailPath(currentPath) &&
+    getSeedDetailActiveSection() !== 'list'
+  ) {
+    return `/seed/${x}`
+  }
+  return '/seeds'
+}
+
+/** 頂部「雜交計算器」：離開雜交區時若有雜交詳情紀錄則導向 /seed/:id（脈絡由 session 標記為 cross） */
+export function crossTabTarget(currentPath: string): string {
+  if (isCrossSectionPath(currentPath)) return '/cross'
+  const y = getCrossLastSeedDetailFromCross()
+  if (y != null) return `/seed/${y}`
+  return '/cross'
+}
+
+/** 頂部「田地管理」：離開田地区時若有田地詳情紀錄則導向 /seed/:id（脈絡由 session 標記為 fields） */
+export function fieldsTabTarget(currentPath: string): string {
+  if (isFieldsSectionPath(currentPath)) return '/fields'
+  const z = getFieldsLastSeedDetailFromFields()
+  if (z != null) return `/seed/${z}`
+  return '/fields'
 }
 
 export function loadCrossCalcUiState(): Partial<CrossCalcUiState> | null {

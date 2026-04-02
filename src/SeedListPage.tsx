@@ -11,7 +11,9 @@ import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import { SearchClearButton } from './SearchClearButton'
 import {
   loadSeedListUiState,
+  resetSeedDetailPath,
   saveSeedListUiState,
+  setSeedDetailActiveSection,
   type SeedListSortKey,
 } from './sessionUiState'
 import { durationToSortHours, formatDurationEn } from './seedFormat'
@@ -393,7 +395,11 @@ export function SeedListPage() {
                   <tr
                     key={s.seedId}
                     className="seed-tr seed-tr--clickable"
-                    onClick={() => navigate(`/seed/${s.seedId}`)}
+                    onClick={() => {
+                      setSeedDetailActiveSection('list')
+                      resetSeedDetailPath('list', s.seedId)
+                      navigate(`/seed/${s.seedId}`)
+                    }}
                   >
                     <td className="seed-td seed-td-name">
                       <span className="seed-name-cell">
@@ -408,7 +414,11 @@ export function SeedListPage() {
                         <Link
                           to={`/seed/${s.seedId}`}
                           className="seed-name-link"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSeedDetailActiveSection('list')
+                            resetSeedDetailPath('list', s.seedId)
+                          }}
                         >
                           {s.name}
                         </Link>

@@ -26,6 +26,13 @@ import { publicUrl } from './publicUrl'
 import { SearchClearButton } from './SearchClearButton'
 import { hasMarketAccess } from './marketAccess'
 import { PriceSpinner } from './PriceSpinner'
+import {
+  getSeedDetailActiveSection,
+  popSeedDetailPathForBack,
+  recordSeedDetailForSection,
+  seedDetailHref,
+  type SeedDetailSection,
+} from './sessionUiState'
 
 const MARKET_ITEM_BASE = 'https://beherw.github.io/FFXIV_Market/item'
 
@@ -303,17 +310,44 @@ function BlackForestSoilYieldHint({ text }: { text: string }) {
   )
 }
 
-function SeedDetailBackNav() {
+function SeedDetailBackNav({
+  seedId,
+  section,
+}: {
+  seedId?: number
+  section: SeedDetailSection
+}) {
   const navigate = useNavigate()
   return (
     <button
       type="button"
       className="seed-detail-back"
       onClick={() => {
+        if (seedId != null && Number.isFinite(seedId) && seedId >= 1) {
+          const r = popSeedDetailPathForBack(section, seedId)
+          if (r.kind === 'main') {
+            navigate(
+              section === 'cross'
+                ? '/cross'
+                : section === 'fields'
+                  ? '/fields'
+                  : '/seeds',
+            )
+            return
+          }
+          navigate(`/seed/${r.seedId}`)
+          return
+        }
         if (typeof window !== 'undefined' && window.history.length > 1) {
           navigate(-1)
         } else {
-          navigate('/seeds')
+          navigate(
+            section === 'cross'
+              ? '/cross'
+              : section === 'fields'
+                ? '/fields'
+                : '/seeds',
+          )
         }
       }}
     >
@@ -326,16 +360,22 @@ function SeedLink({
   seedId,
   name,
   growDays,
+  section,
 }: {
   seedId: number | null
   name: string | null | undefined
   growDays?: number | null
+  section: SeedDetailSection
 }) {
   if (seedId == null || !name) return <span>—</span>
   const extra =
     growDays != null && Number.isFinite(growDays) ? ` (${growDays}天)` : ''
   return (
-    <Link to={`/seed/${seedId}`} className="seed-detail-link">
+    <Link
+      to={seedDetailHref(section, seedId)}
+      className="seed-detail-link"
+      onClick={() => recordSeedDetailForSection(section, seedId)}
+    >
       {name}
       {extra}
     </Link>
@@ -579,11 +619,13 @@ function ConfirmedCrossesTable({
   crosses,
   marketEnabled,
   onSeedItemCopied,
+  section,
 }: {
   seedId: number
   crosses: ConfirmedCross[]
   marketEnabled: boolean
   onSeedItemCopied: (copiedText: string) => void
+  section: SeedDetailSection
 }) {
   const [query, setQuery] = useState('')
   const [nameSearchById, setNameSearchById] = useState<Record<string, string>>(
@@ -868,6 +910,7 @@ function ConfirmedCrossesTable({
                     <SeedLink
                       seedId={item.displayA.seedId}
                       name={item.displayA.name}
+                      section={section}
                     />
                     {item.displayA.seedId != null &&
                     item.displayA.seedItemName ? (
@@ -899,6 +942,7 @@ function ConfirmedCrossesTable({
                     <SeedLink
                       seedId={item.displayB.seedId}
                       name={item.displayB.name}
+                      section={section}
                     />
                     {item.displayB.seedId != null &&
                     item.displayB.seedItemName ? (
@@ -930,6 +974,7 @@ function ConfirmedCrossesTable({
                     <SeedLink
                       seedId={item.row.alternate.seedId}
                       name={item.row.alternate.name}
+                      section={section}
                     />
                     {item.row.alternate.seedId != null &&
                     item.row.alternate.seedItemName ? (
@@ -974,6 +1019,7 @@ function ConfirmedCrossesTable({
 
 export function SeedDetailPage() {
   const { seedId: rawId } = useParams()
+  const section = getSeedDetailActiveSection()
   const [seed, setSeed] = useState<SeedRecord | null | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
   const [marketEnabled, setMarketEnabled] = useState(false)
@@ -1021,7 +1067,7 @@ export function SeedDetailPage() {
     return (
       <div className="seed-detail-page">
         <p className="seed-detail-error">無效的種子編號。</p>
-        <SeedDetailBackNav />
+        <SeedDetailBackNav section={section} />
       </div>
     )
   }
@@ -1030,7 +1076,7 @@ export function SeedDetailPage() {
     return (
       <div className="seed-detail-page">
         <p className="seed-detail-error">{error}</p>
-        <SeedDetailBackNav />
+        <SeedDetailBackNav seedId={idNum} section={section} />
       </div>
     )
   }
@@ -1047,7 +1093,7 @@ export function SeedDetailPage() {
     return (
       <div className="seed-detail-page">
         <p className="seed-detail-error">找不到此種子。</p>
-        <SeedDetailBackNav />
+        <SeedDetailBackNav seedId={idNum} section={section} />
       </div>
     )
   }
@@ -1059,7 +1105,7 @@ export function SeedDetailPage() {
   return (
     <div className="seed-detail-page">
       <nav className="seed-detail-nav">
-        <SeedDetailBackNav />
+        <SeedDetailBackNav seedId={s.seedId} section={section} />
       </nav>
 
       <header className="seed-detail-hero">
@@ -1183,6 +1229,7 @@ export function SeedDetailPage() {
             seedId={s.seedId}
             crosses={s.confirmedCrosses}
             marketEnabled={marketEnabled}
+            section={section}
             onSeedItemCopied={(text) =>
               setCopyToast({
                 key: Date.now(),
@@ -1202,8 +1249,9 @@ export function SeedDetailPage() {
             {s.usedInOtherCrosses.map((u) => (
               <li key={u.seedId}>
                 <Link
-                  to={`/seed/${u.seedId}`}
+                  to={seedDetailHref(section, u.seedId)}
                   className="seed-detail-used-item"
+                  onClick={() => recordSeedDetailForSection(section, u.seedId)}
                 >
                   <img
                     src={iconSrc(u.seedId)}
