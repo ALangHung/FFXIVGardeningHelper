@@ -6,6 +6,8 @@ import { HomePage } from './HomePage'
 import { SeedDetailPage } from './SeedDetailPage'
 import { SeedListPage } from './SeedListPage'
 import {
+  clearCrossLastSeedDetailFromCross,
+  clearFieldsLastSeedDetailFromFields,
   clearSeedListLastDetailFromList,
   crossTabTarget,
   fieldsTabTarget,
@@ -69,6 +71,9 @@ function AppTopNav() {
           <NavLink
             to={crossTarget}
             onClick={() => {
+              if (detailSection === 'cross' && crossTarget === '/cross') {
+                clearCrossLastSeedDetailFromCross()
+              }
               if (crossTarget.startsWith('/seed/')) {
                 setSeedDetailActiveSection('cross')
               }
@@ -82,6 +87,9 @@ function AppTopNav() {
           <NavLink
             to={fieldsTarget}
             onClick={() => {
+              if (detailSection === 'fields' && fieldsTarget === '/fields') {
+                clearFieldsLastSeedDetailFromFields()
+              }
               if (fieldsTarget.startsWith('/seed/')) {
                 setSeedDetailActiveSection('fields')
               }

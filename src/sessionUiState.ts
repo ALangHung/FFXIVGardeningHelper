@@ -335,7 +335,7 @@ export function isListSectionSeedDetailPath(path: string): boolean {
 }
 
 /**
- * 頂部「種子列表」連結目標：有列表詳情紀錄時，從雜交／田地（主頁或種子詳情）回到列表脈絡的 /seed/:id。
+ * 頂部「種子列表」連結目標：有列表詳情紀錄時，從雜交／田地（主頁或種子詳情）、或從首頁回到列表脈絡的 /seed/:id。
  * 種子詳情網址統一為 /seed/:id，故需依路徑或 getSeedDetailActiveSection 判斷是否為「非列表脈絡的詳情」。
  */
 export function seedListTabTarget(currentPath: string): string {
@@ -350,20 +350,37 @@ export function seedListTabTarget(currentPath: string): string {
   ) {
     return `/seed/${x}`
   }
+  if (currentPath === '/' || currentPath === '') {
+    return `/seed/${x}`
+  }
   return '/seeds'
 }
 
-/** 頂部「雜交計算器」：離開雜交區時若有雜交詳情紀錄則導向 /seed/:id（脈絡由 session 標記為 cross） */
+/** 頂部「雜交計算器」：離開雜交區時若有雜交詳情紀錄則導向 /seed/:id（脈絡由 session 標記為 cross）。若在種子詳情（雜交脈絡）且編號串有值，點擊改為回 /cross 主畫面（由 App 頂欄 onClick 清除編號串）；首頁等非詳情路徑仍導向 /seed/:id。 */
 export function crossTabTarget(currentPath: string): string {
   if (isCrossSectionPath(currentPath)) return '/cross'
+  if (
+    isListSectionSeedDetailPath(currentPath) &&
+    getSeedDetailActiveSection() === 'cross' &&
+    getCrossLastSeedDetailFromCross() != null
+  ) {
+    return '/cross'
+  }
   const y = getCrossLastSeedDetailFromCross()
   if (y != null) return `/seed/${y}`
   return '/cross'
 }
 
-/** 頂部「田地管理」：離開田地区時若有田地詳情紀錄則導向 /seed/:id（脈絡由 session 標記為 fields） */
+/** 頂部「田地管理」：離開田地区時若有田地詳情紀錄則導向 /seed/:id（脈絡由 session 標記為 fields）。若在種子詳情（田地脈絡）且編號串有值，點擊改為回 /fields 主畫面（由 App 頂欄 onClick 清除編號串）；首頁等非詳情路徑仍導向 /seed/:id。 */
 export function fieldsTabTarget(currentPath: string): string {
   if (isFieldsSectionPath(currentPath)) return '/fields'
+  if (
+    isListSectionSeedDetailPath(currentPath) &&
+    getSeedDetailActiveSection() === 'fields' &&
+    getFieldsLastSeedDetailFromFields() != null
+  ) {
+    return '/fields'
+  }
   const z = getFieldsLastSeedDetailFromFields()
   if (z != null) return `/seed/${z}`
   return '/fields'
