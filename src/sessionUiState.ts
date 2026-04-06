@@ -50,6 +50,7 @@ export type SeedListUiState = {
 export type CrossCalcMode = 'computeOutcomes' | 'searchParents'
 export type OutcomeSortKey =
   | 'outcome'
+  | 'growTime'
   | 'seedMinPrice'
   | 'cropMinPrice'
   | 'loop'
@@ -108,6 +109,7 @@ function isCrossMode(x: unknown): x is CrossCalcMode {
 function isOutcomeSortKey(x: unknown): x is OutcomeSortKey {
   return (
     x === 'outcome' ||
+    x === 'growTime' ||
     x === 'seedMinPrice' ||
     x === 'cropMinPrice' ||
     x === 'loop' ||

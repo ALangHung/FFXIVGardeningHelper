@@ -4,6 +4,7 @@ export type IntercrossOutcome = {
   outcomeSeedId: number
   outcomeName: string
   kind: 'primary' | 'alternate'
+  outcomeGrowTime: string | null
   efficiency: number | null
   efficiencyRating: string | null
   isLoop: boolean
@@ -86,6 +87,7 @@ export function findIntercrossOutcomes(
         outcomeSeedId: seed.seedId,
         outcomeName: seed.seedItemName.trim() || seed.name,
         kind: 'primary',
+        outcomeGrowTime: seed.growTime ?? null,
         efficiency: primaryEff.efficiency,
         efficiencyRating: primaryEff.efficiencyRating,
         isLoop: primaryEff.isLoop,
@@ -109,6 +111,7 @@ export function findIntercrossOutcomes(
           outcomeSeedId: altId,
           outcomeName: altName,
           kind: 'alternate',
+          outcomeGrowTime: altRec?.growTime ?? null,
           efficiency: altEff.efficiency,
           efficiencyRating: altEff.efficiencyRating,
           isLoop: altEff.isLoop,

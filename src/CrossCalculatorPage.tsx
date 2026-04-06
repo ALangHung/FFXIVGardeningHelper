@@ -18,7 +18,7 @@ import {
 import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import { publicUrl } from './publicUrl'
 import { SearchClearButton } from './SearchClearButton'
-import { formatDurationEn } from './seedFormat'
+import { formatDurationEn, durationToSortHours } from './seedFormat'
 import {
   loadCrossCalcUiState,
   resetSeedDetailPath,
@@ -305,6 +305,8 @@ function compareOutcomes(
   switch (key) {
     case 'outcome':
       return m * a.outcomeName.localeCompare(b.outcomeName, 'zh-Hant')
+    case 'growTime':
+      return m * (durationToSortHours(a.outcomeGrowTime) - durationToSortHours(b.outcomeGrowTime))
     case 'seedMinPrice':
       return compareNullableNumber(
         normalizePrice(priceBySeedId[a.outcomeSeedId]?.seedMinPrice ?? null),
@@ -937,6 +939,7 @@ export function CrossCalculatorPage() {
                       <thead>
                         <tr>
                           <th scope="col">{outcomeSortTh('outcome', '可能結果')}</th>
+                          <th scope="col">{outcomeSortTh('growTime', '收成天數')}</th>
                           {marketEnabled ? (
                             <th scope="col">
                               {outcomeSortTh('seedMinPrice', '種子最低價')}
@@ -1003,6 +1006,9 @@ export function CrossCalculatorPage() {
                                     />
                                   </span>
                                 </div>
+                              </td>
+                              <td>
+                                {formatDurationEn(row.outcomeGrowTime)}
                               </td>
                               {marketEnabled ? (
                                 <td>
