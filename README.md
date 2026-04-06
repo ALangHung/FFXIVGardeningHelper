@@ -1,6 +1,6 @@
 # FFXIV 園藝小幫手
 
-以 [React](https://react.dev/) + [Vite](https://vite.dev/) 建置的《最終幻想 XIV》園藝參考網頁，介面為**繁體中文**，協助查詢種子、雜交結果與規劃田地版面。頂部導覽列僅提供主要功能分頁（首頁、種子列表、雜交計算器、田地管理），**資料與美術等參考來源**集中於首頁「致謝」區塊。
+以 [React](https://react.dev/) + [Vite](https://vite.dev/) 建置的《最終幻想 XIV》園藝參考網頁，介面為**繁體中文**，協助查詢種子、雜交結果與規劃田地版面。頂部導覽列提供主要功能分頁（首頁、種子列表、雜交計算器、田地管理、已知問題），**資料與美術等參考來源**集中於首頁「致謝」區塊。
 
 ## 功能概覽
 
@@ -10,6 +10,7 @@
 | 種子列表 | `/seeds` | 瀏覽與搜尋種子，可進入詳情；支援一鍵複製作物名稱 |
 | 雜交計算器 | `/cross` | 依親本組合推算雜交結果，或由結果反查另一親本；支援一鍵複製名稱 |
 | 田地管理 | `/fields` | 在格狀田地上配置種子、輔助版面與收成時間預估，並以本機儲存保留田地資料（關閉分頁／瀏覽器後仍有效） |
+| 已知問題 | `/known-issues` | 列出離線掃描報告中「雜交可能結果超過兩種」的親本組合（內容來自建置時打包之 `reports/multi-outcome-cross-pairs.txt`） |
 | 種子詳情 | `/seed/:seedId` | 單一種子詳細資訊、已確認雜交表（多語搜尋）、作物／種子產量、盆栽染色等 |
 
 各頁道具／作物名稱旁之複製按鈕可快速複製遊戲內名稱。資料來源與參考連結亦見首頁「致謝」。
@@ -59,11 +60,15 @@ npm run preview
 | `npm run translate:harvest-locations` | 採集地點等翻譯處理（就地更新 `public/data/seeds-by-id.json`） |
 | `npm run download:seed-icons` | 下載種子圖示資源 |
 | `npm run report:seed-crop-same` | 檢查 seedItem 與 crop 是否同名，協助資料檢核 |
+| `npm run report:multi-outcome-crosses` | 枚舉全部兩兩親本組合，列出與 `findIntercrossOutcomes` 相同邏輯下「可能結果種類數超過 2」者，並寫入 **`reports/multi-outcome-cross-pairs.txt`**（供已知問題頁與人工檢核） |
+| `npm run strip:multi-outcome-alternates` | 依 **`reports/multi-outcome-cross-pairs.txt`** 中標為 `[alternate]` 的列，在 **`public/data/seeds-by-id.json`** 對應親本組合列上清除 `alternate.seedId`（維護資料前請先備份並確認報告內容） |
 | `npm run build:flowerpot-crops-by-color` | 依 `seeds-i18n.json` 的盆栽專用種子與腳本內混色英文對照，自 Teamcraft 產生 `public/data/flowerpot-crops-by-color.json`（八色染料＋混色收成之四語系名與 `teamcraftItemId`） |
 
 **盆栽染色表**：`public/data/flowerpot-crops-by-color.json` 供種子詳情等畫面使用，記錄盆栽專用種子在八色染料與混色收成下的作物對應。種子與作物名稱以 `seeds-i18n.json` 為準；混色收成在 Teamcraft 上的英文基準須調整時，請編輯 `scripts/build-flowerpot-crops-by-color.mjs` 內的常數（如 `TEAMCRAFT_MIXED_EN`）。Teamcraft JSON 的取得方式與 `build:seeds-i18n` 相同（環境變數 `TEAMCRAFT_JSON`、本機 `ffxiv-teamcraft` 路徑，或遠端 `staging`）。`meta` 中「未染色」語意等同紅色染料，與檔案內 `note`／`fields.red` 一致。
 
 **建議更新流程**（擷取新資料後）：`scrape:seeds` → `build:seeds-i18n`（可選 `fetch:seeds-gardening-en` 若無英文對照）→ `translate:harvest-locations`（若需要）→ `build:seeds-summary`。需維護盆栽染色表時，請在 `build:seeds-i18n` 完成（或至少已更新 `seeds-i18n.json`）後執行 `npm run build:flowerpot-crops-by-color`。
+
+**已知問題頁**：清單來自建置時打包之 `reports/multi-outcome-cross-pairs.txt`。若 `seeds-by-id.json` 已更新且需重產報告，請執行 `npm run report:multi-outcome-crosses` 後再 `npm run build`。若要以腳本依報告清除特定親本組合之 `alternate` 欄位，請先備份資料並詳閱 `scripts/strip-multi-outcome-alternates.mjs` 說明，再執行 `npm run strip:multi-outcome-alternates`。
 
 更新資料後請確認 `public/data/` 內容與建置流程一致，必要時重新執行 `npm run build`。
 
@@ -71,6 +76,7 @@ npm run preview
 
 ```
 ├── public/data/          # 種子 JSON、i18n、摘要、flowerpot-crops-by-color 等（腳本與前端共用路徑）
+├── reports/              # 離線報告（如 multi-outcome-cross-pairs.txt；KnownIssuesPage 以 ?raw 打包）
 ├── scripts/              # Node 維護腳本（.mjs）
 ├── src/
 │   ├── App.tsx           # 路由與頂部導覽
@@ -78,6 +84,7 @@ npm run preview
 │   ├── SeedListPage.tsx / SeedDetailPage.tsx
 │   ├── CrossCalculatorPage.tsx
 │   ├── FieldManagementPage.tsx
+│   ├── KnownIssuesPage.tsx
 │   └── …
 ├── index.html
 ├── vite.config.ts

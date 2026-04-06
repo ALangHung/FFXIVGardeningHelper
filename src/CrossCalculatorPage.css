@@ -181,6 +181,19 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
 }
 
+.cross-calc-suggestions--empty {
+  overflow: hidden;
+  padding: 0.55rem 0.65rem;
+}
+
+.cross-calc-suggestions-empty {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  user-select: none;
+  pointer-events: none;
+}
+
 .cross-calc-suggest-btn {
   display: flex;
   align-items: center;
@@ -384,6 +397,10 @@
 
 .cross-calc-picker-assistive--placeholder {
   visibility: hidden;
+}
+
+.cross-calc-picker-assistive--nomatch {
+  color: var(--text-muted);
 }
 
 .cross-calc-error {

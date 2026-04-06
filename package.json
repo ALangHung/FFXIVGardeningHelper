@@ -14,6 +14,8 @@
     "translate:harvest-locations": "node scripts/translate-harvest-locations.mjs",
     "download:seed-icons": "node scripts/download-seed-icons.mjs",
     "report:seed-crop-same": "node scripts/report-seed-crop-same-names.mjs",
+    "report:multi-outcome-crosses": "node scripts/list-multi-outcome-cross-pairs.mjs",
+    "strip:multi-outcome-alternates": "node scripts/strip-multi-outcome-alternates.mjs",
     "build:flowerpot-crops-by-color": "node scripts/build-flowerpot-crops-by-color.mjs"
   },
   "devDependencies": {

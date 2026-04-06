@@ -11,13 +11,11 @@ import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import type { SeedSummary } from './seedSummaryTypes'
+import { filterSeeds, resolveSeedFromQuery } from './seedPickerQuery'
 import type { SeedRecord } from './seedDetailTypes'
 import { getSeedById, loadSeedsById, loadSeedsSummaryMerged } from './seedDataApi'
 import { SeedFavoriteHeartIcon } from './SeedFavoriteHeartIcon'
-import {
-  sortSeedsFavoritesFirstThenName,
-  useSeedFavoriteIds,
-} from './seedFavorites'
+import { useSeedFavoriteIds } from './seedFavorites'
 import { publicUrl } from './publicUrl'
 import {
   loadFieldsLocal,
@@ -68,23 +66,6 @@ import {
   type FlowerpotSeedColorEntry,
 } from './flowerpotCropsByColor'
 import './FieldManagementPage.css'
-
-function normalize(s: string) {
-  return s.trim().toLowerCase()
-}
-
-function filterSeeds(
-  seeds: SeedSummary[],
-  q: string,
-  favoriteIds: ReadonlySet<number>,
-): SeedSummary[] {
-  const sorted = sortSeedsFavoritesFirstThenName(seeds, favoriteIds)
-  const nq = normalize(q)
-  if (!nq) return sorted
-  return sorted.filter((s) =>
-    normalize(s.nameSearchText ?? s.name).includes(nq),
-  )
-}
 
 function createEmptySlots(): PlotSlot[] {
   return FIELD_SLOTS.map((s) => ({
@@ -337,6 +318,12 @@ export function FieldManagementPage() {
   /** 鍵盤／ARIA 用：目前選中的清單項索引 */
   const [pickerHighlight, setPickerHighlight] = useState<number | null>(null)
 
+  const plantInFlightRef = useRef(false)
+  /** 關閉選種視窗後延遲解析種子用的 timer，開新視窗或再次關閉時須清除以免誤植。 */
+  const pickerDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  )
+
   const pickerListId = useId()
 
   const [draggingFieldId, setDraggingFieldId] = useState<string | null>(null)
@@ -532,16 +519,52 @@ export function FieldManagementPage() {
   /** 選種後直接依種子資料中的收成時間種植（不再開啟自訂天／時／分／秒彈窗）。 */
   const plantSelectedSeed = useCallback(
     async (fieldId: string, slotId: FieldSlotId, seed: SeedSummary) => {
-      if (!seedsById) return
-      const rec =
-        seedsById[String(seed.seedId)] ?? (await getSeedById(seed.seedId))
-      const growMs = growMsFromSeedRecord(rec)
-      if (growMs == null || growMs <= 0) return
-      await applyPlantWithGrowMs(fieldId, slotId, seed, growMs)
-      setPickerTarget(null)
+      if (plantInFlightRef.current) return
+      plantInFlightRef.current = true
+      try {
+        if (!seedsById) return
+        const rec =
+          seedsById[String(seed.seedId)] ?? (await getSeedById(seed.seedId))
+        const growMs = growMsFromSeedRecord(rec)
+        if (growMs == null || growMs <= 0) return
+        await applyPlantWithGrowMs(fieldId, slotId, seed, growMs)
+        setPickerTarget(null)
+      } finally {
+        plantInFlightRef.current = false
+      }
     },
     [seedsById, applyPlantWithGrowMs],
   )
+
+  const clearPickerDismissTimer = useCallback(() => {
+    if (pickerDismissTimerRef.current != null) {
+      clearTimeout(pickerDismissTimerRef.current)
+      pickerDismissTimerRef.current = null
+    }
+  }, [])
+
+  /** 關閉「選擇種子」視窗；延遲後依輸入嘗試解析唯一／名稱完全相符的種子並種植（與雜交計算器失焦邏輯一致）。 */
+  const dismissSeedPicker = useCallback(() => {
+    clearPickerDismissTimer()
+    const t = pickerTarget
+    const q = pickerQuery
+    setPickerTarget(null)
+    if (!t) return
+    pickerDismissTimerRef.current = window.setTimeout(() => {
+      pickerDismissTimerRef.current = null
+      if (plantInFlightRef.current) return
+      const resolved = resolveSeedFromQuery(seeds, q, favoriteSeedIds)
+      if (!resolved) return
+      void plantSelectedSeed(t.fieldId, t.slotId, resolved)
+    }, 150)
+  }, [
+    pickerTarget,
+    pickerQuery,
+    seeds,
+    favoriteSeedIds,
+    plantSelectedSeed,
+    clearPickerDismissTimer,
+  ])
 
   const clearSlot = useCallback(
     (
@@ -941,15 +964,18 @@ export function FieldManagementPage() {
     const onDocKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return
       e.preventDefault()
-      setPickerTarget(null)
+      dismissSeedPicker()
     }
     document.addEventListener('keydown', onDocKey, true)
     return () => document.removeEventListener('keydown', onDocKey, true)
-  }, [pickerTarget])
+  }, [pickerTarget, dismissSeedPicker])
 
-  const closeSeedPicker = useCallback(() => {
-    setPickerTarget(null)
-  }, [])
+  useEffect(
+    () => () => {
+      clearPickerDismissTimer()
+    },
+    [clearPickerDismissTimer],
+  )
 
   const confirmPickerSeed = useCallback(
     (s: SeedSummary) => {
@@ -968,7 +994,7 @@ export function FieldManagementPage() {
       if (e.nativeEvent.isComposing) return
       if (e.key === 'Escape') {
         e.preventDefault()
-        closeSeedPicker()
+        dismissSeedPicker()
         return
       }
       const n = pickerSeeds.length
@@ -996,7 +1022,7 @@ export function FieldManagementPage() {
         if (s) confirmPickerSeed(s)
       }
     },
-    [pickerSeeds, pickerHighlight, confirmPickerSeed, closeSeedPicker],
+    [pickerSeeds, pickerHighlight, confirmPickerSeed, dismissSeedPicker],
   )
 
   return (
@@ -1596,6 +1622,7 @@ export function FieldManagementPage() {
                                   draggable={false}
                                   className="field-cell-btn"
                                   onClick={() => {
+                                    clearPickerDismissTimer()
                                     setPickerQuery('')
                                     setPickerTarget({
                                       fieldId: field.id,
@@ -1772,6 +1799,7 @@ export function FieldManagementPage() {
                                     draggable={false}
                                     className="field-cell-btn"
                                     onClick={() => {
+                                      clearPickerDismissTimer()
                                       setPickerQuery('')
                                       setPickerTarget({
                                         fieldId: field.id,
@@ -1933,7 +1961,7 @@ export function FieldManagementPage() {
           aria-modal="true"
           aria-labelledby="field-picker-title"
           onMouseDown={(e) => {
-            if (e.target === e.currentTarget) setPickerTarget(null)
+            if (e.target === e.currentTarget) dismissSeedPicker()
           }}
         >
           <div className="field-modal">

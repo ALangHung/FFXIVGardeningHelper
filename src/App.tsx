@@ -3,6 +3,7 @@ import './App.css'
 import { CrossCalculatorPage } from './CrossCalculatorPage'
 import { FieldManagementPage } from './FieldManagementPage'
 import { HomePage } from './HomePage'
+import { KnownIssuesPage } from './KnownIssuesPage'
 import { SeedDetailPage } from './SeedDetailPage'
 import { SeedListPage } from './SeedListPage'
 import {
@@ -100,6 +101,14 @@ function AppTopNav() {
           >
             田地管理
           </NavLink>
+          <NavLink
+            to="/known-issues"
+            className={({ isActive }) =>
+              `app-top-nav-tab${isActive ? ' app-top-nav-tab--active' : ''}`
+            }
+          >
+            已知問題
+          </NavLink>
         </nav>
       </div>
     </header>
@@ -116,6 +125,7 @@ export function App() {
           <Route path="/seeds" element={<SeedListPage />} />
           <Route path="/cross" element={<CrossCalculatorPage />} />
           <Route path="/fields" element={<FieldManagementPage />} />
+          <Route path="/known-issues" element={<KnownIssuesPage />} />
           <Route path="/seed/:seedId" element={<SeedDetailPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

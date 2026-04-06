@@ -15522,7 +15522,7 @@
             "growDays": 5
           },
           "alternate": {
-            "seedId": 18
+            "seedId": null
           },
           "efficiency": 95,
           "efficiencyRating": "green"
@@ -18319,7 +18319,7 @@
             "growDays": 5
           },
           "alternate": {
-            "seedId": 12
+            "seedId": null
           },
           "efficiency": 93,
           "efficiencyRating": "green"
@@ -30549,7 +30549,7 @@
             "growDays": 5
           },
           "alternate": {
-            "seedId": 77
+            "seedId": null
           },
           "efficiency": 92,
           "efficiencyRating": "green"
@@ -31269,7 +31269,7 @@
             "growDays": 1
           },
           "alternate": {
-            "seedId": 77
+            "seedId": null
           },
           "efficiency": 93,
           "efficiencyRating": "green"
@@ -44943,7 +44943,7 @@
             "growDays": 5
           },
           "alternate": {
-            "seedId": 39
+            "seedId": null
           },
           "efficiency": 88,
           "efficiencyRating": "yellow"
@@ -57267,7 +57267,7 @@
             "growDays": 2
           },
           "alternate": {
-            "seedId": 19
+            "seedId": null
           },
           "efficiency": 91,
           "efficiencyRating": "green"

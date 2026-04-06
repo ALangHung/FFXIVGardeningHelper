@@ -120,6 +120,12 @@ export function HomePage() {
               </Link>
               ：在格狀田地上配置種子、模擬雜交結果、收成時間預估；田地資料儲存在本機，關閉分頁或瀏覽器後仍會保留。
             </li>
+            <li>
+              <Link to="/known-issues" className="seed-name-link">
+                已知問題
+              </Link>
+              ：將FFXIV Gardening的雜交結果為三種以上，有疑慮的資料從使用的資料中排除，先記錄在這裡，之後養老的時候在嘗試驗證看看。
+            </li>
           </ul>
           <p className="home-intro-note">
             首頁下方「致謝」可連至本專案參考的社群資料網站；實際遊戲內容仍以版本與 Square Enix 官方為準。

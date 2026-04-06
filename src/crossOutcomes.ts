@@ -139,6 +139,78 @@ export function findIntercrossOutcomes(
   )
 }
 
+/**
+ * 在任一種子的確認配方中，曾與 fixedParentId 配對為親本者（可作為另一親本與之雜交的候選，不含自身同格循環列）。
+ */
+export function getCompatibleParentSeedIds(
+  seedsById: Record<string, SeedRecord>,
+  fixedParentId: number,
+): Set<number> {
+  const out = new Set<number>()
+  for (const seed of Object.values(seedsById)) {
+    for (const c of seed.confirmedCrosses ?? []) {
+      const a = c.parentA.seedId
+      const b = c.parentB.seedId
+      if (a === fixedParentId && b != null && Number.isFinite(b) && b !== fixedParentId) {
+        out.add(b)
+      }
+      if (b === fixedParentId && a != null && Number.isFinite(a) && a !== fixedParentId) {
+        out.add(a)
+      }
+    }
+  }
+  return out
+}
+
+/**
+ * 在「搜尋親本」中：已知親本 K 時，可作為「雜交結果」候選的種子 id（某確認配方列中 (K,Q) 之主要／其他可能結果）。
+ */
+export function getPossibleResultSeedIdsForKnownParent(
+  seedsById: Record<string, SeedRecord>,
+  knownParentId: number,
+): Set<number> {
+  const out = new Set<number>()
+  for (const seed of Object.values(seedsById)) {
+    for (const c of seed.confirmedCrosses ?? []) {
+      const a = c.parentA.seedId
+      const b = c.parentB.seedId
+      const pairHasKnown =
+        (a === knownParentId &&
+          b != null &&
+          Number.isFinite(b) &&
+          b !== knownParentId) ||
+        (b === knownParentId &&
+          a != null &&
+          Number.isFinite(a) &&
+          a !== knownParentId)
+      if (!pairHasKnown) continue
+      out.add(seed.seedId)
+      const altId = c.alternate.seedId
+      if (altId != null && Number.isFinite(altId)) out.add(altId)
+    }
+  }
+  return out
+}
+
+/**
+ * 在「搜尋親本」中：雜交結果種子 R 的確認配方列上出現過的親本 id（可作為「已有的親本」候選）。
+ */
+export function getParentSeedIdsOnResultConfirmedCrosses(
+  seedsById: Record<string, SeedRecord>,
+  resultSeedId: number,
+): Set<number> {
+  const rec = seedsById[String(resultSeedId)]
+  if (!rec) return new Set()
+  const out = new Set<number>()
+  for (const c of rec.confirmedCrosses ?? []) {
+    const a = c.parentA.seedId
+    const b = c.parentB.seedId
+    if (a != null && Number.isFinite(a)) out.add(a)
+    if (b != null && Number.isFinite(b)) out.add(b)
+  }
+  return out
+}
+
 export type OtherParentCandidate = {
   otherParentSeedId: number
   otherParentName: string

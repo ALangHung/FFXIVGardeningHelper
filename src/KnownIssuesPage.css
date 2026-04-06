@@ -1,0 +1,200 @@
+.known-issues-page {
+  --surface: rgba(26, 20, 40, 0.75);
+  --border: rgba(167, 139, 250, 0.22);
+  --text: #f3f4f6;
+  --text-muted: #9ca3af;
+  --gold: #fbbf24;
+
+  width: 100%;
+  max-width: var(--app-page-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2rem 1.25rem 3.5rem;
+  box-sizing: border-box;
+}
+
+/* 與種子列表 /seeds 名稱欄（.seed-name-cell / .seed-row-icon / .seed-name-link）一致 */
+.known-issues-page .seed-name-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.known-issues-page .seed-row-icon {
+  flex-shrink: 0;
+  display: block;
+  border-radius: 4px;
+  image-rendering: pixelated;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.known-issues-page .seed-name-link {
+  min-width: 0;
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.known-issues-page .seed-name-link:hover {
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+}
+
+.known-issues-pair .seed-name-link {
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.known-issues-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.known-issues-title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  text-shadow: 0 0 24px rgba(251, 191, 36, 0.25);
+}
+
+.known-issues-lead {
+  margin: 0 auto;
+  max-width: 42rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #d1d5db;
+}
+
+.known-issues-inline-link {
+  color: #c4b5fd;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.known-issues-inline-link:hover {
+  color: #e9d5ff;
+}
+
+.known-issues-code {
+  font-size: 0.85em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(167, 139, 250, 0.25);
+}
+
+.known-issues-muted {
+  margin: 0 0 1rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.known-issues-error {
+  color: #fca5a5;
+}
+
+.known-issues-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.known-issues-card {
+  margin: 0;
+  padding: 1.15rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+}
+
+.known-issues-card-title {
+  margin: 0 0 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #e5e7eb;
+}
+
+.known-issues-pair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.known-issues-cross {
+  color: var(--text-muted);
+  font-weight: 600;
+  user-select: none;
+}
+
+.known-issues-badge {
+  flex-shrink: 0;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fde68a;
+  background: rgba(124, 58, 237, 0.2);
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  border-radius: 999px;
+}
+
+.known-issues-outcomes-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.known-issues-outcomes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.1rem;
+  align-items: flex-start;
+}
+
+.known-issues-outcomes > li {
+  min-width: 0;
+}
+
+.known-issues-outcomes .seed-name-link {
+  white-space: normal;
+  line-height: 1.4;
+  max-width: 14rem;
+}
+
+/* alternate（其他可能）：名稱加刪除線 */
+.known-issues-page .known-issues-outcome--alternate {
+  text-decoration: line-through;
+  text-decoration-color: rgba(0, 0, 0, 1);
+  text-decoration-thickness: 3px;
+}
+
+.known-issues-page .known-issues-outcome--alternate:hover {
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+  text-decoration: line-through;
+  text-decoration-color: rgba(251, 191, 36, 0.65);
+  text-decoration-thickness: 2px;
+}

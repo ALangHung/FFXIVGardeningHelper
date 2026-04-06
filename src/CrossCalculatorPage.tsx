@@ -14,6 +14,9 @@ import type {
 import {
   findIntercrossOutcomes,
   findOtherParentsFromResult,
+  getCompatibleParentSeedIds,
+  getParentSeedIdsOnResultConfirmedCrosses,
+  getPossibleResultSeedIdsForKnownParent,
 } from './crossOutcomes'
 import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import { publicUrl } from './publicUrl'
@@ -31,34 +34,18 @@ import {
 import { hasMarketAccess } from './marketAccess'
 import { PriceSpinner } from './PriceSpinner'
 import { SeedFavoriteHeartIcon } from './SeedFavoriteHeartIcon'
+import { useSeedFavoriteIds } from './seedFavorites'
 import {
-  sortSeedsFavoritesFirstThenName,
-  useSeedFavoriteIds,
-} from './seedFavorites'
+  filterSeeds,
+  normalizeSeedQuery,
+  resolveSeedFromQuery,
+} from './seedPickerQuery'
 import './CrossCalculatorPage.css'
 
 const MARKET_ITEM_BASE = 'https://beherw.github.io/FFXIV_Market/item'
 
-function normalize(s: string) {
-  return s.trim().toLowerCase()
-}
-
 function marketItemUrl(itemId: number): string {
   return `${MARKET_ITEM_BASE}/${itemId}`
-}
-
-/** 空字串時列出全部種子（最愛優先、名稱排序）；有輸入時列出所有符合的種子。 */
-function filterSeeds(
-  seeds: SeedSummary[],
-  q: string,
-  favoriteIds: ReadonlySet<number>,
-): SeedSummary[] {
-  const sorted = sortSeedsFavoritesFirstThenName(seeds, favoriteIds)
-  const nq = normalize(q)
-  if (!nq) return sorted
-  return sorted.filter((s) =>
-    normalize(s.nameSearchText ?? s.name).includes(nq),
-  )
 }
 
 function SearchGlyph() {
@@ -95,6 +82,8 @@ function ParentPicker({
   onQueryChange,
   onSelect,
   favoriteIds,
+  restrictToSeedIds,
+  excludeSeedId,
 }: {
   label: string
   inputId: string
@@ -110,8 +99,20 @@ function ParentPicker({
   onQueryChange: (q: string) => void
   onSelect: (s: SeedSummary) => void
   favoriteIds: ReadonlySet<number>
+  /** 非 null 時僅顯示此集合內的種子（與另一親本可雜交者）。 */
+  restrictToSeedIds?: ReadonlySet<number> | null
+  /** 從選項與 blur 解析中排除（避免與另一欄選到同一顆）。 */
+  excludeSeedId?: number | null
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const queryRef = useRef(query)
+  const selectedIdRef = useRef(selectedId)
+  const restrictToSeedIdsRef = useRef(restrictToSeedIds)
+  const excludeSeedIdRef = useRef(excludeSeedId)
+  queryRef.current = query
+  selectedIdRef.current = selectedId
+  restrictToSeedIdsRef.current = restrictToSeedIds
+  excludeSeedIdRef.current = excludeSeedId
   const [activeIndex, setActiveIndex] = useState(-1)
   const summaryById = useMemo(() => {
     const m = new Map<number, SeedSummary>()
@@ -122,23 +123,54 @@ function ParentPicker({
   const displayValue =
     selectedId != null ? (summaryById.get(selectedId)?.name ?? '') : query
 
-  const suggestions = useMemo(
-    () =>
-      filterSeeds(seeds, selectedId != null ? '' : query, favoriteIds),
-    [seeds, query, selectedId, favoriteIds],
-  )
+  const suggestions = useMemo(() => {
+    let list = filterSeeds(seeds, selectedId != null ? '' : query, favoriteIds)
+    if (restrictToSeedIds != null) {
+      list = list.filter((s) => restrictToSeedIds.has(s.seedId))
+    }
+    if (excludeSeedId != null) {
+      list = list.filter((s) => s.seedId !== excludeSeedId)
+    }
+    return list
+  }, [
+    seeds,
+    query,
+    selectedId,
+    favoriteIds,
+    restrictToSeedIds,
+    excludeSeedId,
+  ])
   const activeSuggestion =
     activeIndex >= 0 && activeIndex < suggestions.length
       ? suggestions[activeIndex]
       : null
 
-  useEffect(() => {
-    if (!open) setActiveIndex(-1)
-  }, [open])
+  const showNoMatches =
+    selectedId == null &&
+    suggestions.length === 0 &&
+    (normalizeSeedQuery(query).length > 0 ||
+      (restrictToSeedIds != null && restrictToSeedIds.size === 0))
+
+  const assistiveHasVisibleLine =
+    (selectedId != null && selectedAssistiveText) ||
+    (showNoMatches && !open)
 
   useEffect(() => {
-    setActiveIndex(-1)
-  }, [query, selectedId])
+    if (!open) {
+      setActiveIndex(-1)
+      return
+    }
+    if (selectedId != null) {
+      setActiveIndex(-1)
+      return
+    }
+    const nq = normalizeSeedQuery(query)
+    if (nq.length > 0 && suggestions.length > 0) {
+      setActiveIndex(0)
+    } else {
+      setActiveIndex(-1)
+    }
+  }, [open, query, selectedId, suggestions])
 
   return (
     <div className={`cross-calc-picker cross-calc-picker--${stackOrder}`}>
@@ -157,8 +189,12 @@ function ParentPicker({
             placeholder="搜尋名稱…"
             autoComplete="off"
             role="combobox"
-            aria-expanded={open}
-            aria-controls={listId}
+            aria-expanded={open && (suggestions.length > 0 || showNoMatches)}
+            aria-controls={
+              open && (suggestions.length > 0 || showNoMatches)
+                ? listId
+                : undefined
+            }
             aria-autocomplete="list"
             aria-activedescendant={
               open && activeSuggestion != null
@@ -213,7 +249,22 @@ function ParentPicker({
               }
             }}
             onBlur={() => {
-              window.setTimeout(() => onOpenChange(false), 150)
+              window.setTimeout(() => {
+                onOpenChange(false)
+                if (selectedIdRef.current != null) return
+                const q = queryRef.current
+                const r = restrictToSeedIdsRef.current
+                const ex = excludeSeedIdRef.current
+                let pool = seeds
+                if (r != null) {
+                  pool = seeds.filter((s) => r.has(s.seedId))
+                }
+                if (ex != null) {
+                  pool = pool.filter((s) => s.seedId !== ex)
+                }
+                const resolved = resolveSeedFromQuery(pool, q, favoriteIds)
+                if (resolved) onSelect(resolved)
+              }, 150)
             }}
           />
           {displayValue ? (
@@ -224,7 +275,18 @@ function ParentPicker({
             />
           ) : null}
         </div>
-        {open && suggestions.length > 0 ? (
+        {open && selectedId == null && showNoMatches ? (
+          <div
+            id={listId}
+            className="cross-calc-suggestions cross-calc-suggestions--empty"
+            role="listbox"
+            aria-label="搜尋結果"
+          >
+            <p className="cross-calc-suggestions-empty" role="status">
+              沒有符合的種子
+            </p>
+          </div>
+        ) : open && suggestions.length > 0 ? (
           <ul id={listId} className="cross-calc-suggestions" role="listbox">
             {suggestions.map((s, idx) => (
               <li key={s.seedId} role="none">
@@ -269,9 +331,15 @@ function ParentPicker({
         ) : null}
       </div>
       <p
-        className={`cross-calc-picker-assistive${selectedId != null && selectedAssistiveText ? '' : ' cross-calc-picker-assistive--placeholder'}`}
+        className={`cross-calc-picker-assistive${
+          assistiveHasVisibleLine ? '' : ' cross-calc-picker-assistive--placeholder'
+        }${showNoMatches && !open ? ' cross-calc-picker-assistive--nomatch' : ''}`}
       >
-        {selectedId != null && selectedAssistiveText ? selectedAssistiveText : '\u00A0'}
+        {selectedId != null && selectedAssistiveText
+          ? selectedAssistiveText
+          : showNoMatches && !open
+            ? '沒有符合的種子'
+            : '\u00A0'}
       </p>
     </div>
   )
@@ -494,6 +562,58 @@ export function CrossCalculatorPage() {
   >({})
   const [priceLoading, setPriceLoading] = useState(false)
   const favoriteSeedIds = useSeedFavoriteIds()
+
+  const resolvedParentAId = useMemo(() => {
+    if (parentAId != null) return parentAId
+    return resolveSeedFromQuery(seeds, queryA, favoriteSeedIds)?.seedId ?? null
+  }, [parentAId, queryA, seeds, favoriteSeedIds])
+
+  const resolvedParentBId = useMemo(() => {
+    if (parentBId != null) return parentBId
+    return resolveSeedFromQuery(seeds, queryB, favoriteSeedIds)?.seedId ?? null
+  }, [parentBId, queryB, seeds, favoriteSeedIds])
+
+  const compatibleIdsForPickerA = useMemo(() => {
+    if (!seedsById || resolvedParentBId == null) return null
+    return getCompatibleParentSeedIds(seedsById, resolvedParentBId)
+  }, [seedsById, resolvedParentBId])
+
+  const compatibleIdsForPickerB = useMemo(() => {
+    if (!seedsById || resolvedParentAId == null) return null
+    return getCompatibleParentSeedIds(seedsById, resolvedParentAId)
+  }, [seedsById, resolvedParentAId])
+
+  const resolvedSpKnownId = useMemo(() => {
+    if (spKnownId != null) return spKnownId
+    return (
+      resolveSeedFromQuery(seeds, spQueryKnown, favoriteSeedIds)?.seedId ??
+      null
+    )
+  }, [spKnownId, spQueryKnown, seeds, favoriteSeedIds])
+
+  const resolvedSpResultId = useMemo(() => {
+    if (spResultId != null) return spResultId
+    return (
+      resolveSeedFromQuery(seeds, spQueryResult, favoriteSeedIds)?.seedId ??
+      null
+    )
+  }, [spResultId, spQueryResult, seeds, favoriteSeedIds])
+
+  const compatibleIdsForSpKnown = useMemo(() => {
+    if (!seedsById || resolvedSpResultId == null) return null
+    return getParentSeedIdsOnResultConfirmedCrosses(
+      seedsById,
+      resolvedSpResultId,
+    )
+  }, [seedsById, resolvedSpResultId])
+
+  const compatibleIdsForSpResult = useMemo(() => {
+    if (!seedsById || resolvedSpKnownId == null) return null
+    return getPossibleResultSeedIdsForKnownParent(
+      seedsById,
+      resolvedSpKnownId,
+    )
+  }, [seedsById, resolvedSpKnownId])
 
   const prevParentPairKeyRef = useRef<string | null>(null)
   const prevSpPairKeyRef = useRef<string | null>(null)
@@ -883,6 +1003,8 @@ export function CrossCalculatorPage() {
                   open={openA}
                   keyboardSelectEnabled
                   selectedAssistiveText={parentAHarvestText}
+                  restrictToSeedIds={compatibleIdsForPickerA}
+                  excludeSeedId={resolvedParentBId}
                   onOpenChange={(o) => {
                     setOpenA(o)
                     if (o) setOpenB(false)
@@ -908,6 +1030,8 @@ export function CrossCalculatorPage() {
                   stackOrder="second"
                   keyboardSelectEnabled
                   selectedAssistiveText={parentBHarvestText}
+                  restrictToSeedIds={compatibleIdsForPickerB}
+                  excludeSeedId={resolvedParentAId}
                   onOpenChange={(o) => {
                     setOpenB(o)
                     if (o) setOpenA(false)
@@ -1065,6 +1189,8 @@ export function CrossCalculatorPage() {
                   open={spOpenKnown}
                   keyboardSelectEnabled
                   selectedAssistiveText={spKnownHarvestText}
+                  restrictToSeedIds={compatibleIdsForSpKnown}
+                  excludeSeedId={resolvedSpResultId}
                   onOpenChange={(o) => {
                     setSpOpenKnown(o)
                     if (o) setSpOpenResult(false)
@@ -1090,6 +1216,8 @@ export function CrossCalculatorPage() {
                   stackOrder="second"
                   keyboardSelectEnabled
                   selectedAssistiveText={spResultHarvestText}
+                  restrictToSeedIds={compatibleIdsForSpResult}
+                  excludeSeedId={resolvedSpKnownId}
                   onOpenChange={(o) => {
                     setSpOpenResult(o)
                     if (o) setSpOpenKnown(false)
