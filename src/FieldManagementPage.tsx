@@ -2183,7 +2183,8 @@ export function FieldManagementPage() {
                         onClick={() => {
                           setPickerCrossTargetId(null)
                           setPickerCrossTargetQuery('')
-                          setPickerCrossTargetOpen(false)
+                          setPickerCrossTargetOpen(true)
+                          setPickerCrossTargetActiveIdx(-1)
                           pickerCrossTargetInputRef.current?.focus()
                         }}
                       >
