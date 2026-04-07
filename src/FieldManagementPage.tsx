@@ -14,6 +14,7 @@ import type { SeedSummary } from './seedSummaryTypes'
 import { filterSeeds, resolveSeedFromQuery } from './seedPickerQuery'
 import type { SeedRecord } from './seedDetailTypes'
 import { getSeedById, loadSeedsById, loadSeedsSummaryMerged } from './seedDataApi'
+import { findIntercrossOutcomes } from './crossOutcomes'
 import { SeedFavoriteHeartIcon } from './SeedFavoriteHeartIcon'
 import { useSeedFavoriteIds } from './seedFavorites'
 import { publicUrl } from './publicUrl'
@@ -317,6 +318,24 @@ export function FieldManagementPage() {
   const [pickerQuery, setPickerQuery] = useState('')
   /** 鍵盤／ARIA 用：目前選中的清單項索引 */
   const [pickerHighlight, setPickerHighlight] = useState<number | null>(null)
+  /** 雜交提示篩選：只顯示可與鄰格作物雜交的種子（localStorage 持久化） */
+  const [pickerCrossFilter, setPickerCrossFilter] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('ffxivgh.pickerCrossFilter.v1') === '1'
+    } catch {
+      return false
+    }
+  })
+
+  const togglePickerCrossFilter = useCallback(() => {
+    setPickerCrossFilter((v) => {
+      const next = !v
+      try {
+        localStorage.setItem('ffxivgh.pickerCrossFilter.v1', next ? '1' : '0')
+      } catch {}
+      return next
+    })
+  }, [])
 
   const plantInFlightRef = useRef(false)
   /** 關閉選種視窗後延遲解析種子用的 timer，開新視窗或再次關閉時須清除以免誤植。 */
@@ -943,10 +962,47 @@ export function FieldManagementPage() {
     [draggingFieldId, baseBoardCells, boardCols],
   )
 
-  const pickerSeeds = useMemo(
-    () => filterSeeds(seeds, pickerQuery, favoriteSeedIds),
-    [seeds, pickerQuery, favoriteSeedIds],
-  )
+  /** 目標格的鄰格（有種植作物）之種子 ID 列表，用於雜交篩選 */
+  const pickerNeighborSeedIds = useMemo<number[]>(() => {
+    if (!pickerTarget) return []
+    const field = fields.find((f) => f.id === pickerTarget.fieldId)
+    if (!field) return []
+    const meta = FIELD_SLOTS.find((s) => s.id === pickerTarget.slotId)
+    if (!meta) return []
+    const byId = new Map<FieldSlotId, PlotSlot>()
+    for (const s of field.slots) byId.set(s.id, s)
+    const ids: number[] = []
+    for (const [dr, dc] of [
+      [meta.row, meta.col + 1],
+      [meta.row + 1, meta.col],
+      [meta.row - 1, meta.col],
+      [meta.row, meta.col - 1],
+    ] as [number, number][]) {
+      const nb = FIELD_SLOTS.find((s) => s.row === dr && s.col === dc)
+      if (!nb) continue
+      const seedId = byId.get(nb.id)?.seedId
+      if (seedId != null) ids.push(seedId)
+    }
+    return ids
+  }, [pickerTarget, fields])
+
+  const pickerSeeds = useMemo(() => {
+    const base = filterSeeds(seeds, pickerQuery, favoriteSeedIds)
+    if (!pickerCrossFilter || !seedsById || pickerNeighborSeedIds.length === 0)
+      return base
+    return base.filter((s) =>
+      pickerNeighborSeedIds.some(
+        (nid) => findIntercrossOutcomes(seedsById, s.seedId, nid).length > 0,
+      ),
+    )
+  }, [
+    seeds,
+    pickerQuery,
+    favoriteSeedIds,
+    pickerCrossFilter,
+    seedsById,
+    pickerNeighborSeedIds,
+  ])
 
   useEffect(() => {
     if (!pickerTarget) return
@@ -1967,6 +2023,22 @@ export function FieldManagementPage() {
           <div className="field-modal">
             <div className="field-modal-head" id="field-picker-title">
               選擇種子
+              <button
+                type="button"
+                className={`field-picker-cross-filter-btn${pickerCrossFilter ? ' field-picker-cross-filter-btn--on' : ''}`}
+                onClick={togglePickerCrossFilter}
+                disabled={pickerNeighborSeedIds.length === 0}
+                title={
+                  pickerNeighborSeedIds.length === 0
+                    ? '鄰格無作物，無法篩選'
+                    : pickerCrossFilter
+                      ? '關閉雜交篩選'
+                      : '只顯示可與鄰格雜交的種子'
+                }
+              >
+                <span className="field-picker-cross-filter-indicator" aria-hidden="true" />
+                雜交提示篩選
+              </button>
             </div>
             <input
               id="field-picker-search"
