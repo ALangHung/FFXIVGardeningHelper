@@ -1,6 +1,7 @@
 /* 色調參考繁中XIV市場（slate 底 + 青綠輔色 + 琥珀強調）https://beherw.github.io/FFXIV_Market/ */
 .field-page {
   --surface: #0f172a;
+  --surface-2: #221a32;
   --border: rgba(34, 211, 238, 0.22);
   --text: #f1f5f9;
   --text-muted: #94a3b8;
@@ -950,6 +951,121 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
+  overflow: visible;
+}
+
+/* ——— 雜交目標種子 combobox ——— */
+.field-picker-target-combobox {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.field-picker-target-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-picker-target-input {
+  width: 100%;
+  padding: 0.2rem 1.5rem 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+  min-width: 0;
+}
+
+.field-picker-target-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px var(--purple-soft);
+}
+
+.field-picker-target-input::placeholder {
+  color: #6b7280;
+}
+
+.field-picker-target-clear {
+  position: absolute;
+  right: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.field-picker-target-clear:hover {
+  color: var(--text);
+}
+
+.field-picker-target-suggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.25rem);
+  z-index: 20;
+  max-height: min(52vh, 380px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+.field-picker-target-suggest-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.88rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.field-picker-target-suggest-btn:hover,
+.field-picker-target-suggest-btn:focus-visible {
+  background: rgba(124, 58, 237, 0.2);
+  outline: none;
+}
+
+.field-picker-target-suggest-btn--active {
+  background: rgba(124, 58, 237, 0.28);
+}
+
+.field-picker-target-suggest-btn img {
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.field-picker-target-suggest-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .field-picker-cross-filter-btn {

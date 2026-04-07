@@ -337,6 +337,19 @@ export function FieldManagementPage() {
     })
   }, [])
 
+  /** 雜交目標種子：期望雜交結果的搜尋文字 */
+  const [pickerCrossTargetQuery, setPickerCrossTargetQuery] = useState('')
+  const pickerCrossTargetQueryRef = useRef('')
+  pickerCrossTargetQueryRef.current = pickerCrossTargetQuery
+  /** 雜交目標種子 ID（已選定） */
+  const [pickerCrossTargetId, setPickerCrossTargetId] = useState<number | null>(null)
+  /** 雜交目標建議清單是否開啟 */
+  const [pickerCrossTargetOpen, setPickerCrossTargetOpen] = useState(false)
+  /** 雜交目標建議清單鍵盤游標 */
+  const [pickerCrossTargetActiveIdx, setPickerCrossTargetActiveIdx] = useState(-1)
+  const pickerCrossTargetInputRef = useRef<HTMLInputElement | null>(null)
+  const pickerCrossTargetListId = useId()
+
   const plantInFlightRef = useRef(false)
   /** 關閉選種視窗後延遲解析種子用的 timer，開新視窗或再次關閉時須清除以免誤植。 */
   const pickerDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
@@ -986,15 +999,51 @@ export function FieldManagementPage() {
     return ids
   }, [pickerTarget, fields])
 
+  /** 雜交目標種子建議清單（只在篩選開啟且下拉展開時計算） */
+  const pickerCrossTargetSuggestions = useMemo(() => {
+    if (!pickerCrossFilter || !pickerCrossTargetOpen) return []
+    return filterSeeds(
+      seeds,
+      pickerCrossTargetId != null ? '' : pickerCrossTargetQuery,
+      favoriteSeedIds,
+    )
+  }, [
+    pickerCrossFilter,
+    pickerCrossTargetOpen,
+    seeds,
+    pickerCrossTargetQuery,
+    pickerCrossTargetId,
+    favoriteSeedIds,
+  ])
+
+  const pickerCrossTargetActiveSuggestion =
+    pickerCrossTargetActiveIdx >= 0 &&
+    pickerCrossTargetActiveIdx < pickerCrossTargetSuggestions.length
+      ? pickerCrossTargetSuggestions[pickerCrossTargetActiveIdx]
+      : null
+
+  const pickerCrossTargetDisplayValue =
+    pickerCrossTargetId != null
+      ? (seeds.find((s) => s.seedId === pickerCrossTargetId)?.name ??
+        pickerCrossTargetQuery)
+      : pickerCrossTargetQuery
+
   const pickerSeeds = useMemo(() => {
     const base = filterSeeds(seeds, pickerQuery, favoriteSeedIds)
     if (!pickerCrossFilter || !seedsById || pickerNeighborSeedIds.length === 0)
       return base
-    return base.filter((s) =>
-      pickerNeighborSeedIds.some(
+    return base.filter((s) => {
+      const canCross = pickerNeighborSeedIds.some(
         (nid) => findIntercrossOutcomes(seedsById, s.seedId, nid).length > 0,
-      ),
-    )
+      )
+      if (!canCross) return false
+      if (pickerCrossTargetId == null) return true
+      return pickerNeighborSeedIds.some((nid) =>
+        findIntercrossOutcomes(seedsById, s.seedId, nid).some(
+          (o) => o.outcomeSeedId === pickerCrossTargetId,
+        ),
+      )
+    })
   }, [
     seeds,
     pickerQuery,
@@ -1002,6 +1051,7 @@ export function FieldManagementPage() {
     pickerCrossFilter,
     seedsById,
     pickerNeighborSeedIds,
+    pickerCrossTargetId,
   ])
 
   useEffect(() => {
@@ -1680,6 +1730,9 @@ export function FieldManagementPage() {
                                   onClick={() => {
                                     clearPickerDismissTimer()
                                     setPickerQuery('')
+                                    setPickerCrossTargetQuery('')
+                                    setPickerCrossTargetId(null)
+                                    setPickerCrossTargetOpen(false)
                                     setPickerTarget({
                                       fieldId: field.id,
                                       slotId: sid,
@@ -2023,6 +2076,170 @@ export function FieldManagementPage() {
           <div className="field-modal">
             <div className="field-modal-head" id="field-picker-title">
               選擇種子
+              {pickerCrossFilter && (
+                <div className="field-picker-target-combobox">
+                  <div className="field-picker-target-input-wrap">
+                    <input
+                      ref={pickerCrossTargetInputRef}
+                      type="search"
+                      className="field-picker-target-input"
+                      placeholder="期望雜交結果…"
+                      autoComplete="off"
+                      role="combobox"
+                      aria-label="期望雜交結果種子"
+                      aria-expanded={
+                        pickerCrossTargetOpen &&
+                        pickerCrossTargetSuggestions.length > 0
+                      }
+                      aria-controls={
+                        pickerCrossTargetOpen &&
+                        pickerCrossTargetSuggestions.length > 0
+                          ? pickerCrossTargetListId
+                          : undefined
+                      }
+                      aria-autocomplete="list"
+                      aria-activedescendant={
+                        pickerCrossTargetActiveSuggestion != null
+                          ? `${pickerCrossTargetListId}-opt-${pickerCrossTargetActiveSuggestion.seedId}`
+                          : undefined
+                      }
+                      value={pickerCrossTargetDisplayValue}
+                      onChange={(e) => {
+                        setPickerCrossTargetId(null)
+                        setPickerCrossTargetQuery(e.target.value)
+                        setPickerCrossTargetOpen(true)
+                      }}
+                      onFocus={() => setPickerCrossTargetOpen(true)}
+                      onKeyDown={(e) => {
+                        if (
+                          !pickerCrossTargetOpen &&
+                          (e.key === 'ArrowDown' || e.key === 'ArrowUp')
+                        ) {
+                          e.preventDefault()
+                          setPickerCrossTargetOpen(true)
+                          setPickerCrossTargetActiveIdx(
+                            pickerCrossTargetSuggestions.length > 0 ? 0 : -1,
+                          )
+                          return
+                        }
+                        if (!pickerCrossTargetOpen) return
+                        if (e.key === 'ArrowDown') {
+                          e.preventDefault()
+                          setPickerCrossTargetActiveIdx((i) =>
+                            i < 0
+                              ? 0
+                              : Math.min(
+                                  i + 1,
+                                  pickerCrossTargetSuggestions.length - 1,
+                                ),
+                          )
+                        } else if (e.key === 'ArrowUp') {
+                          e.preventDefault()
+                          setPickerCrossTargetActiveIdx((i) =>
+                            i < 0
+                              ? pickerCrossTargetSuggestions.length - 1
+                              : Math.max(i - 1, 0),
+                          )
+                        } else if (e.key === 'Enter') {
+                          if (pickerCrossTargetActiveSuggestion == null) return
+                          e.preventDefault()
+                          setPickerCrossTargetId(
+                            pickerCrossTargetActiveSuggestion.seedId,
+                          )
+                          setPickerCrossTargetQuery(
+                            pickerCrossTargetActiveSuggestion.name,
+                          )
+                          setPickerCrossTargetOpen(false)
+                          pickerCrossTargetInputRef.current?.blur()
+                        } else if (e.key === 'Escape') {
+                          e.stopPropagation()
+                          setPickerCrossTargetOpen(false)
+                          setPickerCrossTargetActiveIdx(-1)
+                        }
+                      }}
+                      onBlur={() => {
+                        window.setTimeout(() => {
+                          setPickerCrossTargetOpen(false)
+                          if (pickerCrossTargetId != null) return
+                          const q = pickerCrossTargetQueryRef.current
+                          const resolved = resolveSeedFromQuery(
+                            seeds,
+                            q,
+                            favoriteSeedIds,
+                          )
+                          if (resolved) {
+                            setPickerCrossTargetId(resolved.seedId)
+                            setPickerCrossTargetQuery(resolved.name)
+                          }
+                        }, 150)
+                      }}
+                    />
+                    {pickerCrossTargetDisplayValue ? (
+                      <button
+                        type="button"
+                        className="field-picker-target-clear"
+                        aria-label="清除目標種子"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => {
+                          setPickerCrossTargetId(null)
+                          setPickerCrossTargetQuery('')
+                          setPickerCrossTargetOpen(false)
+                          pickerCrossTargetInputRef.current?.focus()
+                        }}
+                      >
+                        ×
+                      </button>
+                    ) : null}
+                  </div>
+                  {pickerCrossTargetOpen &&
+                  pickerCrossTargetSuggestions.length > 0 ? (
+                    <ul
+                      id={pickerCrossTargetListId}
+                      className="field-picker-target-suggestions"
+                      role="listbox"
+                      aria-label="期望雜交結果建議"
+                    >
+                      {pickerCrossTargetSuggestions.map((s, idx) => (
+                        <li key={s.seedId} role="none">
+                          <button
+                            type="button"
+                            role="option"
+                            id={`${pickerCrossTargetListId}-opt-${s.seedId}`}
+                            aria-selected={idx === pickerCrossTargetActiveIdx}
+                            className={`field-picker-target-suggest-btn${idx === pickerCrossTargetActiveIdx ? ' field-picker-target-suggest-btn--active' : ''}`}
+                            onMouseDown={(e) => e.preventDefault()}
+                            onMouseEnter={() =>
+                              setPickerCrossTargetActiveIdx(idx)
+                            }
+                            onClick={() => {
+                              setPickerCrossTargetId(s.seedId)
+                              setPickerCrossTargetQuery(s.name)
+                              setPickerCrossTargetOpen(false)
+                            }}
+                          >
+                            <img
+                              src={publicUrl(s.iconUrl)}
+                              alt=""
+                              width={20}
+                              height={20}
+                              loading="lazy"
+                            />
+                            <span className="field-picker-target-suggest-name">
+                              {s.name}
+                            </span>
+                            {favoriteSeedIds.has(s.seedId) ? (
+                              <SeedFavoriteHeartIcon
+                                variant="solid"
+                                className="field-modal-item-fav-icon"
+                              />
+                            ) : null}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              )}
               <button
                 type="button"
                 className={`field-picker-cross-filter-btn${pickerCrossFilter ? ' field-picker-cross-filter-btn--on' : ''}`}
