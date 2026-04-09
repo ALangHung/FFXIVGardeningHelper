@@ -4,6 +4,7 @@ import { CrossCalculatorPage } from './CrossCalculatorPage'
 import { FieldManagementPage } from './FieldManagementPage'
 import { HomePage } from './HomePage'
 import { KnownIssuesPage } from './KnownIssuesPage'
+import { TutorialPage } from './TutorialPage'
 import { SeedDetailPage } from './SeedDetailPage'
 import { SeedListPage } from './SeedListPage'
 import {
@@ -49,6 +50,14 @@ function AppTopNav() {
             }
           >
             首頁
+          </NavLink>
+          <NavLink
+            to="/tutorial"
+            className={({ isActive }) =>
+              `app-top-nav-tab${isActive ? ' app-top-nav-tab--active' : ''}`
+            }
+          >
+            入門教學
           </NavLink>
           <NavLink
             to={seedListTarget}
@@ -101,6 +110,8 @@ function AppTopNav() {
           >
             田地管理
           </NavLink>
+        </nav>
+        <div className="app-top-nav-actions">
           <NavLink
             to="/known-issues"
             className={({ isActive }) =>
@@ -109,7 +120,15 @@ function AppTopNav() {
           >
             已知問題
           </NavLink>
-        </nav>
+          <a
+            href="https://forum.gamer.com.tw/C.php?bsn=17608&snA=29949"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="app-top-nav-tab app-top-nav-tab--report"
+          >
+            回報
+          </a>
+        </div>
       </div>
     </header>
   )
@@ -125,6 +144,7 @@ export function App() {
           <Route path="/seeds" element={<SeedListPage />} />
           <Route path="/cross" element={<CrossCalculatorPage />} />
           <Route path="/fields" element={<FieldManagementPage />} />
+          <Route path="/tutorial" element={<TutorialPage />} />
           <Route path="/known-issues" element={<KnownIssuesPage />} />
           <Route path="/seed/:seedId" element={<SeedDetailPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

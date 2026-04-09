@@ -1,0 +1,244 @@
+.tutorial-page {
+  --surface: rgba(26, 20, 40, 0.75);
+  --border: rgba(167, 139, 250, 0.22);
+  --text: #f3f4f6;
+  --text-muted: #9ca3af;
+  --gold: #fbbf24;
+
+  width: 100%;
+  max-width: var(--app-page-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2rem 1.25rem 3.5rem;
+  box-sizing: border-box;
+}
+
+.tutorial-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.tutorial-title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  text-shadow: 0 0 24px rgba(251, 191, 36, 0.25);
+}
+
+.tutorial-lead {
+  margin: 0 auto;
+  max-width: 42rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #d1d5db;
+}
+
+.tutorial-topic-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tutorial-topic-btn {
+  appearance: none;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #d1d5db;
+  border-radius: 8px;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  background: rgba(34, 26, 50, 0.65);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.tutorial-topic-btn:hover {
+  color: #f3f4f6;
+  background: rgba(42, 33, 64, 0.9);
+  border-color: rgba(167, 139, 250, 0.4);
+}
+
+.tutorial-topic-btn--active {
+  color: #fbbf24;
+  background: rgba(124, 58, 237, 0.22);
+  border-color: rgba(251, 191, 36, 0.35);
+  box-shadow: 0 0 18px rgba(251, 191, 36, 0.12);
+}
+
+.tutorial-panel {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 1.25rem 1.25rem;
+  min-height: 12rem;
+}
+
+.tutorial-panel-inner {
+  max-width: none;
+}
+
+.tutorial-panel-heading {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+
+.tutorial-placeholder {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+}
+
+/* 與種子列表 /seeds 名稱欄 `.seed-name-link` 一致 */
+.tutorial-page .seed-name-link {
+  min-width: 0;
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.tutorial-page .seed-name-link:hover {
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+}
+
+.tutorial-prose {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.tutorial-prose p {
+  margin: 0 0 0.85rem;
+}
+
+.tutorial-section {
+  margin-bottom: 1.75rem;
+}
+
+.tutorial-section:last-child {
+  margin-bottom: 0;
+}
+
+.tutorial-h3 {
+  margin: 0 0 0.65rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--gold);
+}
+
+.tutorial-section + .tutorial-section .tutorial-h3 {
+  margin-top: 0.25rem;
+}
+
+.tutorial-h4 {
+  margin: 1rem 0 0.45rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #e5e7eb;
+}
+
+.tutorial-section .tutorial-h4:first-of-type {
+  margin-top: 0.35rem;
+}
+
+.tutorial-list {
+  margin: 0 0 0.85rem;
+  padding-left: 1.35rem;
+}
+
+.tutorial-list li {
+  margin-bottom: 0.35rem;
+}
+
+.tutorial-list li:last-child {
+  margin-bottom: 0;
+}
+
+.tutorial-text-warn {
+  color: #f87171;
+  font-weight: 600;
+}
+
+.tutorial-page .tutorial-text-blue {
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.tutorial-page .tutorial-text-yellow {
+  color: #fde68a;
+  font-weight: 600;
+}
+
+.tutorial-step-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.tutorial-step-row .tutorial-figure {
+  flex-shrink: 0;
+}
+
+.tutorial-step-row p {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .tutorial-step-row {
+    flex-direction: column;
+  }
+}
+
+.tutorial-figure {
+  margin: 0.75rem 0 1rem;
+}
+
+.tutorial-figure img {
+  display: block;
+  max-width: min(100%, 28rem);
+  height: auto;
+  margin: 0 auto;
+  border-radius: 8px;
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.tutorial-tab-jump {
+  display: inline;
+  padding: 0;
+  margin: 0 0.1em;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--gold);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  transition: color 0.15s ease;
+}
+
+.tutorial-tab-jump:hover {
+  color: #fcd34d;
+}

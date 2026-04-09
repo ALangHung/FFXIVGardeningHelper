@@ -30,7 +30,15 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 0.65rem 1rem;
+}
+
+.app-top-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
 }
 
 .app-top-nav-tabs {
@@ -71,6 +79,17 @@
   background: rgba(124, 58, 237, 0.22);
   border-color: rgba(251, 191, 36, 0.35);
   text-shadow: 0 0 18px rgba(251, 191, 36, 0.2);
+}
+
+.app-top-nav-tab--report {
+  color: #6ee7b7;
+  border-color: rgba(110, 231, 183, 0.25);
+}
+
+.app-top-nav-tab--report:hover:not(:disabled) {
+  color: #a7f3d0;
+  background: rgba(16, 64, 48, 0.7);
+  border-color: rgba(110, 231, 183, 0.45);
 }
 
 .app-top-nav-tab--soon {

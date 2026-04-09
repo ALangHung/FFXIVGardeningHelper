@@ -298,7 +298,7 @@ function blackForestSoilYieldHintText(
   return `${intro}\n${display}`
 }
 
-function BlackForestSoilYieldHint({ text }: { text: string }) {
+function SeedDetailHelpHint({ text }: { text: string }) {
   return (
     <span
       className="seed-detail-help"
@@ -1459,17 +1459,23 @@ export function SeedDetailPage() {
           </div>
           <div className="seed-detail-dl-row seed-detail-dl-row--4">
             <div className="seed-detail-dl-item">
-              <dt>生長時間</dt>
+              <dt className="seed-detail-dt-with-help">
+                <span>生長時間</span>
+                <SeedDetailHelpHint text="種子種下後，在沒有施肥的情況下多久可以收成。" />
+              </dt>
               <dd>{formatDurationEn(s.growTime)}</dd>
             </div>
             <div className="seed-detail-dl-item">
-              <dt>枯萎時間</dt>
+              <dt className="seed-detail-dt-with-help">
+                <span>枯萎時間</span>
+                <SeedDetailHelpHint text='種子種下後，經過多久時間沒有"護理"作物會枯萎，每次"護理"後會重新計算枯萎時間。' />
+              </dt>
               <dd>{formatDurationEn(s.wiltTime)}</dd>
             </div>
             <div className="seed-detail-dl-item">
               <dt className="seed-detail-dt-with-help">
                 <span>作物收成</span>
-                <BlackForestSoilYieldHint
+                <SeedDetailHelpHint
                   text={blackForestSoilYieldHintText('crop', s.cropYield)}
                 />
               </dt>
@@ -1478,7 +1484,7 @@ export function SeedDetailPage() {
             <div className="seed-detail-dl-item">
               <dt className="seed-detail-dt-with-help">
                 <span>種子收成</span>
-                <BlackForestSoilYieldHint
+                <SeedDetailHelpHint
                   text={blackForestSoilYieldHintText('seed', s.seedYield)}
                 />
               </dt>
