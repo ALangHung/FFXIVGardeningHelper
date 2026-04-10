@@ -121,6 +121,12 @@ export function HomePage() {
               ：在格狀田地上配置種子、模擬雜交結果、收成時間預估；田地資料儲存在本機，關閉分頁或瀏覽器後仍會保留。
             </li>
             <li>
+              <Link to="/tutorial" className="seed-name-link">
+                入門教學
+              </Link>
+              ：包含種田基礎概念、基礎雜交與 3+5 雜交兩種常見種法的圖文教學。
+            </li>
+            <li>
               <Link to="/known-issues" className="seed-name-link">
                 已知問題
               </Link>
