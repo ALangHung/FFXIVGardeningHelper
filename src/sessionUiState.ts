@@ -593,7 +593,8 @@ function parseFertilizeEntry(raw: unknown): FieldFertilizeEntry | null {
       }
     }
   }
-  return { time, deadlinesBefore, lastFertilizeAtBefore }
+  const lastFertilizeTimeBefore = readNullableNumber(o.lastFertilizeTimeBefore)
+  return { time, deadlinesBefore, lastFertilizeAtBefore, lastFertilizeTimeBefore: lastFertilizeTimeBefore ?? null }
 }
 
 /** 舊版 session：施肥堆疊（僅遷移用） */

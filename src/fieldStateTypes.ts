@@ -62,6 +62,8 @@ export type FieldFertilizeEntry = {
   deadlinesBefore: Partial<Record<FieldSlotId, number | null>>
   /** 施肥前各格 lastFertilizeAt（還原冷卻用） */
   lastFertilizeAtBefore: Partial<Record<FieldSlotId, number | null>>
+  /** 施肥前的田地層級 lastFertilizeTime（還原顯示用） */
+  lastFertilizeTimeBefore: number | null
 }
 
 /** 施肥後可取消的時間窗（毫秒） */

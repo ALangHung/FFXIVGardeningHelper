@@ -832,6 +832,7 @@ export function FieldManagementPage() {
               time: now,
               deadlinesBefore,
               lastFertilizeAtBefore,
+              lastFertilizeTimeBefore: f.lastFertilizeTime,
             },
           }
         }),
@@ -865,7 +866,7 @@ export function FieldManagementPage() {
           ...f,
           slots,
           fertilizeUndo: null,
-          lastFertilizeTime: null,
+          lastFertilizeTime: last.lastFertilizeTimeBefore ?? null,
         }
       }),
     )
