@@ -25,7 +25,7 @@ function effSortValue(e: number | null): number {
 }
 
 /**
- * 在該種子的 confirmedCrosses 中找與兩親本 id 相符的列（順序不論）。
+ * 在該種子的 confirmedCrosses 中找與兩親代 id 相符的列（順序不論）。
  */
 function findCrossRowForParents(
   seed: SeedRecord | undefined,
@@ -44,7 +44,7 @@ function findCrossRowForParents(
 }
 
 /**
- * 效率／顏色／loop 以「結果種子」頁面上 (親本A,親本B) 的列為準；若該頁無此組合（多為從他種「其他可能」欄帶出）則退回發現列。
+ * 效率／顏色／loop 以「結果種子」頁面上 (親代A,親代B) 的列為準；若該頁無此組合（多為從他種「其他可能」欄帶出）則退回發現列。
  */
 function efficiencyFromOutcomeRow(
   seedsById: Record<string, SeedRecord>,
@@ -64,7 +64,7 @@ function efficiencyFromOutcomeRow(
 }
 
 /**
- * 依 seeds-by-id 中各種子的「雜交獲取表」反查：兩親本可得到哪些結果（含主要結果與「其他可能」欄）。
+ * 依 seeds-by-id 中各種子的「雜交獲取表」反查：兩親代可得到哪些結果（含主要結果與「其他可能」欄）。
  */
 export function findIntercrossOutcomes(
   seedsById: Record<string, SeedRecord>,
@@ -140,7 +140,7 @@ export function findIntercrossOutcomes(
 }
 
 /**
- * 在任一種子的確認配方中，曾與 fixedParentId 配對為親本者（可作為另一親本與之雜交的候選，不含自身同格循環列）。
+ * 在任一種子的確認配方中，曾與 fixedParentId 配對為親代者（可作為另一親代與之雜交的候選，不含自身同格循環列）。
  */
 export function getCompatibleParentSeedIds(
   seedsById: Record<string, SeedRecord>,
@@ -163,7 +163,7 @@ export function getCompatibleParentSeedIds(
 }
 
 /**
- * 在「搜尋親本」中：已知親本 K 時，可作為「雜交結果」候選的種子 id（某確認配方列中 (K,Q) 之主要／其他可能結果）。
+ * 在「搜尋親代」中：已知親代 K 時，可作為「雜交結果」候選的種子 id（某確認配方列中 (K,Q) 之主要／其他可能結果）。
  */
 export function getPossibleResultSeedIdsForKnownParent(
   seedsById: Record<string, SeedRecord>,
@@ -193,7 +193,7 @@ export function getPossibleResultSeedIdsForKnownParent(
 }
 
 /**
- * 在「搜尋親本」中：雜交結果種子 R 的確認配方列上出現過的親本 id（可作為「已有的親本」候選）。
+ * 在「搜尋親代」中：雜交結果種子 R 的確認配方列上出現過的親代 id（可作為「已有的親代」候選）。
  */
 export function getParentSeedIdsOnResultConfirmedCrosses(
   seedsById: Record<string, SeedRecord>,
@@ -214,7 +214,7 @@ export function getParentSeedIdsOnResultConfirmedCrosses(
 export type OtherParentCandidate = {
   otherParentSeedId: number
   otherParentName: string
-  /** 來自確認配方親本欄位括號內的天數，無則為 null */
+  /** 來自確認配方親代欄位括號內的天數，無則為 null */
   otherParentGrowDays: number | null
   efficiency: number | null
   efficiencyRating: string | null
@@ -222,7 +222,7 @@ export type OtherParentCandidate = {
 }
 
 /**
- * 在「雜交結果」種子與「已有的親本」其一已確定時，從該結果的確認配方表列出另一種可能的親本。
+ * 在「雜交結果」種子與「已有的親代」其一已確定時，從該結果的確認配方表列出另一種可能的親代。
  */
 export function findOtherParentsFromResult(
   seedsById: Record<string, SeedRecord>,

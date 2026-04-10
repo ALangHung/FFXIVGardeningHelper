@@ -14,6 +14,8 @@ import {
   crossTabTarget,
   fieldsTabTarget,
   getSeedDetailActiveSection,
+  clearTutorialLastTopic,
+  getTutorialLastTopic,
   isCrossSectionPath,
   isFieldsSectionPath,
   isListSectionSeedDetailPath,
@@ -52,7 +54,10 @@ function AppTopNav() {
             首頁
           </NavLink>
           <NavLink
-            to="/tutorial"
+            to={path === '/tutorial' ? '/tutorial' : `/tutorial${(() => { const t = getTutorialLastTopic(); return t ? `#${t}` : '' })()}`}
+            onClick={() => {
+              if (path === '/tutorial') clearTutorialLastTopic()
+            }}
             className={({ isActive }) =>
               `app-top-nav-tab${isActive ? ' app-top-nav-tab--active' : ''}`
             }

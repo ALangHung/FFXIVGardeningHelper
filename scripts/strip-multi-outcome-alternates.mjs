@@ -1,8 +1,8 @@
 /**
  * 依 reports/multi-outcome-cross-pairs.txt 中標為 [alternate] 的雜交結果，
- * 在 public/data/seeds-by-id.json 內將對應親本組合列上的 alternate.seedId 清除（改為 null）。
+ * 在 public/data/seeds-by-id.json 內將對應親代組合列上的 alternate.seedId 清除（改為 null）。
  *
- * 例如親本 32×40 的 alternate 為 39：在「結果種子」30 的 confirmedCrosses 中，
+ * 例如親代 32×40 的 alternate 為 39：在「結果種子」30 的 confirmedCrosses 中，
  * 找到 parent (32,40) 且 alternate.seedId===39 的列，改為 alternate: { seedId: null }。
  *
  * Run:
@@ -30,7 +30,7 @@ function parseReport(text) {
   const targets = []
   /** @type {{ a: number, b: number } | null} */
   let section = null
-  const headerRe = /^【\d+\s*種結果】親本\s+(\d+)（[^）]*）\s*×\s*(\d+)（/
+  const headerRe = /^【\d+\s*種結果】親代\s+(\d+)（[^）]*）\s*×\s*(\d+)（/
 
   for (const line of text.split(/\r?\n/)) {
     const hm = line.match(headerRe)
@@ -72,7 +72,7 @@ function applyStrip(seedsById, targets, dryRun) {
 
         hits++
         log.push(
-          `親本 ${t.parentA}×${t.parentB}，清除 alternate ${t.alternateSeedId}（列於結果種子 ${seed.seedId} 之 confirmedCrosses）`,
+          `親代 ${t.parentA}×${t.parentB}，清除 alternate ${t.alternateSeedId}（列於結果種子 ${seed.seedId} 之 confirmedCrosses）`,
         )
         if (!dryRun) {
           row.alternate = { seedId: null }
@@ -82,11 +82,11 @@ function applyStrip(seedsById, targets, dryRun) {
     }
     if (hits === 0) {
       log.push(
-        `⚠ 未找到：親本 ${t.parentA}×${t.parentB}，alternate ${t.alternateSeedId}`,
+        `⚠ 未找到：親代 ${t.parentA}×${t.parentB}，alternate ${t.alternateSeedId}`,
       )
     } else if (hits > 1) {
       log.push(
-        `⚠ 同一條件命中 ${hits} 列（已全部清除）：親本 ${t.parentA}×${t.parentB}，alternate ${t.alternateSeedId}`,
+        `⚠ 同一條件命中 ${hits} 列（已全部清除）：親代 ${t.parentA}×${t.parentB}，alternate ${t.alternateSeedId}`,
       )
     }
   }

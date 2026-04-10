@@ -29,6 +29,7 @@ const FIELDS_DETAIL_PATH_KEY = 'ffxivgh.fieldsDetailPath.v1'
 /** 目前種子詳情頁所屬分頁（網址統一為 /seed/:id，由此判斷脈絡） */
 const SEED_DETAIL_ACTIVE_SECTION_KEY = 'ffxivgh.seedDetailActiveSection.v1'
 const CROSS_CALC_KEY = 'ffxivgh.crossCalc.v1'
+const TUTORIAL_LAST_TOPIC_KEY = 'ffxivgh.tutorialLastTopic.v1'
 
 export type SeedDetailSection = 'list' | 'cross' | 'fields'
 
@@ -309,6 +310,30 @@ export function setSeedDetailActiveSection(section: SeedDetailSection): void {
   }
 }
 
+/** 入門教學最後停留的分頁 */
+export function getTutorialLastTopic(): string | null {
+  if (typeof sessionStorage === 'undefined') return null
+  return sessionStorage.getItem(TUTORIAL_LAST_TOPIC_KEY)
+}
+
+export function clearTutorialLastTopic(): void {
+  if (typeof sessionStorage === 'undefined') return
+  try {
+    sessionStorage.removeItem(TUTORIAL_LAST_TOPIC_KEY)
+  } catch {
+    /* 配額等 */
+  }
+}
+
+export function setTutorialLastTopic(topic: string): void {
+  if (typeof sessionStorage === 'undefined') return
+  try {
+    sessionStorage.setItem(TUTORIAL_LAST_TOPIC_KEY, topic)
+  } catch {
+    /* 配額等 */
+  }
+}
+
 /** 詳情內連往另一顆種子（網址統一） */
 export function seedDetailHref(_section: SeedDetailSection, seedId: number): string {
   return `/seed/${seedId}`
@@ -343,19 +368,16 @@ export function isListSectionSeedDetailPath(path: string): boolean {
 export function seedListTabTarget(currentPath: string): string {
   const x = getSeedListLastDetailFromList()
   if (x == null) return '/seeds'
-  if (isCrossSectionPath(currentPath) || isFieldsSectionPath(currentPath)) {
-    return `/seed/${x}`
-  }
+  // 已在列表區（/seeds 或列表脈絡的種子詳情）→ 回 /seeds
+  if (currentPath === '/seeds') return '/seeds'
   if (
     isListSectionSeedDetailPath(currentPath) &&
-    getSeedDetailActiveSection() !== 'list'
+    getSeedDetailActiveSection() === 'list'
   ) {
-    return `/seed/${x}`
+    return '/seeds'
   }
-  if (currentPath === '/' || currentPath === '') {
-    return `/seed/${x}`
-  }
-  return '/seeds'
+  // 不在列表區 → 回上次的種子詳情
+  return `/seed/${x}`
 }
 
 /** 頂部「雜交計算器」：離開雜交區時若有雜交詳情紀錄則導向 /seed/:id（脈絡由 session 標記為 cross）。若在種子詳情（雜交脈絡）且編號串有值，點擊改為回 /cross 主畫面（由 App 頂欄 onClick 清除編號串）；首頁等非詳情路徑仍導向 /seed/:id。 */

@@ -99,7 +99,7 @@ function ParentPicker({
   onQueryChange: (q: string) => void
   onSelect: (s: SeedSummary) => void
   favoriteIds: ReadonlySet<number>
-  /** 非 null 時僅顯示此集合內的種子（與另一親本可雜交者）。 */
+  /** 非 null 時僅顯示此集合內的種子（與另一親代可雜交者）。 */
   restrictToSeedIds?: ReadonlySet<number> | null
   /** 從選項與 blur 解析中排除（避免與另一欄選到同一顆）。 */
   excludeSeedId?: number | null
@@ -846,8 +846,8 @@ export function CrossCalculatorPage() {
 
   const statusLine = useMemo(() => {
     if (parentAId == null || parentBId == null)
-      return '請選擇兩個親本以查詢可能結果。'
-    if (parentAId === parentBId) return '請選擇兩個不同的親本。'
+      return '請選擇兩個親代以查詢可能結果。'
+    if (parentAId === parentBId) return '請選擇兩個不同的親代。'
     return `共 ${outcomes.length} 種可能結果`
   }, [parentAId, parentBId, outcomes.length])
 
@@ -928,10 +928,10 @@ export function CrossCalculatorPage() {
 
   const searchParentsStatusLine = useMemo(() => {
     if (spKnownId == null || spResultId == null)
-      return '請選擇已有的親本與雜交結果。'
+      return '請選擇已有的親代與雜交結果。'
     if (spKnownId === spResultId)
-      return '已有的親本與雜交結果須為不同種子。'
-    return `共 ${otherParents.length} 種可能的另一種親本`
+      return '已有的親代與雜交結果須為不同種子。'
+    return `共 ${otherParents.length} 種可能的另一種親代`
   }, [spKnownId, spResultId, otherParents.length])
 
   return (
@@ -981,7 +981,7 @@ export function CrossCalculatorPage() {
               className={`cross-calc-mode-btn${mode === 'searchParents' ? ' cross-calc-mode-btn--active' : ''}`}
               onClick={() => setMode('searchParents')}
             >
-              搜尋親本
+              搜尋親代
             </button>
           </div>
 
@@ -993,7 +993,7 @@ export function CrossCalculatorPage() {
             >
               <div className="cross-calc-parents">
                 <ParentPicker
-                  label="親本 A"
+                  label="親代 A"
                   inputId="cross-parent-a"
                   listId="cross-suggest-a"
                   seeds={seeds}
@@ -1019,7 +1019,7 @@ export function CrossCalculatorPage() {
                   }}
                 />
                 <ParentPicker
-                  label="親本 B"
+                  label="親代 B"
                   inputId="cross-parent-b"
                   listId="cross-suggest-b"
                   seeds={seeds}
@@ -1179,7 +1179,7 @@ export function CrossCalculatorPage() {
             >
               <div className="cross-calc-parents">
                 <ParentPicker
-                  label="已有的親本"
+                  label="已有的親代"
                   inputId="cross-sp-known"
                   listId="cross-sp-suggest-known"
                   seeds={seeds}
@@ -1249,7 +1249,7 @@ export function CrossCalculatorPage() {
                       <thead>
                         <tr>
                           <th scope="col">
-                            {otherParentSortTh('other', '另一種親本')}
+                            {otherParentSortTh('other', '另一種親代')}
                           </th>
                           <th scope="col">
                             {otherParentSortTh('growDays', '收成天數')}

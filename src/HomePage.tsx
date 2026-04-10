@@ -112,7 +112,7 @@ export function HomePage() {
               <Link to="/cross" className="seed-name-link">
                 雜交計算器
               </Link>
-              ：輸入兩個親本推算雜交結果，或由其中一個親本跟目標種子反查可能的另一親本。
+              ：輸入兩個親代推算雜交結果，或由其中一個親代跟目標種子反查可能的另一親代。
             </li>
             <li>
               <Link to="/fields" className="seed-name-link">

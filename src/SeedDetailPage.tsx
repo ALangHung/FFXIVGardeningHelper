@@ -532,7 +532,7 @@ function rowMatchesQuery(
   return hays.some((hay) => hay.includes(n))
 }
 
-/** 有搜尋條件時：符合關鍵字的親本固定顯示在親本 A，另一親本在親本 B。 */
+/** 有搜尋條件時：符合關鍵字的親代固定顯示在親代 A，另一親代在親代 B。 */
 function orientParentsForSearchQuery(
   row: ConfirmedCross,
   q: string,
@@ -568,7 +568,7 @@ function parentSeedInFavorites(
   return seedId != null && favoriteIds.has(seedId)
 }
 
-/** 無搜尋時：若僅親本 B 為最愛，對調使最愛顯示於親本 A（僅 A 或兩者皆最愛則維持原序）。 */
+/** 無搜尋時：若僅親代 B 為最愛，對調使最愛顯示於親代 A（僅 A 或兩者皆最愛則維持原序）。 */
 function orientParentsForFavorites(
   row: ConfirmedCross,
   favoriteIds: ReadonlySet<number>,
@@ -629,7 +629,7 @@ function compareNullableNumber(
   return dir * (av - bv)
 }
 
-/** 列中親本 A／B 或「其他可能獲取的種子」任一為最愛則為 true（與畫面上顯示的親本方向一致） */
+/** 列中親代 A／B 或「其他可能獲取的種子」任一為最愛則為 true（與畫面上顯示的親代方向一致） */
 function preparedCrossRowInvolvesFavorite(
   item: PreparedCrossRow,
   favoriteIds: ReadonlySet<number>,
@@ -1013,12 +1013,12 @@ function ConfirmedCrossesTable({
     <>
       <div className="seed-detail-cross-toolbar">
         <label className="seed-detail-cross-field">
-          <span className="seed-detail-cross-label">親本</span>
+          <span className="seed-detail-cross-label">親代</span>
           <div className="seed-detail-cross-input-wrap">
             <input
               type="search"
               className={`seed-detail-cross-input${query ? ' seed-detail-cross-input--with-clear' : ''}`}
-              placeholder="親本 A 或親本 B"
+              placeholder="親代 A 或親代 B"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               autoComplete="off"
@@ -1069,11 +1069,11 @@ function ConfirmedCrossesTable({
         <table className="seed-detail-table">
           <thead>
             <tr>
-              <th>{sortLabel('parentA', '親本 A')}</th>
+              <th>{sortLabel('parentA', '親代 A')}</th>
               <th>{sortLabel('aGrowDays', '收成天數')}</th>
               {showSeedPrice ? <th>{sortLabel('aSeedPrice', '種子最低價')}</th> : null}
               {showCropPrice ? <th>{sortLabel('aCropPrice', '作物最低價')}</th> : null}
-              <th>{sortLabel('parentB', '親本 B')}</th>
+              <th>{sortLabel('parentB', '親代 B')}</th>
               <th>{sortLabel('bGrowDays', '收成天數')}</th>
               {showSeedPrice ? <th>{sortLabel('bSeedPrice', '種子最低價')}</th> : null}
               {showCropPrice ? <th>{sortLabel('bCropPrice', '作物最低價')}</th> : null}

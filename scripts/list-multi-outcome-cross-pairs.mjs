@@ -1,6 +1,6 @@
 /**
  * 以與 src/crossOutcomes.ts 之 findIntercrossOutcomes 相同邏輯，
- * 枚舉全部種子兩兩雜交，列出「可能結果種類數 > 2」的親本組合。
+ * 枚舉全部種子兩兩雜交，列出「可能結果種類數 > 2」的親代組合。
  *
  * Run: node scripts/list-multi-outcome-cross-pairs.mjs
  * 報告：reports/multi-outcome-cross-pairs.txt
@@ -157,7 +157,7 @@ async function main() {
 
   const lines = []
   lines.push(
-    `雜交可能結果超過 2 種的親本組合（與 findIntercrossOutcomes 去重邏輯相同）`,
+    `雜交可能結果超過 2 種的親代組合（與 findIntercrossOutcomes 去重邏輯相同）`,
     `種子數：${ids.length}，組合數：${(ids.length * (ids.length - 1)) / 2}，符合筆數：${hits.length}`,
     '',
   )
@@ -166,7 +166,7 @@ async function main() {
     const pa = seedZhName(bySeedId, h.parentA)
     const pb = seedZhName(bySeedId, h.parentB)
     lines.push(
-      `【${h.count} 種結果】親本 ${h.parentA}（${pa}）× ${h.parentB}（${pb}）`,
+      `【${h.count} 種結果】親代 ${h.parentA}（${pa}）× ${h.parentB}（${pb}）`,
     )
     for (const o of h.outcomes) {
       lines.push(`  · ${o.id}\t${o.label}\t[${o.kind}]`)

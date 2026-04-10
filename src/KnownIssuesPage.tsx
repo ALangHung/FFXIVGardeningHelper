@@ -31,7 +31,7 @@ function parseMultiOutcomeReport(text: string): ParsedMultiOutcomeReport {
   const lines = text.split(/\r?\n/)
 
   const headerRe =
-    /^【(\d+)\s*種結果】親本\s+(\d+)（([^）]*)）\s*×\s*(\d+)（([^）]*)）/
+    /^【(\d+)\s*種結果】親代\s+(\d+)（([^）]*)）\s*×\s*(\d+)（([^）]*)）/
   const bulletRe = /^\s*·\s*(\d+)\t(.+)\t\[(primary|alternate)\]\s*$/
 
   const pairs: ReportPairBlock[] = []

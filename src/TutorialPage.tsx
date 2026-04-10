@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { publicUrl } from './publicUrl'
+import { getTutorialLastTopic, setTutorialLastTopic } from './sessionUiState'
 import './TutorialPage.css'
 
 const TUTORIAL_TOPICS = [
@@ -137,7 +138,7 @@ function TutorialBasicsContent({ selectTopic }: TutorialBasicsProps) {
           雜交
         </h3>
         <p>兩種不同作物種在同一塊田的相鄰兩格時，有機會雜交獲得種子。</p>
-        <p>親代A + 親代B = 子代</p>
+        <p><span className="tutorial-text-warn">親代A + 親代B = 子代</span></p>
         <p>
           子代最多有兩種可能，有些組合會歪出不想要的種子。
         </p>
@@ -232,10 +233,10 @@ function TutorialBasicCrossContent() {
 
       <section className="tutorial-section">
         <p>
-          基本雜交為 4 個親代A搭配 4 個親代B的作法，以下親代A為
-          <Link to="/seed/41" className="seed-name-link tutorial-text-blue">庫爾札斯茶樹種子</Link>
-          搭配親代B為
+          基本雜交為 4 個親代A搭配 4 個親代B的作法，以下親代A
           <Link to="/seed/20" className="seed-name-link tutorial-text-yellow">虛無界風茄種子</Link>
+          搭配親代B
+          <Link to="/seed/41" className="seed-name-link tutorial-text-blue">庫爾札斯茶樹種子</Link>
           ，種出子代
           <Link to="/seed/22" className="seed-name-link">扁桃種子</Link>
           作為解釋。
@@ -319,33 +320,161 @@ function TutorialBasicCrossContent() {
   )
 }
 
+function Tutorial35CrossContent() {
+  return (
+    <div className="tutorial-prose">
+      <p>
+        <span className="tutorial-text-warn">種子種下的時候判斷雜交出什麼種子</span>
+      </p>
+      <p>
+        <span className="tutorial-text-warn">優先級為右 → 下 → 上 → 左</span>
+      </p>
+
+      <section className="tutorial-section">
+        <p>
+          基本雜交為 3 個親代A搭配 5 個親代B的作法，以下親代A
+          <Link to="/seed/20" className="seed-name-link tutorial-text-yellow">虛無界風茄種子</Link>
+          搭配親代B
+          <Link to="/seed/41" className="seed-name-link tutorial-text-blue">庫爾札斯茶樹種子</Link>
+          ，種出子代
+          <Link to="/seed/22" className="seed-name-link">扁桃種子</Link>
+          作為解釋。
+        </p>
+
+        <div className="tutorial-step-row">
+          <figure className="tutorial-figure">
+            <img
+              src={publicUrl('images/tutorial/3-5-cross_1.jpg')}
+              alt="3+5雜交步驟 1"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+          <p>地壟1跟6使用園藝土壤種<span className="tutorial-text-blue">庫爾札斯茶樹種子</span>。</p>
+        </div>
+
+        <div className="tutorial-step-row">
+          <figure className="tutorial-figure">
+            <img
+              src={publicUrl('images/tutorial/3-5-cross_2.jpg')}
+              alt="3+5雜交步驟 2"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+          <p>
+            地壟2、5、7使用 3 級納薩蘭土壤種<span className="tutorial-text-yellow">無界風茄種子</span>，這時候會發現地壟2、5、7的<span className="tutorial-text-yellow">無界風茄</span>跟地壟1、6的<span className="tutorial-text-blue">庫爾札斯茶樹</span>雜交，有機會雜交出扁桃種子。
+          </p>
+        </div>
+
+        <div className="tutorial-step-row">
+          <figure className="tutorial-figure">
+            <img
+              src={publicUrl('images/tutorial/3-5-cross_3.jpg')}
+              alt="3+5雜交步驟 3"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+          <p>把地壟1、6挖掉（處理）。</p>
+        </div>
+
+        <div className="tutorial-step-row">
+          <figure className="tutorial-figure">
+            <img
+              src={publicUrl('images/tutorial/3-5-cross_4.jpg')}
+              alt="3+5雜交步驟 4"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+          <p>
+            地壟1、3使用 3 級納薩蘭土壤種<span className="tutorial-text-blue">庫爾札斯茶樹種子</span>。地壟1、3跟地壟2雜交。
+          </p>
+        </div>
+
+        <div className="tutorial-step-row">
+          <figure className="tutorial-figure">
+            <img
+              src={publicUrl('images/tutorial/3-5-cross_5.jpg')}
+              alt="3+5雜交步驟 5"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+          <p>
+            地壟4、6、8使用 3 級納薩蘭土壤種<span className="tutorial-text-blue">庫爾札斯茶樹種子</span>。地壟4、6跟地壟5雜交，地壟8跟地壟7雜交。
+          </p>
+        </div>
+
+        <p>這樣你就得到一塊 3+5 雜交園圃了～（灑花</p>
+      </section>
+
+      <section className="tutorial-section">
+        <p>
+          收成親代A<span className="tutorial-text-yellow">虛無界風茄</span>時，只要把地壟2、5、7收成重種就可以。
+        </p>
+        <p>
+          收成親代B<span className="tutorial-text-blue">庫爾札斯茶樹</span>時，先把地壟1、3、4、6、8收成，接著先種地壟1、3、6，再種地壟4、8。一定要先種地壟1、3，再種地壟4、8，不然可能會跟預期雜交結果不同。
+        </p>
+      </section>
+    </div>
+  )
+}
+
 export function TutorialPage() {
+  const location = useLocation()
+
   const [activeTopic, setActiveTopic] = useState<TopicId>(() => {
     if (typeof window === 'undefined') return 'basics'
-    return topicFromHash(window.location.hash) ?? 'basics'
+    const fromHash = topicFromHash(window.location.hash)
+    if (fromHash) return fromHash
+    const saved = getTutorialLastTopic()
+    if (saved) {
+      const parsed = topicFromHash(`#${saved}`)
+      if (parsed) {
+        const path = `${window.location.pathname}${window.location.search}#${parsed}`
+        window.history.replaceState(null, '', path)
+        return parsed
+      }
+    }
+    return 'basics'
   })
 
   const selectTopic = useCallback((id: TopicId) => {
     setActiveTopic(id)
+    setTutorialLastTopic(id)
     const path = `${window.location.pathname}${window.location.search}#${id}`
     window.history.replaceState(null, '', path)
   }, [])
 
   useEffect(() => {
-    const onHashChange = () => {
-      const next = topicFromHash(window.location.hash)
-      if (next) setActiveTopic(next)
+    const hash = location.hash
+    if (!hash) {
+      const saved = getTutorialLastTopic()
+      const parsed = saved ? topicFromHash(`#${saved}`) : null
+      if (parsed) {
+        setActiveTopic(parsed)
+        const path = `${window.location.pathname}${window.location.search}#${parsed}`
+        window.history.replaceState(null, '', path)
+      } else {
+        setActiveTopic('basics')
+      }
+    } else {
+      const next = topicFromHash(hash)
+      if (next) {
+        setActiveTopic(next)
+        setTutorialLastTopic(next)
+      }
     }
-    window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
-  }, [])
+  }, [location])
 
   return (
     <div className="tutorial-page">
       <header className="tutorial-header">
         <h1 className="tutorial-title">入門教學</h1>
         <p className="tutorial-lead">
-          以下分主題說明園藝與雜交概念；基礎教學已撰寫，其餘主題內文將陸續補上。
+          以下分主題說明園藝與雜交概念。
         </p>
       </header>
 
@@ -388,7 +517,7 @@ export function TutorialPage() {
           ) : activeTopic === 'basic-cross' ? (
             <TutorialBasicCrossContent />
           ) : (
-            <p className="tutorial-placeholder">內文後續補上</p>
+            <Tutorial35CrossContent />
           )}
         </div>
       </section>
