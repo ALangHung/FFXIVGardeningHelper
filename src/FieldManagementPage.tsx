@@ -347,11 +347,11 @@ export function FieldManagementPage() {
     })
   }, [])
 
-  /** 雜交目標種子：期望雜交結果的搜尋文字 */
+  /** 雜交目標子代：期望的子代種子的搜尋文字 */
   const [pickerCrossTargetQuery, setPickerCrossTargetQuery] = useState('')
   const pickerCrossTargetQueryRef = useRef('')
   pickerCrossTargetQueryRef.current = pickerCrossTargetQuery
-  /** 雜交目標種子 ID（已選定） */
+  /** 雜交目標子代 ID（已選定） */
   const [pickerCrossTargetId, setPickerCrossTargetId] = useState<number | null>(null)
   /** 雜交目標建議清單是否開啟 */
   const [pickerCrossTargetOpen, setPickerCrossTargetOpen] = useState(false)
@@ -1017,7 +1017,7 @@ export function FieldManagementPage() {
     return field?.plotNumber === 'pot'
   }, [pickerTarget, fields])
 
-  /** 雜交目標種子建議清單（只在篩選開啟且下拉展開時計算） */
+  /** 雜交目標子代建議清單（只在篩選開啟且下拉展開時計算） */
   const pickerCrossTargetSuggestions = useMemo(() => {
     if (!pickerCrossFilter || !pickerCrossTargetOpen) return []
     return filterSeeds(
@@ -1066,7 +1066,7 @@ export function FieldManagementPage() {
       })
     }
 
-    // 無鄰格作物 + 有期望雜交結果：列出該結果的所有親代
+    // 無鄰格作物 + 雜交目標子代：列出該結果的所有親代
     if (pickerCrossTargetId != null) {
       const parentIds = getParentSeedIdsOnResultConfirmedCrosses(
         seedsById,
@@ -1075,7 +1075,7 @@ export function FieldManagementPage() {
       return base.filter((s) => parentIds.has(s.seedId))
     }
 
-    // 無鄰格作物 + 無期望結果：列出可用於雜交的種子（曾作為親代）
+    // 無鄰格作物 + 無雜交目標：列出可用於雜交的親代
     const crossableIds = new Set<number>()
     for (const seed of Object.values(seedsById)) {
       for (const c of seed.confirmedCrosses ?? []) {
@@ -2264,10 +2264,10 @@ export function FieldManagementPage() {
                       ref={pickerCrossTargetInputRef}
                       type="search"
                       className="field-picker-target-input"
-                      placeholder="期望雜交結果…"
+                      placeholder="雜交目標子代"
                       autoComplete="off"
                       role="combobox"
-                      aria-label="期望雜交結果種子"
+                      aria-label="期望雜交出的子代"
                       aria-expanded={
                         pickerCrossTargetOpen &&
                         pickerCrossTargetSuggestions.length > 0
@@ -2359,7 +2359,7 @@ export function FieldManagementPage() {
                       <button
                         type="button"
                         className="field-picker-target-clear"
-                        aria-label="清除目標種子"
+                        aria-label="清除雜交目標子代"
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => {
                           setPickerCrossTargetId(null)
@@ -2379,7 +2379,7 @@ export function FieldManagementPage() {
                       id={pickerCrossTargetListId}
                       className="field-picker-target-suggestions"
                       role="listbox"
-                      aria-label="期望雜交結果建議"
+                      aria-label="期望子代建議"
                     >
                       {pickerCrossTargetSuggestions.map((s, idx) => (
                         <li key={s.seedId} role="none">
