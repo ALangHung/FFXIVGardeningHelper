@@ -45,9 +45,10 @@
 
 .app-top-nav-tabs {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 0.4rem;
+  flex-shrink: 0;
 }
 
 .app-top-nav-tab {
