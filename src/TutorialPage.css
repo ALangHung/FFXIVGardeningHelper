@@ -207,6 +207,15 @@
 @media (max-width: 640px) {
   .tutorial-step-row {
     flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .tutorial-step-row .tutorial-figure {
+    margin-bottom: 0;
+  }
+
+  .tutorial-step-row + .tutorial-step-row {
+    margin-top: 1rem;
   }
 }
 
