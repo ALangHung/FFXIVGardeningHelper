@@ -1,8 +1,8 @@
 :root {
   color-scheme: dark;
   --app-bg: #120c1d;
-  /* 與田地管理 `.field-page` 同寬 */
-  --app-page-max-width: min(100%, 76rem);
+  /* 與田地管理 `.field-page` 同寬（4 欄 × --field-block-width + gap + padding） */
+  --app-page-max-width: min(100%, 100.64rem);
   --scrollbar-track: rgba(15, 23, 42, 0.9);
   --scrollbar-thumb: #7c3aed;
   --scrollbar-thumb-hover: #8b5cf6;

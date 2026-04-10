@@ -707,6 +707,15 @@ function parseGardenField(raw: unknown, index: number): GardenField | null {
     if (age < 0 || age >= FERTILIZE_UNDO_WINDOW_MS) fertilizeUndo = null
   }
 
+  let potSlotLocations: Record<string, string> | undefined
+  if (o.potSlotLocations != null && typeof o.potSlotLocations === 'object' && !Array.isArray(o.potSlotLocations)) {
+    const parsed: Record<string, string> = {}
+    for (const [k, v] of Object.entries(o.potSlotLocations as Record<string, unknown>)) {
+      if (typeof v === 'string') parsed[k] = v
+    }
+    if (Object.keys(parsed).length > 0) potSlotLocations = parsed
+  }
+
   return {
     id,
     locationLabel,
@@ -715,6 +724,7 @@ function parseGardenField(raw: unknown, index: number): GardenField | null {
     slots: fullSlots,
     lastFertilizeTime,
     fertilizeUndo,
+    potSlotLocations,
   }
 }
 

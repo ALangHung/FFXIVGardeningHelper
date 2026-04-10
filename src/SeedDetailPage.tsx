@@ -25,6 +25,7 @@ import './SeedDetailPage.css'
 import { publicUrl } from './publicUrl'
 import { SearchClearButton } from './SearchClearButton'
 import { hasMarketAccess } from './marketAccess'
+import { useUniversalisDc } from './useUniversalisDc'
 import { PriceSpinner } from './PriceSpinner'
 import {
   getSeedDetailActiveSection,
@@ -316,12 +317,10 @@ function SeedDetailHelpHint({ text }: { text: string }) {
 }
 
 function SeedDetailHeroPrice({
-  label,
   kind,
   loading,
   data,
 }: {
-  label: string
   kind: 'crop' | 'seed'
   loading: boolean
   data: {
@@ -334,7 +333,6 @@ function SeedDetailHeroPrice({
   if (loading) {
     return (
       <span className="seed-detail-hero-price">
-        <span className="seed-detail-hero-price-label">{label}</span>
         <PriceSpinner />
       </span>
     )
@@ -342,7 +340,6 @@ function SeedDetailHeroPrice({
   if (data == null) {
     return (
       <span className="seed-detail-hero-price">
-        <span className="seed-detail-hero-price-label">{label}</span>
         <span className="seed-detail-hero-price-value">—</span>
       </span>
     )
@@ -351,7 +348,6 @@ function SeedDetailHeroPrice({
     if (data.cropItemId == null) {
       return (
         <span className="seed-detail-hero-price">
-          <span className="seed-detail-hero-price-label">{label}</span>
           <span className="seed-detail-hero-price-value seed-detail-hero-price-value--muted">
             不支援盆栽作物
           </span>
@@ -361,7 +357,6 @@ function SeedDetailHeroPrice({
     const text = formatMarketPrice(data.cropMinPrice)
     return (
       <span className="seed-detail-hero-price">
-        <span className="seed-detail-hero-price-label">{label}</span>
         <a
           href={marketItemUrl(data.cropItemId)}
           target="_blank"
@@ -389,7 +384,6 @@ function SeedDetailHeroPrice({
     )
   return (
     <span className="seed-detail-hero-price">
-      <span className="seed-detail-hero-price-label">{label}</span>
       {inner}
     </span>
   )
@@ -804,6 +798,7 @@ function ConfirmedCrossesTable({
   section: SeedDetailSection
 }) {
   const favoriteIds = useSeedFavoriteIds()
+  const [dcName] = useUniversalisDc()
   const [query, setQuery] = useState('')
   const [nameSearchById, setNameSearchById] = useState<Record<string, string>>(
     {},
@@ -818,7 +813,8 @@ function ConfirmedCrossesTable({
   const [priceBySeedId, setPriceBySeedId] = useState<Record<number, CrossSeedPrice>>(
     {},
   )
-  const [priceLoading, setPriceLoading] = useState(false)
+  const [cropPriceLoading, setCropPriceLoading] = useState(false)
+  const [seedPriceLoading, setSeedPriceLoading] = useState(false)
 
   useEffect(() => {
     setQuery('')
@@ -856,20 +852,52 @@ function ConfirmedCrossesTable({
   }, [crosses])
 
   useEffect(() => {
-    if (!marketEnabled) {
-      setPriceLoading(false)
-      return
-    }
-    if (!showCropPrice && !showSeedPrice) {
-      setPriceLoading(false)
-      return
-    }
-    if (crossSeedIds.length === 0) {
-      setPriceLoading(false)
-      return
-    }
+    if (!marketEnabled || !showCropPrice) return
+    if (crossSeedIds.length === 0) return
     let cancelled = false
-    setPriceLoading(true)
+    setCropPriceLoading(true)
+    ;(async () => {
+      try {
+        const i18n = await loadSeedsI18n()
+        const bySeed = i18n.bySeedId ?? {}
+        const itemIds: number[] = []
+        for (const sid of crossSeedIds) {
+          const e = bySeed[String(sid)] as SeedI18nEntry | undefined
+          if (e?.cropItemId != null) itemIds.push(e.cropItemId)
+        }
+        const minPrices = await loadUniversalisMinPricesByItemId([...new Set(itemIds)], dcName)
+        if (cancelled) return
+        setPriceBySeedId((prev) => {
+          const next = { ...prev }
+          for (const sid of crossSeedIds) {
+            const e = bySeed[String(sid)] as SeedI18nEntry | undefined
+            const cropItemId = e?.cropItemId ?? null
+            next[sid] = {
+              ...next[sid],
+              seedItemId: e?.seedItemId ?? null,
+              seedMinPrice: next[sid]?.seedMinPrice ?? null,
+              cropItemId,
+              cropMinPrice: cropItemId == null ? null : minPrices[cropItemId] ?? null,
+            }
+          }
+          return next
+        })
+      } catch {
+        // 作物價格失敗不阻斷
+      } finally {
+        if (!cancelled) setCropPriceLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [crossSeedIds, showCropPrice, marketEnabled, dcName])
+
+  useEffect(() => {
+    if (!marketEnabled || !showSeedPrice) return
+    if (crossSeedIds.length === 0) return
+    let cancelled = false
+    setSeedPriceLoading(true)
     ;(async () => {
       try {
         const i18n = await loadSeedsI18n()
@@ -878,35 +906,34 @@ function ConfirmedCrossesTable({
         for (const sid of crossSeedIds) {
           const e = bySeed[String(sid)] as SeedI18nEntry | undefined
           if (e?.seedItemId != null) itemIds.push(e.seedItemId)
-          if (e?.cropItemId != null) itemIds.push(e.cropItemId)
         }
-        const uniqItemIds = [...new Set(itemIds)]
-        const minPrices = await loadUniversalisMinPricesByItemId(uniqItemIds)
+        const minPrices = await loadUniversalisMinPricesByItemId([...new Set(itemIds)], dcName)
         if (cancelled) return
-
-        const next: Record<number, CrossSeedPrice> = {}
-        for (const sid of crossSeedIds) {
-          const e = bySeed[String(sid)] as SeedI18nEntry | undefined
-          const seedItemId = e?.seedItemId ?? null
-          const cropItemId = e?.cropItemId ?? null
-          next[sid] = {
-            seedItemId,
-            seedMinPrice: seedItemId == null ? null : minPrices[seedItemId] ?? null,
-            cropMinPrice: cropItemId == null ? null : minPrices[cropItemId] ?? null,
-            cropItemId,
+        setPriceBySeedId((prev) => {
+          const next = { ...prev }
+          for (const sid of crossSeedIds) {
+            const e = bySeed[String(sid)] as SeedI18nEntry | undefined
+            const seedItemId = e?.seedItemId ?? null
+            next[sid] = {
+              ...next[sid],
+              seedItemId,
+              seedMinPrice: seedItemId == null ? null : minPrices[seedItemId] ?? null,
+              cropItemId: e?.cropItemId ?? null,
+              cropMinPrice: next[sid]?.cropMinPrice ?? null,
+            }
           }
-        }
-        setPriceBySeedId(next)
+          return next
+        })
       } catch {
-        if (!cancelled) setPriceBySeedId({})
+        // 種子價格失敗不阻斷
       } finally {
-        if (!cancelled) setPriceLoading(false)
+        if (!cancelled) setSeedPriceLoading(false)
       }
     })()
     return () => {
       cancelled = true
     }
-  }, [crossSeedIds, showCropPrice, showSeedPrice, marketEnabled])
+  }, [crossSeedIds, showSeedPrice, marketEnabled, dcName])
 
   useEffect(() => {
     if (!marketEnabled) {
@@ -975,7 +1002,7 @@ function ConfirmedCrossesTable({
 
   function seedPriceContent(seedId: number | null) {
     if (seedId == null) return '—'
-    if (priceLoading) return <PriceSpinner />
+    if (seedPriceLoading) return <PriceSpinner />
     const price = priceBySeedId[seedId]
     if (!price) return '—'
     if (price.seedItemId == null) return formatMarketPrice(price.seedMinPrice)
@@ -993,7 +1020,7 @@ function ConfirmedCrossesTable({
 
   function cropPriceContent(seedId: number | null) {
     if (seedId == null) return '—'
-    if (priceLoading) return <PriceSpinner />
+    if (cropPriceLoading) return <PriceSpinner />
     const price = priceBySeedId[seedId]
     if (!price) return '—'
     if (price.cropItemId == null) return '不支援盆栽作物'
@@ -1046,17 +1073,17 @@ function ConfirmedCrossesTable({
           <div className="seed-detail-cross-toggle-group">
             <button
               type="button"
-              className={`seed-detail-cross-toggle-btn${showCropPrice ? ' is-on' : ''}`}
-              onClick={() => setShowCropPrice((v) => !v)}
-            >
-              顯示作物價格
-            </button>
-            <button
-              type="button"
               className={`seed-detail-cross-toggle-btn${showSeedPrice ? ' is-on' : ''}`}
               onClick={() => setShowSeedPrice((v) => !v)}
             >
               顯示種子價格
+            </button>
+            <button
+              type="button"
+              className={`seed-detail-cross-toggle-btn${showCropPrice ? ' is-on' : ''}`}
+              onClick={() => setShowCropPrice((v) => !v)}
+            >
+              顯示作物價格
             </button>
           </div>
         ) : null}
@@ -1216,6 +1243,7 @@ export function SeedDetailPage() {
   const [seed, setSeed] = useState<SeedRecord | null | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
   const [marketEnabled, setMarketEnabled] = useState(false)
+  const [dcName] = useUniversalisDc()
   const [heroMarket, setHeroMarket] = useState<{
     seedItemId: number | null
     cropItemId: number | null
@@ -1274,7 +1302,7 @@ export function SeedDetailPage() {
           })
           return
         }
-        const minPrices = await loadUniversalisMinPricesByItemId(ids)
+        const minPrices = await loadUniversalisMinPricesByItemId(ids, dcName)
         if (cancelled) return
         setHeroMarket({
           seedItemId,
@@ -1293,7 +1321,7 @@ export function SeedDetailPage() {
     return () => {
       cancelled = true
     }
-  }, [marketEnabled, seed])
+  }, [marketEnabled, seed, dcName])
 
   useEffect(() => {
     let cancelled = false
@@ -1360,7 +1388,6 @@ export function SeedDetailPage() {
     <div className="seed-detail-page">
       <nav className="seed-detail-nav">
         <SeedDetailBackNav seedId={s.seedId} section={section} />
-        <SeedDetailFavoriteButton seedId={s.seedId} />
       </nav>
 
       <header className="seed-detail-hero">
@@ -1384,15 +1411,13 @@ export function SeedDetailPage() {
               }
             />
             {marketEnabled ? (
-              <div className="seed-detail-hero-price-row">
-                <SeedDetailHeroPrice
-                  label="作物最低價"
-                  kind="crop"
-                  loading={heroMarketLoading}
-                  data={heroMarket}
-                />
-              </div>
+              <SeedDetailHeroPrice
+                kind="crop"
+                loading={heroMarketLoading}
+                data={heroMarket}
+              />
             ) : null}
+            <SeedDetailFavoriteButton seedId={s.seedId} />
           </div>
           {showSeedSubline ? (
             <div className="seed-detail-seed-subrow">
@@ -1412,7 +1437,6 @@ export function SeedDetailPage() {
               />
               {marketEnabled ? (
                 <SeedDetailHeroPrice
-                  label="種子最低價"
                   kind="seed"
                   loading={heroMarketLoading}
                   data={heroMarket}
@@ -1422,7 +1446,6 @@ export function SeedDetailPage() {
           ) : marketEnabled ? (
             <div className="seed-detail-seed-subrow seed-detail-seed-subrow--hero-seed-price-only">
               <SeedDetailHeroPrice
-                label="種子最低價"
                 kind="seed"
                 loading={heroMarketLoading}
                 data={heroMarket}

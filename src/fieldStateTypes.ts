@@ -69,6 +69,8 @@ export type FieldFertilizeEntry = {
 /** 施肥後可取消的時間窗（毫秒） */
 export const FERTILIZE_UNDO_WINDOW_MS = 60 * 1000
 
+export type PotSlotLocations = Record<string, string>
+
 export type GardenField = {
   id: string
   /** 位置名稱，最多 5 字；空白時標題顯示「未命名」 */
@@ -82,11 +84,14 @@ export type GardenField = {
   lastFertilizeTime: number | null
   /** 僅保留一筆：最近一次施肥的可撤銷快照；取消後為 null；超過 FERTILIZE_UNDO_WINDOW_MS 亦不可撤銷 */
   fertilizeUndo: FieldFertilizeEntry | null
+  /** 盆栽各格位置標籤（key 為 slotId "0"–"3"） */
+  potSlotLocations?: PotSlotLocations
 }
 
 export type FieldPlotNumber = 1 | 2 | 3 | 'pot'
 
 export const FIELD_LOCATION_MAX_CHARS = 5
+export const POT_SLOT_LOCATION_MAX_CHARS = 10
 
 export function normalizeFieldLocation(raw: string): string {
   const t = raw.trim()

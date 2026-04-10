@@ -56,6 +56,7 @@ import {
   canUndoFertilize,
   FERTILIZE_UNDO_WINDOW_MS,
   FIELD_LOCATION_MAX_CHARS,
+  POT_SLOT_LOCATION_MAX_CHARS,
   formatFieldHeading,
   normalizeFieldLocation,
 } from './fieldStateTypes'
@@ -310,6 +311,12 @@ export function FieldManagementPage() {
   const [deleteConfirmFieldId, setDeleteConfirmFieldId] = useState<
     string | null
   >(null)
+
+  const [potSlotLocEdit, setPotSlotLocEdit] = useState<{
+    fieldId: string
+    slotId: FieldSlotId
+  } | null>(null)
+  const [potSlotLocDraft, setPotSlotLocDraft] = useState('')
 
   const [pickerTarget, setPickerTarget] = useState<{
     fieldId: string
@@ -1535,6 +1542,7 @@ export function FieldManagementPage() {
                             slot,
                             nowTick,
                           )
+                          const potSlotLoc = field.potSlotLocations?.[String(sid)] ?? ''
                           return (
                             <div key={`${field.id}-pot-${sid}`} className="field-cell">
                               <div className="field-cell-main">
@@ -1543,6 +1551,36 @@ export function FieldManagementPage() {
                                     <span className="field-cell-label-key">
                                       {idx + 1}
                                     </span>
+                                    {potSlotLoc ? (
+                                      <span className="field-pot-slot-loc">{potSlotLoc}</span>
+                                    ) : null}
+                                    {fieldLayoutEditMode ? (
+                                      <button
+                                        type="button"
+                                        draggable={false}
+                                        className="field-pot-slot-loc-edit-btn"
+                                        aria-label={`修改盆栽 ${idx + 1} 位置`}
+                                        title={`修改盆栽 ${idx + 1} 位置`}
+                                        onClick={() => {
+                                          setPotSlotLocDraft(potSlotLoc)
+                                          setPotSlotLocEdit({ fieldId: field.id, slotId: sid })
+                                        }}
+                                      >
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          aria-hidden
+                                        >
+                                          <path d="M12 20h9" />
+                                          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                        </svg>
+                                      </button>
+                                    ) : null}
                                   </span>
                                   {slot.seedId != null && !canHarvest ? (
                                     <button
@@ -1993,17 +2031,42 @@ export function FieldManagementPage() {
               <fieldset className="field-add-field-group">
                 <legend className="field-add-field-legend">田編號</legend>
                 <div className="field-add-field-options">
-                  {([1, 2, 3, 'pot'] as const).map((n) => (
-                    <label key={n} className="field-add-field-radio">
+                  {editingFieldId && draftPlotNumber === 'pot' ? (
+                    <label className="field-add-field-radio">
                       <input
                         type="radio"
                         name="field-plot"
-                        checked={draftPlotNumber === n}
-                        onChange={() => setDraftPlotNumber(n)}
+                        checked
+                        disabled
                       />
-                      {n === 'pot' ? '盆栽' : `${n} 號`}
+                      盆栽
                     </label>
-                  ))}
+                  ) : (
+                    <>
+                      {([1, 2, 3] as const).map((n) => (
+                        <label key={n} className="field-add-field-radio">
+                          <input
+                            type="radio"
+                            name="field-plot"
+                            checked={draftPlotNumber === n}
+                            onChange={() => setDraftPlotNumber(n)}
+                          />
+                          {n} 號
+                        </label>
+                      ))}
+                      {!editingFieldId && (
+                        <label className="field-add-field-radio">
+                          <input
+                            type="radio"
+                            name="field-plot"
+                            checked={draftPlotNumber === 'pot'}
+                            onChange={() => setDraftPlotNumber('pot')}
+                          />
+                          盆栽
+                        </label>
+                      )}
+                    </>
+                  )}
                 </div>
               </fieldset>
               <div className="field-add-field-actions">
@@ -2057,6 +2120,91 @@ export function FieldManagementPage() {
                   onClick={() => deleteField(deleteConfirmFieldId)}
                 >
                   刪除
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {potSlotLocEdit && !loadError ? (
+        <div
+          className="field-modal-backdrop field-modal-backdrop--confirm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="pot-slot-loc-title"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setPotSlotLocEdit(null)
+          }}
+        >
+          <div className="field-modal field-modal--confirm">
+            <div className="field-modal-head" id="pot-slot-loc-title">
+              修改盆栽位置
+            </div>
+            <div className="field-confirm-body">
+              <div className="field-add-field-input-wrap">
+                <input
+                  className="field-add-field-text"
+                  maxLength={POT_SLOT_LOCATION_MAX_CHARS}
+                  value={potSlotLocDraft}
+                  onChange={(e) => setPotSlotLocDraft(e.target.value)}
+                  placeholder="例：樓梯左邊"
+                  autoComplete="off"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const { fieldId, slotId } = potSlotLocEdit
+                      const loc = potSlotLocDraft.trim().slice(0, POT_SLOT_LOCATION_MAX_CHARS)
+                      setFields((prev) =>
+                        prev.map((f) => {
+                          if (f.id !== fieldId) return f
+                          const locs = { ...f.potSlotLocations }
+                          if (loc) {
+                            locs[String(slotId)] = loc
+                          } else {
+                            delete locs[String(slotId)]
+                          }
+                          return { ...f, potSlotLocations: Object.keys(locs).length > 0 ? locs : undefined }
+                        }),
+                      )
+                      setPotSlotLocEdit(null)
+                    }
+                  }}
+                />
+                <span className="field-add-field-charcount" aria-live="polite">
+                  {potSlotLocDraft.length}/{POT_SLOT_LOCATION_MAX_CHARS}
+                </span>
+              </div>
+              <div className="field-add-field-actions">
+                <button
+                  type="button"
+                  className="field-btn"
+                  onClick={() => setPotSlotLocEdit(null)}
+                >
+                  取消
+                </button>
+                <button
+                  type="button"
+                  className="field-btn field-btn--primary"
+                  onClick={() => {
+                    const { fieldId, slotId } = potSlotLocEdit
+                    const loc = potSlotLocDraft.trim().slice(0, POT_SLOT_LOCATION_MAX_CHARS)
+                    setFields((prev) =>
+                      prev.map((f) => {
+                        if (f.id !== fieldId) return f
+                        const locs = { ...f.potSlotLocations }
+                        if (loc) {
+                          locs[String(slotId)] = loc
+                        } else {
+                          delete locs[String(slotId)]
+                        }
+                        return { ...f, potSlotLocations: Object.keys(locs).length > 0 ? locs : undefined }
+                      }),
+                    )
+                    setPotSlotLocEdit(null)
+                  }}
+                >
+                  儲存
                 </button>
               </div>
             </div>

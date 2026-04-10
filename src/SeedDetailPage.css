@@ -125,13 +125,9 @@ button.seed-detail-back {
   margin-top: 0.2rem;
 }
 
-.seed-detail-seed-subrow .seed-detail-hero-price {
-  margin-left: auto;
-}
-
-/** 無「種子：」副行時：種子最低價獨立第二行，與有副行時的種子價排版一致 */
+/** 無「種子：」副行時：種子最低價獨立第二行 */
 .seed-detail-seed-subrow--hero-seed-price-only {
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .seed-detail-seed-sub {
@@ -141,19 +137,8 @@ button.seed-detail-back {
   letter-spacing: 0.02em;
 }
 
-.seed-detail-hero-price-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1rem;
-  width: 100%;
-}
-
-.seed-detail-title-row .seed-detail-hero-price-row {
-  width: auto;
-  flex: 1 1 auto;
-  min-width: 0;
-  justify-content: flex-end;
+.seed-detail-title-row .seed-detail-favorite-btn {
+  margin-left: auto;
 }
 
 .seed-detail-hero-price {
@@ -167,12 +152,6 @@ button.seed-detail-back {
 
 .seed-detail-hero-price .seed-price-spinner {
   vertical-align: middle;
-}
-
-.seed-detail-hero-price-label {
-  color: var(--muted);
-  font-weight: 500;
-  white-space: nowrap;
 }
 
 .seed-detail-hero-price-value {

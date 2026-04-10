@@ -81,6 +81,35 @@
   text-shadow: 0 0 18px rgba(251, 191, 36, 0.2);
 }
 
+.app-top-nav-dc-select {
+  appearance: none;
+  margin: 0;
+  padding: 0.4rem 1.8rem 0.4rem 0.7rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #d1d5db;
+  border-radius: 8px;
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  background: rgba(34, 26, 50, 0.6) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23d1d5db'/%3E%3C/svg%3E") no-repeat right 0.6rem center;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.app-top-nav-dc-select:hover {
+  color: #f3f4f6;
+  background-color: rgba(42, 33, 64, 0.85);
+  border-color: rgba(167, 139, 250, 0.45);
+}
+
+.app-top-nav-dc-select:focus-visible {
+  outline: 2px solid rgba(251, 191, 36, 0.6);
+  outline-offset: 1px;
+}
+
 .app-top-nav-tab--report {
   color: #6ee7b7;
   border-color: rgba(110, 231, 183, 0.25);

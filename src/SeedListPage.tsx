@@ -6,6 +6,7 @@ import {
   loadUniversalisMinPricesByItemId,
 } from './seedDataApi'
 import { hasMarketAccess } from './marketAccess'
+import { useUniversalisDc } from './useUniversalisDc'
 import { publicUrl } from './publicUrl'
 import { CopyCropNameButton, CopyCropNameToast } from './CopyCropNameUi'
 import { SearchClearButton } from './SearchClearButton'
@@ -127,6 +128,7 @@ export function SeedListPage() {
   } | null>(null)
   const [priceLoading, setPriceLoading] = useState(false)
   const [marketEnabled, setMarketEnabled] = useState(false)
+  const [dcName] = useUniversalisDc()
   const favoriteSeedIds = useSeedFavoriteIds()
 
   useEffect(() => {
@@ -191,7 +193,7 @@ export function SeedListPage() {
     ;(async () => {
       setPriceLoading(true)
       try {
-        const prices = await loadUniversalisMinPricesByItemId(ids)
+        const prices = await loadUniversalisMinPricesByItemId(ids, dcName)
         if (cancelled) return
         setSeeds((prev) =>
           prev.map((s) => ({
@@ -209,7 +211,7 @@ export function SeedListPage() {
     return () => {
       cancelled = true
     }
-  }, [allPriceItemIdsKey, marketEnabled])
+  }, [allPriceItemIdsKey, marketEnabled, dcName])
 
   useEffect(() => {
     if (marketEnabled) return

@@ -17,8 +17,27 @@ import {
 import type { SeedSummary, SeedsSummaryPayloadJson } from './seedSummaryTypes'
 import { publicUrl } from './publicUrl'
 
-export const UNIVERSALIS_TW_DC = '陸行鳥'
+const UNIVERSALIS_DC_KEY = 'universalis_dc'
+const UNIVERSALIS_DC_DEFAULT = '陸行鳥'
+export const UNIVERSALIS_DC_EVENT = 'universalis-dc-change'
 const UNIVERSALIS_BATCH_SIZE = 50
+
+export function getUniversalisDc(): string {
+  try {
+    return localStorage.getItem(UNIVERSALIS_DC_KEY) || UNIVERSALIS_DC_DEFAULT
+  } catch {
+    return UNIVERSALIS_DC_DEFAULT
+  }
+}
+
+export function setUniversalisDc(dc: string): void {
+  try {
+    localStorage.setItem(UNIVERSALIS_DC_KEY, dc)
+  } catch {
+    // ignore
+  }
+  window.dispatchEvent(new CustomEvent(UNIVERSALIS_DC_EVENT, { detail: dc }))
+}
 
 let cache: Record<string, SeedRecord> | null = null
 let loading: Promise<Record<string, SeedRecord>> | null = null
@@ -157,7 +176,7 @@ type UniversalisBatchPayload = {
  */
 export async function loadUniversalisMinPricesByItemId(
   itemIds: number[],
-  dcName: string = UNIVERSALIS_TW_DC,
+  dcName: string = getUniversalisDc(),
 ): Promise<Record<number, number | null>> {
   const uniq = [...new Set(itemIds.filter((x) => Number.isFinite(x) && x > 0))]
   if (uniq.length === 0) return {}

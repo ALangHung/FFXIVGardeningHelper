@@ -32,6 +32,7 @@ import {
   type OutcomeSortKey,
 } from './sessionUiState'
 import { hasMarketAccess } from './marketAccess'
+import { useUniversalisDc } from './useUniversalisDc'
 import { PriceSpinner } from './PriceSpinner'
 import { SeedFavoriteHeartIcon } from './SeedFavoriteHeartIcon'
 import { useSeedFavoriteIds } from './seedFavorites'
@@ -549,6 +550,7 @@ export function CrossCalculatorPage() {
     message: string
   } | null>(null)
   const [marketEnabled, setMarketEnabled] = useState(false)
+  const [dcName] = useUniversalisDc()
   const [priceBySeedId, setPriceBySeedId] = useState<
     Record<
       number,
@@ -675,7 +677,7 @@ export function CrossCalculatorPage() {
           if (s.cropItemId != null) itemIds.push(s.cropItemId)
         }
         const uniqIds = [...new Set(itemIds)]
-        const prices = await loadUniversalisMinPricesByItemId(uniqIds)
+        const prices = await loadUniversalisMinPricesByItemId(uniqIds, dcName)
         if (cancelled) return
         const next: Record<
           number,
@@ -704,7 +706,7 @@ export function CrossCalculatorPage() {
     return () => {
       cancelled = true
     }
-  }, [seeds, marketEnabled])
+  }, [seeds, marketEnabled, dcName])
 
   useEffect(() => {
     if (marketEnabled) return
