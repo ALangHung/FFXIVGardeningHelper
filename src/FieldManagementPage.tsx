@@ -14,7 +14,10 @@ import type { SeedSummary } from './seedSummaryTypes'
 import { filterSeeds, resolveSeedFromQuery } from './seedPickerQuery'
 import type { SeedRecord } from './seedDetailTypes'
 import { getSeedById, loadSeedsById, loadSeedsSummaryMerged } from './seedDataApi'
-import { findIntercrossOutcomes } from './crossOutcomes'
+import {
+  findIntercrossOutcomes,
+  getParentSeedIdsOnResultConfirmedCrosses,
+} from './crossOutcomes'
 import { SeedFavoriteHeartIcon } from './SeedFavoriteHeartIcon'
 import { useSeedFavoriteIds } from './seedFavorites'
 import { publicUrl } from './publicUrl'
@@ -1007,6 +1010,13 @@ export function FieldManagementPage() {
     return ids
   }, [pickerTarget, fields])
 
+  /** 目標格所屬田地是否為盆栽（盆栽無雜交篩選） */
+  const pickerTargetIsPot = useMemo(() => {
+    if (!pickerTarget) return false
+    const field = fields.find((f) => f.id === pickerTarget.fieldId)
+    return field?.plotNumber === 'pot'
+  }, [pickerTarget, fields])
+
   /** 雜交目標種子建議清單（只在篩選開啟且下拉展開時計算） */
   const pickerCrossTargetSuggestions = useMemo(() => {
     if (!pickerCrossFilter || !pickerCrossTargetOpen) return []
@@ -1038,25 +1048,50 @@ export function FieldManagementPage() {
 
   const pickerSeeds = useMemo(() => {
     const base = filterSeeds(seeds, pickerQuery, favoriteSeedIds)
-    if (!pickerCrossFilter || !seedsById || pickerNeighborSeedIds.length === 0)
-      return base
-    return base.filter((s) => {
-      const canCross = pickerNeighborSeedIds.some(
-        (nid) => findIntercrossOutcomes(seedsById, s.seedId, nid).length > 0,
+    if (!pickerCrossFilter || !seedsById || pickerTargetIsPot) return base
+
+    // 有鄰格作物：依鄰格雜交可能性篩選（原有邏輯）
+    if (pickerNeighborSeedIds.length > 0) {
+      return base.filter((s) => {
+        const canCross = pickerNeighborSeedIds.some(
+          (nid) => findIntercrossOutcomes(seedsById, s.seedId, nid).length > 0,
+        )
+        if (!canCross) return false
+        if (pickerCrossTargetId == null) return true
+        return pickerNeighborSeedIds.some((nid) =>
+          findIntercrossOutcomes(seedsById, s.seedId, nid).some(
+            (o) => o.outcomeSeedId === pickerCrossTargetId,
+          ),
+        )
+      })
+    }
+
+    // 無鄰格作物 + 有期望雜交結果：列出該結果的所有親代
+    if (pickerCrossTargetId != null) {
+      const parentIds = getParentSeedIdsOnResultConfirmedCrosses(
+        seedsById,
+        pickerCrossTargetId,
       )
-      if (!canCross) return false
-      if (pickerCrossTargetId == null) return true
-      return pickerNeighborSeedIds.some((nid) =>
-        findIntercrossOutcomes(seedsById, s.seedId, nid).some(
-          (o) => o.outcomeSeedId === pickerCrossTargetId,
-        ),
-      )
-    })
+      return base.filter((s) => parentIds.has(s.seedId))
+    }
+
+    // 無鄰格作物 + 無期望結果：列出可用於雜交的種子（曾作為親代）
+    const crossableIds = new Set<number>()
+    for (const seed of Object.values(seedsById)) {
+      for (const c of seed.confirmedCrosses ?? []) {
+        const a = c.parentA.seedId
+        const b = c.parentB.seedId
+        if (a != null && Number.isFinite(a)) crossableIds.add(a)
+        if (b != null && Number.isFinite(b)) crossableIds.add(b)
+      }
+    }
+    return base.filter((s) => crossableIds.has(s.seedId))
   }, [
     seeds,
     pickerQuery,
     favoriteSeedIds,
     pickerCrossFilter,
+    pickerTargetIsPot,
     seedsById,
     pickerNeighborSeedIds,
     pickerCrossTargetId,
@@ -1769,9 +1804,6 @@ export function FieldManagementPage() {
                                   onClick={() => {
                                     clearPickerDismissTimer()
                                     setPickerQuery('')
-                                    setPickerCrossTargetQuery('')
-                                    setPickerCrossTargetId(null)
-                                    setPickerCrossTargetOpen(false)
                                     setPickerTarget({
                                       fieldId: field.id,
                                       slotId: sid,
@@ -2225,7 +2257,7 @@ export function FieldManagementPage() {
           <div className="field-modal">
             <div className="field-modal-head" id="field-picker-title">
               選擇種子
-              {pickerCrossFilter && (
+              {!pickerTargetIsPot && pickerCrossFilter && (
                 <div className="field-picker-target-combobox">
                   <div className="field-picker-target-input-wrap">
                     <input
@@ -2390,22 +2422,23 @@ export function FieldManagementPage() {
                   ) : null}
                 </div>
               )}
-              <button
-                type="button"
-                className={`field-picker-cross-filter-btn${pickerCrossFilter ? ' field-picker-cross-filter-btn--on' : ''}`}
-                onClick={togglePickerCrossFilter}
-                disabled={pickerNeighborSeedIds.length === 0}
-                title={
-                  pickerNeighborSeedIds.length === 0
-                    ? '鄰格無作物，無法篩選'
-                    : pickerCrossFilter
+              {!pickerTargetIsPot && (
+                <button
+                  type="button"
+                  className={`field-picker-cross-filter-btn${pickerCrossFilter ? ' field-picker-cross-filter-btn--on' : ''}`}
+                  onClick={togglePickerCrossFilter}
+                  title={
+                    pickerCrossFilter
                       ? '關閉雜交篩選'
-                      : '只顯示可與鄰格雜交的種子'
-                }
-              >
-                <span className="field-picker-cross-filter-indicator" aria-hidden="true" />
-                雜交提示篩選
-              </button>
+                      : pickerNeighborSeedIds.length === 0
+                        ? '只顯示可用於雜交的種子'
+                        : '只顯示可與鄰格雜交的種子'
+                  }
+                >
+                  <span className="field-picker-cross-filter-indicator" aria-hidden="true" />
+                  雜交提示篩選
+                </button>
+              )}
             </div>
             <input
               id="field-picker-search"
