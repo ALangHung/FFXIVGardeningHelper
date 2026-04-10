@@ -21,6 +21,8 @@
   background: rgba(18, 12, 29, 0.92);
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .app-top-nav-inner {
